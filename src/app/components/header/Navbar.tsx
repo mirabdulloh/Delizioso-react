@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button, Container, Stack } from "@mui/material";
+import { Box, Button, Container, Stack, Typography } from "@mui/material";
 
 import { NavLink } from "react-router-dom";
 import "../../../css/navbar.css";
@@ -53,6 +53,7 @@ function Navbar() {
                 <Box className="auth-buttons">
                   <Box>
                     <Button
+                      color="primary"
                       variant="contained"
                       className="login-button"
                       onClick={() => true}
@@ -63,6 +64,7 @@ function Navbar() {
 
                   <Box>
                     <Button
+                      color="secondary"
                       variant="contained"
                       className="signUp-button"
                       onClick={() => true}
@@ -82,6 +84,53 @@ function Navbar() {
               )}
             </Stack>
           </Stack>
+
+          <Box className="hero">
+            <Container className="hero-container" maxWidth="lg">
+              <Box className="hero-grid">
+                {/* LEFT */}
+                <Box className="hero-left">
+                  <Box className="hero-pill">Restaurant</Box>
+
+                  <Typography className="hero-title" component="h1">
+                    Italian <br /> Cuisine
+                  </Typography>
+
+                  <Typography className="hero-desc">
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                    Sodales senectus dictum arcu sit tristique donec eget.
+                  </Typography>
+
+                  <Stack direction="row" spacing={2} className="hero-actions">
+                    <Button
+                      className="btn-orange"
+                      variant="contained"
+                      color="secondary"
+                    >
+                      Order now
+                    </Button>
+                    <Button
+                      className="btn-green"
+                      variant="contained"
+                      color="primary"
+                    >
+                      Reservation
+                    </Button>
+                  </Stack>
+                </Box>
+
+                {/* RIGHT */}
+                <Box className="hero-right">
+                  <Box
+                    className="hero-img"
+                    component="img"
+                    src="/imgs/hero-pasta.png"
+                    alt="Italian cuisine"
+                  />
+                </Box>
+              </Box>
+            </Container>
+          </Box>
         </Container>
       </div>
     </div>
