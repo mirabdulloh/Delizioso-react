@@ -319,6 +319,7 @@
 }
 
 /* ! Reservation Sectional component */
+
 /* =========================
    RESERVATION SECTION
 ========================= */
@@ -426,6 +427,9 @@
      RIGHT TEXT
   ======================= */
 
+.reservation-right {
+  margin-left: 60px;
+}
 .reservation-title {
   width: 453px;
   color: #311f09;
