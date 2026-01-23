@@ -86,50 +86,59 @@ function Navbar() {
           </Stack>
 
           <Box className="hero">
-            <Container className="hero-container" maxWidth="lg">
-              <Box className="hero-grid">
-                {/* LEFT */}
-                <Box className="hero-left">
-                  <Box className="hero-pill">Restaurant</Box>
+            <Box className="hero-grid">
+              {/* LEFT */}
+              <Box className="hero-left">
+                <Box className="hero-pill">Restaurant</Box>
 
-                  <Typography className="hero-title" component="h1">
-                    Italian <br /> Cuisine
-                  </Typography>
-
-                  <Typography className="hero-desc">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    Sodales senectus dictum arcu sit tristique donec eget.
-                  </Typography>
-
-                  <Stack direction="row" spacing={2} className="hero-actions">
-                    <Button
-                      className="btn-orange"
-                      variant="contained"
-                      color="secondary"
-                    >
-                      Order now
-                    </Button>
-                    <Button
-                      className="btn-green"
-                      variant="contained"
-                      color="primary"
-                    >
-                      Reservation
-                    </Button>
-                  </Stack>
+                <Box className="hero-title" component="h1">
+                  Italian <br /> Cuisine
                 </Box>
 
-                {/* RIGHT */}
-                <Box className="hero-right">
-                  <Box
-                    className="hero-img"
-                    component="img"
-                    src="/imgs/hero-pasta.png"
-                    alt="Italian cuisine"
-                  />
+                <Box className="hero-desc">
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                  Sodales senectus dictum arcu sit tristique donec eget.
                 </Box>
+
+                <Stack direction="row" spacing={2} className="hero-actions">
+                  <Button
+                    className="btn-orange"
+                    variant="contained"
+                    color="secondary"
+                  >
+                    Order now
+                  </Button>
+                  <Button
+                    className="btn-green"
+                    variant="contained"
+                    color="primary"
+                  >
+                    Reservation
+                  </Button>
+                </Stack>
               </Box>
-            </Container>
+
+              {/* RIGHT */}
+              <Box className="hero-right">
+                <Box
+                  component="img"
+                  className="img img-main"
+                  src="/imgs/header-img1.png"
+                />
+
+                <Box
+                  component="img"
+                  className="img img-left"
+                  src="/imgs/header-img2.png"
+                />
+
+                <Box
+                  component="img"
+                  className="img img-bottom"
+                  src="/imgs/header-img3.jpg"
+                />
+              </Box>
+            </Box>
           </Box>
         </Container>
       </div>
