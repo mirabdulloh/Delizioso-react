@@ -1,4 +1,5 @@
 import PopularMenu from "./PopularMenu";
+import ReserveTable from "./ReserveTable";
 import WelcomePage from "./WelcomePage";
 
 function HomePage() {
@@ -6,6 +7,7 @@ function HomePage() {
     <>
       <WelcomePage />
       <PopularMenu />
+      <ReserveTable />
     </>
   );
 }

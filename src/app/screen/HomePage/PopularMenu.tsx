@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Container,
-  Typography,
   Stack,
   Box,
   Button,
@@ -49,7 +48,7 @@ function PopularMenu() {
             </Box>
 
             <Stack direction="row" className="menu-footer">
-              <Typography className="price">$12.05</Typography>
+              <Box className="price">$12.05</Box>
               <Button
                 variant="contained"
                 color="secondary"
@@ -82,7 +81,7 @@ function PopularMenu() {
             </Box>
 
             <Stack direction="row" className="menu-footer">
-              <Typography className="price">$12.05</Typography>
+              <Box className="price">$12.05</Box>
               <Button
                 variant="contained"
                 color="secondary"
@@ -115,7 +114,7 @@ function PopularMenu() {
             </Box>
 
             <Stack direction="row" className="menu-footer">
-              <Typography className="price">$12.05</Typography>
+              <Box className="price">$12.05</Box>
               <Button
                 variant="contained"
                 color="secondary"
