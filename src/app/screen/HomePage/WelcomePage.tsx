@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Container, Typography, Button } from "@mui/material";
+import { Box, Container, Button } from "@mui/material";
 import "../../../css/home.css";
 
 function WelcomePage() {

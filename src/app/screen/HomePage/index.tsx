@@ -1,7 +1,13 @@
+import PopularMenu from "./PopularMenu";
 import WelcomePage from "./WelcomePage";
 
 function HomePage() {
-  return <WelcomePage />;
+  return (
+    <>
+      <WelcomePage />
+      <PopularMenu />
+    </>
+  );
 }
 
 export default HomePage;
