@@ -30,7 +30,7 @@ function HomeNavbar() {
               </Box>
               {authMember ? (
                 <Box className={"hover-line"}>
-                  <NavLink to="/orders">Order online</NavLink>
+                  <NavLink to="/order-online">Order online</NavLink>
                 </Box>
               ) : null}
               {authMember ? (

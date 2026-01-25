@@ -8,6 +8,7 @@ import HomePage from "./screen/HomePage";
 import MenuPage from "./screen/MenuPage";
 import PromotionsAll from "./screen/MenuPage/PromotionsAll";
 import OtherNavbar from "./components/header/OtherNavbar";
+import OrderOnline from "./screen/OrderOnline";
 
 function App() {
   const location = useLocation();
@@ -18,6 +19,7 @@ function App() {
       <Routes>
         <Route path="/products/*" element={<MenuPage />} />
         <Route path="/promotions" element={<PromotionsAll />} />
+        <Route path="/order-online" element={<OrderOnline />} />
         <Route path="/" element={<HomePage />} />
       </Routes>
 
