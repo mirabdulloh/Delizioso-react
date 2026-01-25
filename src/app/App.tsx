@@ -10,7 +10,9 @@ import PromotionsAll from "./screen/MenuPage/PromotionsAll";
 import OtherNavbar from "./components/header/OtherNavbar";
 import OrderOnline from "./screen/OrderOnline";
 import AboutUs from "./screen/AboutUs";
+import CS from "./screen/CS";
 import Contact from "./screen/ContactUs/Contact";
+import Reservation from "./screen/Reservation";
 
 function App() {
   const location = useLocation();
@@ -21,6 +23,8 @@ function App() {
       <Routes>
         <Route path="/products/*" element={<MenuPage />} />
         <Route path="/promotions" element={<PromotionsAll />} />
+        <Route path="/support" element={<CS />} />
+        <Route path="/reservation" element={<Reservation />} />
         <Route path="/order-online" element={<OrderOnline />} />
         <Route path="/help" element={<Contact />} />
         <Route path="/about" element={<AboutUs />} />

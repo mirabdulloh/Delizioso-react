@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Button, Container, Stack } from "@mui/material";
+import { NavLink } from "react-router-dom";
 import "../../../css/home.css";
 
 function ReserveTable() {
@@ -59,7 +60,13 @@ function ReserveTable() {
             ultricies at eleifend proin.
           </Box>
 
-          <Button variant="contained" className="reservation-btn" color="secondary">
+          <Button
+            variant="contained"
+            className="reservation-btn"
+            color="secondary"
+            component={NavLink}
+            to="/reservation"
+          >
             Reservation
           </Button>
         </Stack>

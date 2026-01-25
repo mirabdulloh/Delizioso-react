@@ -8,11 +8,8 @@ import {
   IconButton,
   Rating,
   Divider,
-  TextField,
-  InputAdornment,
 } from "@mui/material";
 
-import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import LocalShippingRoundedIcon from "@mui/icons-material/LocalShippingRounded";
 import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";

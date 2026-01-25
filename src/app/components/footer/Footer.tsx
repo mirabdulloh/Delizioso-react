@@ -54,8 +54,9 @@ function Footer() {
                 <a href="#">Menu</a>
                 <a href="/order-online">Order online</a>
                 <a href="#">Catering</a>
-                <a href="#">Reservation</a>
+                <a href="/reservation">Reservation</a>
                 <a href="/help">Contact us</a>
+                <a href="/support">Support</a>
               </Stack>
             </Box>
 
