@@ -55,8 +55,28 @@ function Footer() {
                 <NavLink to="/products">Menu</NavLink>
                 <NavLink to="/about">About</NavLink>
                 <NavLink to="/support">Support</NavLink>
-                <NavLink to="/order-online">Order Online</NavLink>
-                <NavLink to="/reservation">Reservation</NavLink>
+                <NavLink
+                  to="/order-online"
+                  onClick={(e: any) => {
+                    if (!localStorage.getItem('memberNick')) {
+                      e.preventDefault();
+                      require("../../../lib/sweetAlert").sweetFailureProvider('Please sign up first to order.', true);
+                    }
+                  }}
+                >
+                  Order Online
+                </NavLink>
+                <NavLink
+                  to="/reservation"
+                  onClick={(e: any) => {
+                    if (!localStorage.getItem('memberNick')) {
+                      e.preventDefault();
+                      require("../../../lib/sweetAlert").sweetFailureProvider('Please sign up first to make a reservation.', true);
+                    }
+                  }}
+                >
+                  Reservation
+                </NavLink>
                 <NavLink to="/help">Contact</NavLink>
               </Stack>
             </Box>

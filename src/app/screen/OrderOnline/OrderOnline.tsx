@@ -1,14 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Box,
-  Container,
-  Stack,
-  Button,
-  IconButton,
-  Rating,
-  Divider,
-} from "@mui/material";
+import { Box, Container, Stack, Button, IconButton, Rating, Divider } from "@mui/material";
 
 import LocalShippingRoundedIcon from "@mui/icons-material/LocalShippingRounded";
 import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
@@ -18,6 +10,7 @@ import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import RemoveRoundedIcon from "@mui/icons-material/RemoveRounded";
 import ReceiptLongRoundedIcon from "@mui/icons-material/ReceiptLongRounded";
+import InboxRoundedIcon from "@mui/icons-material/InboxRounded";
 
 import "../../../css/order-online.css";
 
@@ -35,8 +28,8 @@ type Order = {
   id: string;
   status: OrderStatus;
   restaurant: string;
-  createdAt: string; // hard-coded string
-  etaMin?: number; // ongoing
+  createdAt: string;
+  etaMin?: number;
   items: OrderItem[];
 };
 
@@ -44,17 +37,15 @@ function calcSubtotal(items: OrderItem[]) {
   return items.reduce((sum, it) => sum + it.price * it.qty, 0);
 }
 
-function Orders() {
+function OrderOnline() {
   const navigate = useNavigate();
 
-  // member page not implemented in repo — fallback to home
   const memberRoute = "/";
 
   const hasAddress = () => Boolean(localStorage.getItem("userAddress"));
   const [activeStatus, setActiveStatus] = useState<OrderStatus>("PAUSED");
   const [selectedId, setSelectedId] = useState<string>("o1");
 
-  // ✅ HARD-CODE DATA
   const orders = useMemo<Order[]>(
     () => [
       {
@@ -92,26 +83,28 @@ function Orders() {
   const filtered = orders.filter((o) => o.status === activeStatus);
   const selectedOrder = orders.find((o) => o.id === selectedId) ?? filtered[0] ?? orders[0];
 
-  // ensure selected is visible
   const visibleSelected =
     selectedOrder && selectedOrder.status === activeStatus ? selectedOrder : filtered[0] ?? null;
 
   const subtotal = visibleSelected ? calcSubtotal(visibleSelected.items) : 0;
-  const tax = Math.round(subtotal * 0.05 * 100) / 100; // fake 5%
+  const tax = Math.round(subtotal * 0.05 * 100) / 100;
   const delivery = 0;
   const total = Math.round((subtotal + tax + delivery) * 100) / 100;
 
   return (
     <div className="orders-page">
-      <Container >
+      <Container>
         {/* HEADER */}
-        <Stack direction="row" justifyContent="space-between" alignItems="flex-end" className="orders-header">
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="flex-end"
+          className="orders-header"
+        >
           <Box>
             <Box className="orders-title">Orders</Box>
             <Box className="orders-subtitle">Paused • Ongoing • Finished</Box>
           </Box>
-
-        
         </Stack>
 
         {/* LAYOUT */}
@@ -170,59 +163,74 @@ function Orders() {
           {/* CENTER LIST */}
           <Box className="orders-center">
             <Stack spacing={2}>
-              {filtered.map((o) => {
-                const isActive = visibleSelected?.id === o.id;
-                const osub = calcSubtotal(o.items);
-                return (
-                  <Box
-                    key={o.id}
-                    className={`orderCard ${isActive ? "active" : ""}`}
-                    role="button"
-                    onClick={() => setSelectedId(o.id)}
-                  >
-                    <Stack direction="row" justifyContent="space-between" alignItems="center">
-                      <Box>
-                        <Box className="orderCard-restaurant">{o.restaurant}</Box>
-                        <Box className="orderCard-date">{o.createdAt}</Box>
-                      </Box>
+              {filtered.length === 0 ? (
+                <Box className="orders-empty" key="empty">
+                  <InboxRoundedIcon style={{ fontSize: 60, color: "#ccc" }} />
+                  <Box className="orders-emptyText">No orders found</Box>
+                  <Button variant="outlined" onClick={() => navigate("/products")}>
+                    Browse Menu
+                  </Button>
+                </Box>
+              ) : (
+                filtered.map((o) => {
+                  const isActive = visibleSelected?.id === o.id;
+                  const osub = calcSubtotal(o.items);
 
-                      <Box className={`orderCard-status ${o.status.toLowerCase()}`}>
-                        {o.status === "PAUSED" ? "Paused" : o.status === "ONGOING" ? "Ongoing" : "Finished"}
-                      </Box>
-                    </Stack>
-
-                    <Stack direction="row" spacing={1.5} className="orderCard-items" mt={2}>
-                      {o.items.slice(0, 3).map((it) => (
-                        <Box key={it.id} className="orderMini">
-                          <Box component="img" src={it.img} alt={it.name} className="orderMini-img" />
-                          <Box className="orderMini-name">{it.name}</Box>
-                          <Box className="orderMini-qty">x{it.qty}</Box>
+                  return (
+                    <Box
+                      key={o.id}
+                      className={`orderCard ${isActive ? "active" : ""}`}
+                      role="button"
+                      onClick={() => setSelectedId(o.id)}
+                    >
+                      <Stack direction="row" justifyContent="space-between" alignItems="center">
+                        <Box>
+                          <Box className="orderCard-restaurant">{o.restaurant}</Box>
+                          <Box className="orderCard-date">{o.createdAt}</Box>
                         </Box>
-                      ))}
-                      {o.items.length > 3 ? <Box className="orderMini-more">+{o.items.length - 3}</Box> : null}
-                    </Stack>
 
-                    <Stack direction="row" justifyContent="space-between" alignItems="center" mt={2}>
-                      <Stack direction="row" spacing={1} alignItems="center" className="orderCard-meta">
-                        <Rating value={4} readOnly size="small" />
-                        {o.status === "ONGOING" ? (
-                          <Box className="orderCard-eta">
-                            <AccessTimeRoundedIcon />
-                            <span>{o.etaMin} min</span>
-                          </Box>
-                        ) : (
-                          <Box className="orderCard-eta muted">
-                            <ReceiptLongRoundedIcon />
-                            <span>{o.items.length} items</span>
-                          </Box>
-                        )}
+                        <Box className={`orderCard-status ${o.status.toLowerCase()}`}>
+                          {o.status === "PAUSED"
+                            ? "Paused"
+                            : o.status === "ONGOING"
+                            ? "Ongoing"
+                            : "Finished"}
+                        </Box>
                       </Stack>
 
-                      <Box className="orderCard-total">${osub.toFixed(2)}</Box>
-                    </Stack>
-                  </Box>
-                );
-              })}
+                      <Stack direction="row" spacing={1.5} className="orderCard-items" mt={2}>
+                        {o.items.slice(0, 3).map((it) => (
+                          <Box key={it.id} className="orderMini">
+                            <Box component="img" src={it.img} alt={it.name} className="orderMini-img" />
+                            <Box className="orderMini-name">{it.name}</Box>
+                            <Box className="orderMini-qty">x{it.qty}</Box>
+                          </Box>
+                        ))}
+                        {o.items.length > 3 ? <Box className="orderMini-more">+{o.items.length - 3}</Box> : null}
+                      </Stack>
+
+                      <Stack direction="row" justifyContent="space-between" alignItems="center" mt={2}>
+                        <Stack direction="row" spacing={1} alignItems="center" className="orderCard-meta">
+                          <Rating value={4} readOnly size="small" />
+                          {o.status === "ONGOING" ? (
+                            <Box className="orderCard-eta">
+                              <AccessTimeRoundedIcon />
+                              <span>{o.etaMin} min</span>
+                            </Box>
+                          ) : (
+                            <Box className="orderCard-eta muted">
+                              <ReceiptLongRoundedIcon />
+                              <span>{o.items.length} items</span>
+                            </Box>
+                          )}
+                        </Stack>
+
+                        <Box className="orderCard-total">${osub.toFixed(2)}</Box>
+                      </Stack>
+                    </Box>
+                  );
+                })
+              )}
             </Stack>
           </Box>
 
@@ -231,7 +239,11 @@ function Orders() {
             {visibleSelected ? (
               <Box className="orders-summary">
                 <Box className="orders-summary-title">
-                  {activeStatus === "PAUSED" ? "Checkout" : activeStatus === "ONGOING" ? "Order Tracking" : "Order Details"}
+                  {activeStatus === "PAUSED"
+                    ? "Checkout"
+                    : activeStatus === "ONGOING"
+                    ? "Order Tracking"
+                    : "Order Details"}
                 </Box>
 
                 {/* ITEMS LIST */}
@@ -244,7 +256,6 @@ function Orders() {
                       </Stack>
 
                       <Stack direction="row" spacing={1} alignItems="center">
-                        {/* qty controls only for PAUSED */}
                         {activeStatus === "PAUSED" ? (
                           <Stack direction="row" spacing={0.6} alignItems="center" className="summary-qty">
                             <IconButton className="summary-qtyBtn">
@@ -261,7 +272,6 @@ function Orders() {
 
                         <Box className="summary-price">${(it.price * it.qty).toFixed(2)}</Box>
 
-                        {/* delete only for PAUSED */}
                         {activeStatus === "PAUSED" ? (
                           <IconButton className="summary-del">
                             <DeleteOutlineRoundedIcon />
@@ -309,7 +319,6 @@ function Orders() {
                             navigate(memberRoute);
                             return;
                           }
-                          // proceed to payment flow (not implemented)
                           window.alert("Proceeding to payment (demo)");
                         }}
                       >
@@ -345,7 +354,13 @@ function Orders() {
                 </Stack>
               </Box>
             ) : (
-              <Box className="orders-summary empty">No orders here</Box>
+              <Box className="orders-summary empty">
+                <InboxRoundedIcon style={{ fontSize: 48, color: "#ccc" }} />
+                <Box sx={{ mt: 1 }}>No orders to display</Box>
+                <Button variant="text" onClick={() => navigate("/products")}>
+                  Go to Menu
+                </Button>
+              </Box>
             )}
           </Box>
         </Box>
@@ -354,4 +369,4 @@ function Orders() {
   );
 }
 
-export default Orders;
+export default OrderOnline;

@@ -1,9 +1,18 @@
 import React from "react";
 import { Box, Button, Container, Stack } from "@mui/material";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { sweetFailureProvider } from "../../../lib/sweetAlert";
 import "../../../css/home.css";
 
 function ReserveTable() {
+  const navigate = useNavigate();
+  const auth = typeof window !== 'undefined' && Boolean(localStorage.getItem('memberNick'));
+
+  const handleReserveClick = () => {
+    if (auth) navigate('/reservation');
+    else sweetFailureProvider('Please sign up first to make a reservation.', true);
+  };
+
   return (
     <div className="reservation-section">
       <Container className="reservation-container">
@@ -64,8 +73,7 @@ function ReserveTable() {
             variant="contained"
             className="reservation-btn"
             color="secondary"
-            component={NavLink}
-            to="/reservation"
+            onClick={handleReserveClick}
           >
             Reservation
           </Button>

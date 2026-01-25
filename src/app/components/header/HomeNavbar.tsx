@@ -1,11 +1,13 @@
 import React from "react";
 import { Box, Button, Container, Stack } from "@mui/material";
 
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import "../../../css/navbar.css";
 
-const authMember = true || null;
 function HomeNavbar() {
+  const navigate = useNavigate();
+  const authMember = true
+  const { sweetFailureProvider } = require("../../../lib/sweetAlert");
   return (
     <div>
       {" "}
@@ -34,12 +36,16 @@ function HomeNavbar() {
               <Box className={"hover-line"}>
                 <NavLink to="/support">Support</NavLink>
               </Box>
-              <Box className={"hover-line"}>
-                <NavLink to="/order-online">Order Online</NavLink>
-              </Box>
-              <Box className={"hover-line"}>
-                <NavLink to="/reservation">Reservation</NavLink>
-              </Box>
+              {authMember && (
+                <Box className={"hover-line"}>
+                  <NavLink to="/order-online">Order Online</NavLink>
+                </Box>
+              )}
+              {authMember && (
+                <Box className={"hover-line"}>
+                  <NavLink to="/reservation">Reservation</NavLink>
+                </Box>
+              )}
               <Box className={"hover-line"}>
                 <NavLink to="/help">Contact</NavLink>
               </Box>
@@ -51,7 +57,7 @@ function HomeNavbar() {
                 onDelete={onDelete}
                 onDeleteAll={onDeleteAll}
               /> */}
-              {authMember ? (
+              {!authMember ? (
                 <Box className="auth-buttons">
                   <Box>
                     <Button
@@ -107,15 +113,22 @@ function HomeNavbar() {
                     className="btn-orange"
                     variant="contained"
                     color="secondary"
+                    onClick={() => {
+                      if (authMember) navigate("/order-online");
+                      else sweetFailureProvider("Please sign up first to order.", true);
+                    }}
                   >
                     Order now
                   </Button>
+                  
                   <Button
                     className="btn-green"
                     variant="contained"
                     color="primary"
-                    component={NavLink}
-                    to="/reservation"
+                    onClick={() => {
+                      if (authMember) navigate("/reservation");
+                      else sweetFailureProvider("Please sign up first to make a reservation.", true);
+                    }}
                   >
                     Reservation
                   </Button>

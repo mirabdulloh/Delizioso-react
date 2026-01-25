@@ -1,8 +1,22 @@
 import React from "react";
 import { Box, Stack, Button, Container, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { sweetFailureProvider } from "../../../lib/sweetAlert";
 import "../../../css/home.css";
 
 function OpenCloseTime() {
+  const navigate = useNavigate();
+  const auth = typeof window !== 'undefined' && Boolean(localStorage.getItem('memberNick'));
+
+  const handleOrderClick = () => {
+    if (auth) navigate('/order-online');
+    else sweetFailureProvider('Please sign up first to order.', true);
+  };
+
+  const handleReserveClick = () => {
+    if (auth) navigate('/reservation');
+    else sweetFailureProvider('Please sign up first to make a reservation.', true);
+  };
   return (
     <div className="oct-section">
       <Container maxWidth="lg">
@@ -48,6 +62,7 @@ function OpenCloseTime() {
                 color="secondary"
                 size="large"
                 className="open-btn"
+                onClick={handleOrderClick}
               >
                 Order now
               </Button>
@@ -57,6 +72,7 @@ function OpenCloseTime() {
                 variant="contained"
                 size="large"
                 className="open-btn2"
+                onClick={handleReserveClick}
               >
                 Reservation
               </Button>

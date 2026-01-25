@@ -4,8 +4,8 @@ import { Box, Button, Container, Stack } from "@mui/material";
 import { NavLink } from "react-router-dom";
 import "../../../css/navbar.css";
 
-const authMember = true || null;
 function OtherNavbar() {
+  const authMember = typeof window !== "undefined" && Boolean(localStorage.getItem("memberNick"));
   return (
     <div>
       {" "}
@@ -34,12 +34,16 @@ function OtherNavbar() {
               <Box className={"hover-line"}>
                 <NavLink to="/support">Support</NavLink>
               </Box>
-              <Box className={"hover-line"}>
-                <NavLink to="/order-online">Order Online</NavLink>
-              </Box>
-              <Box className={"hover-line"}>
-                <NavLink to="/reservation">Reservation</NavLink>
-              </Box>
+              {authMember && (
+                <Box className={"hover-line"}>
+                  <NavLink to="/order-online">Order Online</NavLink>
+                </Box>
+              )}
+              {authMember && (
+                <Box className={"hover-line"}>
+                  <NavLink to="/reservation">Reservation</NavLink>
+                </Box>
+              )}
               <Box className={"hover-line"}>
                 <NavLink to="/help">Contact</NavLink>
               </Box>
@@ -51,7 +55,7 @@ function OtherNavbar() {
                 onDelete={onDelete}
                 onDeleteAll={onDeleteAll}
               /> */}
-              {authMember ? (
+              {!authMember ? (
                 <Box className="auth-buttons">
                   <Box>
                     <Button

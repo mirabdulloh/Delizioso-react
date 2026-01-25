@@ -1,8 +1,10 @@
 import React from "react";
 import { Box, Container, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import "../../../css/home.css";
 
 function WelcomePage() {
+  const navigate = useNavigate();
   return (
     <div className="welcome-section">
       <Container className="welcome-container">
@@ -32,6 +34,7 @@ function WelcomePage() {
               variant="contained"
               color="secondary"
               className="welcome-btn"
+              onClick={() => navigate("/products")}
             >
               See our menu
             </Button>
