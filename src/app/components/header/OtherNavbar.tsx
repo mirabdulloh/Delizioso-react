@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button, Container, Stack, Typography } from "@mui/material";
+import { Box, Button, Container, Stack } from "@mui/material";
 
 import { NavLink } from "react-router-dom";
 import "../../../css/navbar.css";
