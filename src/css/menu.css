@@ -450,3 +450,421 @@
     padding: 12px 20px !important;
   }
 }
+
+/* =========================
+   PROMOTIONS (Coupang style)
+========================= */
+
+.promotions{
+  background-color: #f9f9f9;
+}
+
+/* .promo2-head {
+  margin: 16px 0 14px;
+} */
+
+.promo2-title {
+  padding-top: 20px;
+  color: #311f09;
+  font-family: Tinos;
+  font-size: 45px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.promo2-sub {
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(44, 44, 44, 0.6);
+  padding-bottom: 25px;
+}
+
+.promo2-viewAll {
+  font-weight: 900 !important;
+  text-transform: none !important;
+}
+
+/* grid */
+.promo2-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  gap: 18px;
+  align-items: stretch;
+}
+
+/* hero */
+.promo2-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 26px;
+  min-height: 290px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+}
+
+.promo2-hero-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #ff9800 0%, #ff6a00 60%, #ff4d4d 120%);
+}
+
+.promo2-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 20% 30%,
+    rgba(255, 255, 255, 0.25),
+    transparent 45%
+  );
+}
+
+.promo2-hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 22px;
+  max-width: 520px;
+  color: #fff;
+}
+
+.promo2-badges {
+  margin-bottom: 12px;
+}
+
+.promo2-chip {
+  font-weight: 900 !important;
+  border-radius: 999px !important;
+}
+
+.promo2-chip-hot {
+  background: rgba(0, 0, 0, 0.22) !important;
+  color: #fff !important;
+}
+
+.promo2-chip-time {
+  background: rgba(255, 255, 255, 0.22) !important;
+  color: #fff !important;
+}
+
+.promo2-hero-h1 {
+  font-size: 40px;
+  font-weight: 1000;
+  letter-spacing: -0.6px;
+}
+
+.promo2-hero-h2 {
+  margin-top: 6px;
+  font-size: 16px;
+  font-weight: 800;
+  opacity: 0.95;
+}
+
+.promo2-priceRow {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.promo2-old {
+  font-weight: 900;
+  text-decoration: line-through;
+  opacity: 0.8;
+}
+
+.promo2-new {
+  font-size: 24px;
+  font-weight: 1000;
+}
+
+.promo2-off {
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.2);
+  font-weight: 1000;
+}
+.promo2-btn {
+  border-radius: 999px !important;
+  padding: 10px 18px !important;
+  font-weight: 900 !important;
+  text-transform: none !important;
+
+  background: #ffffff !important;
+  color: #ff9800 !important;
+
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15) !important;
+  transition: 0.2s ease !important;
+}
+
+.promo2-btnGhost {
+  border-radius: 999px !important;
+  padding: 10px 18px !important;
+  font-weight: 1000 !important;
+  text-transform: none !important;
+  border-color: rgba(255, 255, 255, 0.75) !important;
+  color: #fff !important;
+}
+
+.promo2-hero-img {
+  position: absolute;
+  right: -12px;
+  bottom: -18px;
+  width: 280px;
+  height: 280px;
+  object-fit: cover;
+  border-radius: 32px;
+  transform: rotate(-10deg);
+  filter: drop-shadow(0 20px 34px rgba(0, 0, 0, 0.18));
+  z-index: 1;
+  opacity: 0.95;
+}
+
+/* side */
+.promo2-side {
+  width: 100%;
+}
+
+.promo2-mini {
+  position: relative;
+  overflow: hidden;
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.07);
+  padding: 16px 16px 14px;
+  min-height: 136px;
+}
+
+.promo2-mini-dark {
+  background: #2c2c2c;
+  color: #fff;
+}
+
+.promo2-mini-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.promo2-mini-off {
+  font-weight: 1000;
+  color: #ff9800;
+  background: rgba(255, 152, 0, 0.12);
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+
+.promo2-mini-dark .promo2-mini-off {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.promo2-mini-tag {
+  font-weight: 900;
+  font-size: 12px;
+  color: rgba(44, 44, 44, 0.7);
+}
+
+.promo2-mini-dark .promo2-mini-tag {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.promo2-mini-name {
+  margin-top: 10px;
+  font-weight: 1000;
+  font-size: 16px;
+}
+
+.promo2-mini-old {
+  text-decoration: line-through;
+  font-weight: 900;
+  opacity: 0.65;
+}
+
+.promo2-mini-new {
+  font-weight: 1000;
+  color: #ff9800;
+}
+
+.promo2-mini-dark .promo2-mini-new {
+  color: #fff;
+}
+
+.promo2-mini-btn {
+  margin-top: 10px !important;
+  border-radius: 999px !important;
+  font-weight: 1000 !important;
+  text-transform: none !important;
+  width: 120px;
+}
+
+.promo2-mini-img {
+  position: absolute;
+  right: -6px;
+  bottom: -14px;
+  width: 110px;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 18px;
+  transform: rotate(-10deg);
+  opacity: 0.95;
+}
+
+.promo2-strip {
+  width: 100%;
+  margin-top: 26px;
+  margin-bottom: 26px;
+}
+
+.promo2-strip-title {
+  font-size: 20px;
+  font-weight: 900;
+  color: #2c2c2c;
+  margin: 0 0 14px;
+}
+
+/* row (scroll / or later auto-slide) */
+.promo2-strip-row {
+  display: flex;
+  gap: 18px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 2px 14px;
+  scroll-snap-type: x mandatory;
+
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.promo2-strip-row::-webkit-scrollbar {
+  display: none;
+}
+
+/* card */
+.promo2-dealCard {
+  position: relative;
+  flex: 0 0 300px;
+  border-radius: 22px;
+  background: #fff;
+  padding: 16px 16px 16px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+
+  scroll-snap-align: start;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.promo2-dealCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.09);
+}
+
+/* badge */
+.promo2-dealOff {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+
+  background: #ff9800;
+  color: #fff;
+  font-weight: 900;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 14px;
+}
+
+/* texts */
+.promo2-dealName {
+  margin-top: 34px;
+  font-size: 18px;
+  font-weight: 900;
+  color: #2c2c2c;
+}
+
+.promo2-dealDesc {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+/* prices */
+.promo2-dealOld {
+  text-decoration: line-through;
+  font-weight: 800;
+  color: rgba(0, 0, 0, 0.35);
+  font-size: 14px;
+}
+
+.promo2-dealNew {
+  font-weight: 900;
+  color: #ff9800;
+  font-size: 18px;
+}
+
+/* button */
+.promo2-dealBtn {
+  margin-top: 14px !important;
+  border-radius: 999px !important;
+  padding: 10px 18px !important;
+  font-weight: 900 !important;
+  text-transform: none !important;
+}
+
+/* image (right side, tilted like coupon style) */
+.promo2-dealImg {
+  position: absolute;
+  right: -10px;
+  bottom: -10px;
+
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 18px;
+
+  transform: rotate(10deg);
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.15);
+  opacity: 0.95;
+}
+/* viewport */
+.promo2-marquee {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  padding: 4px 0 14px;
+}
+
+/* moving track */
+.promo2-track {
+  display: flex;
+  gap: 18px;
+  width: max-content;
+  will-change: transform;
+
+  animation: promo2Scroll 22s linear infinite;
+}
+
+.promo2-track:hover {
+  animation-play-state: paused;
+}
+
+/* RIGHT -> LEFT */
+@keyframes promo2Scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* responsive */
+@media (max-width: 1200px) {
+  .promo2-grid {
+    grid-template-columns: 1fr;
+  }
+  .promo2-hero-img {
+    width: 240px;
+    height: 240px;
+  }
+}
