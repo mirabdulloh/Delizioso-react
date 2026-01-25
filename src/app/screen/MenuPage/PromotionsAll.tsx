@@ -117,8 +117,8 @@ function PromotionsAll() {
   ];
 
   return (
-    <Box className="promoAll-section">
-      <Container maxWidth={false} className="promoAll-container">
+    <div className="promoAll-section">
+      <Container >
         {/* title */}
         <Box className="promoAll-title">Hot Promotions</Box>
         <Box className="promoAll-subtitle">
@@ -221,7 +221,7 @@ function PromotionsAll() {
           {cartOpen ? <OrderList /> : null}
         </Box>
       </Container>
-    </Box>
+    </div>
   );
 }
 
