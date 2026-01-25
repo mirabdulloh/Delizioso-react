@@ -28,6 +28,9 @@ function OtherNavbar() {
               <Box className={"hover-line"}>
                 <NavLink to="/products">Menu</NavLink>
               </Box>
+              <Box className={"hover-line"}>
+                <NavLink to="/about">About Us</NavLink>
+              </Box>
               {authMember ? (
                 <Box className={"hover-line"}>
                   <NavLink to="/order-online">Order online</NavLink>
