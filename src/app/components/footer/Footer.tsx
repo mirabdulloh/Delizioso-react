@@ -52,9 +52,10 @@ function Footer() {
               <Stack spacing={2.2} className="footer-links">
                 <a href="#">Home</a>
                 <a href="#">Menu</a>
-                <a href="#">Order online</a>
+                <a href="/order-online">Order online</a>
                 <a href="#">Catering</a>
                 <a href="#">Reservation</a>
+                <a href="/help">Contact us</a>
               </Stack>
             </Box>
 
@@ -63,9 +64,10 @@ function Footer() {
               <Box className="footer-title">Information</Box>
 
               <Stack spacing={2.2} className="footer-links">
-                <a href="#">About us</a>
+                <a href="/about">About us</a>
                 <a href="#">Testimonial</a>
                 <a href="#">Event</a>
+                <a href="/help">Contact us</a>
               </Stack>
             </Box>
 
