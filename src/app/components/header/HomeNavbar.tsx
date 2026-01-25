@@ -2,12 +2,13 @@ import React from "react";
 import { Box, Button, Container, Stack } from "@mui/material";
 
 import { NavLink, useNavigate } from "react-router-dom";
+import { sweetFailureProvider } from "../../../lib/sweetAlert";
 import "../../../css/navbar.css";
 
 function HomeNavbar() {
   const navigate = useNavigate();
-  const authMember = true
-  const { sweetFailureProvider } = require("../../../lib/sweetAlert");
+  const authMember =
+    typeof window !== "undefined" && Boolean(localStorage.getItem("memberNick"));
   return (
     <div>
       {" "}
