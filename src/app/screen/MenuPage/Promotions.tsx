@@ -4,8 +4,12 @@ import LocalFireDepartmentRoundedIcon from "@mui/icons-material/LocalFireDepartm
 import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
 
 import "../../../css/menu.css";
+import HomePage from "../HomePage";
+import { useNavigate } from "react-router-dom";
+import PromotionsAll from "./PromotionsAll";
 
 function Promotions() {
+  const navigate = useNavigate();
   return (
     <div className="promotions">
       <Box className="promo2">
@@ -24,7 +28,11 @@ function Promotions() {
               </Box>
             </Stack>
 
-            <Button className="promo2-viewAll" variant="text">
+            <Button
+              className="promo2-viewAll"
+              variant="text"
+              onClick={() => navigate("/promotions")}
+            >
               View all
             </Button>
           </Stack>
