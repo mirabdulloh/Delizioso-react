@@ -4,112 +4,74 @@ import "../../../css/home.css";
 
 function CostumerReviews() {
   return (
-    <Box className="review-section">
+    <div className="review-section">
       <Container className="review-container">
+
         {/* TITLE */}
+       
+
+        {/* ================= MAIN REVIEW ================= */}
+        <Box className="review-main">
         <Box component="h1" className="review-title">
           Our customers say
         </Box>
 
-        {/* MAIN REVIEW */}
-        <Box className="review-main">
-          {/* MAIN FOOD/USER IMAGE */}
-          <Box className="review-main-ring">
-            <Box className="review-main-ring2">
-              <Box
-                component="img"
-                src="/imgs/header-img1.png"
-                className="review-main-img"
-                alt="Food"
-              />
-            </Box>
+          {/* 🔥 SQUARE FOOD CARD (NOT CIRCLE ANYMORE) */}
+          <Box className="review-food-card">
+            <img
+              src="/imgs/chef1.png"
+              alt="Food"
+              className="review-food-img"
+            />
           </Box>
 
           <Box className="review-name">Starla Virgoun</Box>
-          <Box className="review-role">Financial advisor</Box>
 
           <Box className="review-quote">
-            <Box className="review-quote-mark left">“</Box>
-            <Box component="p" className="review-quote-text">
+            <span className="quote-left">“</span>
+
+            <p>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Facilisis
               ultricies at eleifend proin. Congue nibh nulla malesuada ultrices
               nec quam.
-            </Box>
-            <Box className="review-quote-mark right">”</Box>
+            </p>
+
+            <span className="quote-right">”</span>
           </Box>
         </Box>
 
-        {/* USERS ROW */}
+        {/* ================= USERS ROW ================= */}
         <Box className="review-users-row">
-          {/* user 1 */}
-          <Box className="review-user-ring">
-            <Box className="review-user-ring2">
-              <Box
-                component="img"
-                src="/imgs/u1.png"
-                className="rdefault_img.jpg"
-                alt="User 1"
-              />
-            </Box>
+
+          {/* small */}
+          <Box className="review-user">
+            <img src="/imgs/default_img.jpg" alt="" />
           </Box>
 
-          {/* user 2 */}
-          <Box className="review-user-ring">
-            <Box className="review-user-ring2">
-              <Box
-                component="img"
-                src="/imgs/default_img.jpg"
-                className="review-user-img"
-                alt="User 2"
-              />
-            </Box>
+          {/* small */}
+          <Box className="review-user">
+            <img src="/imgs/default_img.jpg" alt="" />
           </Box>
 
-          {/* active user (bigger) */}
-          <Box className="review-user-ring active">
-            <Box className="review-user-ring2 active">
-              <Box
-                component="img"
-                src="/imgs/default_img.jpg"
-                className="review-user-img active"
-                alt="Active user"
-              />
-            </Box>
+          {/* 🔥 ACTIVE (bigger) */}
+          <Box className="review-user active">
+            <img src="/imgs/default_img.jpg" alt="" />
           </Box>
 
-          {/* user 3 */}
-          <Box className="review-user-ring">
-            <Box className="review-user-ring2">
-              <Box
-                component="img"
-                src="/imgs/default_img.jpg"
-                className="review-user-img"
-                alt="User 3"
-              />
-            </Box>
+          {/* small */}
+          <Box className="review-user">
+            <img src="/imgs/default_img.jpg" alt="" />
           </Box>
 
-          {/* user 4 */}
-          <Box className="review-user-ring">
-            <Box className="review-user-ring2">
-              <Box
-                component="img"
-                src="/imgs/default_img.jpg"
-                className="review-user-img"
-                alt="User 4"
-              />
-            </Box>
+          {/* small */}
+          <Box className="review-user">
+            <img src="/imgs/default_img.jpg" alt="" />
           </Box>
+
         </Box>
 
-        {/* DECOR DOTS */}
-        <Box className="review-dot dot-1" />
-        <Box className="review-dot dot-2" />
-        <Box className="review-dot dot-3" />
-        <Box className="review-dot dot-4" />
-        <Box className="review-dot dot-5" />
       </Container>
-    </Box>
+    </div>
   );
 }
 

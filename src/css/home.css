@@ -582,227 +582,202 @@
     grid-template-columns: 1fr;
   }
 }
-/* =========================
-   REVIEW SECTION
-========================= */
+/* =============================
+   SECTION
+============================= */
 
 .review-section {
-  padding: 110px 0 130px;
-  background: #fffbf4; /* light cream */
-  position: relative;
-  overflow: hidden;
+  /* padding: 120px 0; */
+  background: #fffaf3; /* softer light */
 }
 
 .review-container {
-  position: relative;
   text-align: center;
 }
 
-/* title */
+/* =============================
+   TITLE
+============================= */
+
 .review-title {
-  font-size: 54px;
-  font-weight: 800;
-  color: #2f241b;
-  margin: 0 0 70px;
+  color: #311f09;
+  font-family: Tinos;
+  font-size: 80px;
+  font-style: normal;
+  font-weight: 700;
+  margin-bottom: 15px;
 }
 
-/* main block */
+/* =============================
+   MAIN
+============================= */
+
 .review-main {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-/* =========================
-   MAIN FOOD IMAGE (TOP)
-========================= */
-
-.review-main-ring {
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
-  background: rgba(145, 210, 255, 0.35);
-  padding: 12px;
-  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.12);
-}
-
-.review-main-ring2 {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: #ffffff;
-  padding: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.review-main-img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-  display: block;
-}
-
-/* name role */
-.review-name {
-  margin-top: 22px;
-  font-size: 22px;
-  font-weight: 800;
-  color: #2f241b;
-}
-
-.review-role {
-  margin-top: 6px;
-  font-size: 14px;
-  color: #b7a28b;
-}
-
-/* quote */
-.review-quote {
-  margin-top: 30px;
-  position: relative;
-  max-width: 720px;
-}
-
-.review-quote-text {
-  margin: 0;
-  font-size: 15px;
-  line-height: 1.9;
-  color: #6b5a45;
-  padding: 0 50px;
-}
-
-.review-quote-mark {
-  position: absolute;
-  font-size: 52px;
-  font-weight: 900;
-  color: #2f241b;
-  opacity: 0.85;
-}
-
-.review-quote-mark.left {
-  left: 0;
-  top: -10px;
-}
-
-.review-quote-mark.right {
-  right: 0;
-  bottom: -18px;
-}
-
-/* =========================
-   USERS ROW
-========================= */
-
-.review-users-row {
-  margin-top: 90px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 34px;
-}
-
-/* =========================
-   USER AVATARS (circle)
-========================= */
-
-.review-user-ring {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: #ffffff;
-  padding: 5px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
-  transition: 0.25s;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.review-user-ring:hover {
-  transform: translateY(-4px);
-}
-
-.review-user-img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-/* =========================
-   ⭐ FOOD CARD (square bigger)
-========================= */
-
+/* =============================
+   🔥 SQUARE FOOD CARD
+============================= */
 .review-food-card {
-  width: 160px;
-  height: 160px;
-  border-radius: 28px;
-  background: #ffffff;
-  padding: 14px;
+  width: 300px;
+  height: 270px;
 
-  box-shadow:
-    0 25px 60px rgba(0,0,0,0.15),
-    0 6px 16px rgba(0,0,0,0.08);
+  border-radius: 28px;
+  overflow: hidden;
+  cursor: pointer;
+
+  background: #fff;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  transform: translateY(-12px);
-  transition: 0.25s;
-}
+  margin-bottom: 26px;
 
+  /* 🔥 smooth animation */
+  transition: transform 0.35s ease-in, box-shadow 0.35s ease-in,
+    filter 0.35s ease-in;
+
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.12), 0 6px 14px rgba(0, 0, 0, 0.06);
+}
 .review-food-card:hover {
-  transform: translateY(-18px) scale(1.04);
+  transform: translateY(-10px) scale(1.05);
+
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.22), 0 12px 28px rgba(0, 0, 0, 0.12);
+
+  filter: brightness(1.03);
 }
 
 .review-food-img {
   width: 100%;
   height: 100%;
-  border-radius: 18px;
   object-fit: cover;
+  background-position: center;
+  /* ✅ FULL COVER */
 }
 
-/* =========================
-   DECOR DOTS
-========================= */
+/* =============================
+   TEXT
+============================= */
 
-.review-dot {
+.review-name {
+  color: #311f09;
+  text-align: center;
+  font-family: Poppins;
+  font-size: 30px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 200%; /* 60px */
+}
+
+/* =============================
+   QUOTE
+============================= */
+
+.review-quote {
+  max-width: 720px;
+  position: relative;
+  line-height: 1.9;
+  color: #5c4529;
+  font-family: Poppins;
+  font-size: 20px;
+  padding: 0 50px;
+}
+
+.quote-left,
+.quote-right {
+  font-size: 42px;
+  font-weight: 900;
   position: absolute;
-  border-radius: 50%;
-  opacity: 0.35;
+  color: #2f241b;
 }
 
-.dot-1 { width: 70px; height: 70px; background: #b6f2a3; left: 40px; top: 60px; }
-.dot-2 { width: 26px; height: 26px; background: #a9dcff; left: 260px; top: 220px; }
-.dot-3 { width: 64px; height: 64px; background: #ffd3df; right: 280px; top: 250px; }
-.dot-4 { width: 42px; height: 42px; background: #ffb347; left: 70px; bottom: 180px; }
-.dot-5 { width: 46px; height: 46px; background: #d8b4ff; right: 60px; bottom: 190px; }
+.quote-left {
+  left: 0;
+  top: -8px;
+}
 
-/* responsive */
+.quote-right {
+  right: 0;
+  bottom: -10px;
+}
+
+/* =============================
+   USERS ROW
+============================= */
+
+.review-users-row {
+  margin-top: 18px;
+  padding-bottom: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 26px;
+}
+
+/* =============================
+   🔥 USER AVATAR (FIXED COVER)
+============================= */
+
+.review-user {
+  width: 100px;
+  height: 100px;
+
+  border-radius: 50%;
+  overflow: hidden;
+
+  background: #fff;
+
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+
+  transition: 0.25s;
+  cursor: pointer;
+}
+
+.review-user img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* ✅ PERFECT COVER */
+}
+
+/* hover */
+.review-user:hover {
+  transform: translateY(-4px);
+}
+
+/* =============================
+   🔥 ACTIVE USER
+============================= */
+
+.review-user.active {
+  width: 120px;
+  height: 120px;
+
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2), 0 8px 18px rgba(0, 0, 0, 0.1);
+
+  transform: translateY(-10px);
+}
+
+/* =============================
+   RESPONSIVE
+============================= */
+
 @media (max-width: 900px) {
-  .review-title {
-    font-size: 42px;
-  }
-
-  .review-users-row {
-    gap: 18px;
-  }
-
-  .review-user-ring {
-    width: 62px;
-    height: 62px;
-  }
-
   .review-food-card {
-    width: 130px;
-    height: 130px;
+    width: 150px;
+    height: 150px;
   }
 
-  .review-quote-text {
-    padding: 0 24px;
+  .review-user {
+    width: 58px;
+    height: 58px;
+  }
+
+  .review-user.active {
+    width: 80px;
+    height: 80px;
   }
 }
