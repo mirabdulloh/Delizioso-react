@@ -29,23 +29,19 @@ function HomeNavbar() {
                 <NavLink to="/products">Menu</NavLink>
               </Box>
               <Box className={"hover-line"}>
-                <NavLink to="/about">About Us</NavLink>
+                <NavLink to="/about">About</NavLink>
               </Box>
               <Box className={"hover-line"}>
                 <NavLink to="/support">Support</NavLink>
               </Box>
-              {authMember ? (
-                <Box className={"hover-line"}>
-                  <NavLink to="/order-online">Order online</NavLink>
-                </Box>
-              ) : null}
-              {authMember ? (
-                <Box className={"hover-line"}>
-                  <NavLink to="/reservation">Reservation</NavLink>
-                </Box>
-              ) : null}
               <Box className={"hover-line"}>
-                <NavLink to="/help">Contact us</NavLink>
+                <NavLink to="/order-online">Order Online</NavLink>
+              </Box>
+              <Box className={"hover-line"}>
+                <NavLink to="/reservation">Reservation</NavLink>
+              </Box>
+              <Box className={"hover-line"}>
+                <NavLink to="/help">Contact</NavLink>
               </Box>
               {/* {Basket} */}
               {/* <Basket

@@ -4,6 +4,7 @@ import { Box, Container, Stack } from "@mui/material";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import FacebookIcon from "@mui/icons-material/Facebook";
+import { NavLink } from "react-router-dom";
 import "../../../css/footer.css";
 
 function Footer() {
@@ -50,13 +51,13 @@ function Footer() {
               <Box className="footer-title">Page</Box>
 
               <Stack spacing={2.2} className="footer-links">
-                <a href="#">Home</a>
-                <a href="#">Menu</a>
-                <a href="/order-online">Order online</a>
-                <a href="#">Catering</a>
-                <a href="/reservation">Reservation</a>
-                <a href="/help">Contact us</a>
-                <a href="/support">Support</a>
+                <NavLink to="/">Home</NavLink>
+                <NavLink to="/products">Menu</NavLink>
+                <NavLink to="/about">About</NavLink>
+                <NavLink to="/support">Support</NavLink>
+                <NavLink to="/order-online">Order Online</NavLink>
+                <NavLink to="/reservation">Reservation</NavLink>
+                <NavLink to="/help">Contact</NavLink>
               </Stack>
             </Box>
 
