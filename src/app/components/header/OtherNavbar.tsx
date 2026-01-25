@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom";
 import "../../../css/navbar.css";
 
 const authMember = true || null;
-function Navbar() {
+function HomeNavbar() {
   return (
     <div>
       {" "}
@@ -84,66 +84,10 @@ function Navbar() {
               )}
             </Stack>
           </Stack>
-
-          <Box className="hero">
-            <Box className="hero-grid">
-              {/* LEFT */}
-              <Box className="hero-left">
-                <Box className="hero-pill">Restaurant</Box>
-
-                <Box className="hero-title" component="h1">
-                  Italian <br /> Cuisine
-                </Box>
-
-                <Box className="hero-desc">
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                  Sodales senectus dictum arcu sit tristique donec eget.
-                </Box>
-
-                <Stack direction="row" spacing={2} className="hero-actions">
-                  <Button
-                    className="btn-orange"
-                    variant="contained"
-                    color="secondary"
-                  >
-                    Order now
-                  </Button>
-                  <Button
-                    className="btn-green"
-                    variant="contained"
-                    color="primary"
-                  >
-                    Reservation
-                  </Button>
-                </Stack>
-              </Box>
-
-              {/* RIGHT */}
-              <Box className="hero-right">
-                <Box
-                  component="img"
-                  className="img img-main"
-                  src="/imgs/header-img1.png"
-                />
-
-                <Box
-                  component="img"
-                  className="img img-left"
-                  src="/imgs/header-img2.png"
-                />
-
-                <Box
-                  component="img"
-                  className="img img-bottom"
-                  src="/imgs/header-img3.jpg"
-                />
-              </Box>
-            </Box>
-          </Box>
         </Container>
       </div>
     </div>
   );
 }
 
-export default Navbar;
+export default HomeNavbar;
