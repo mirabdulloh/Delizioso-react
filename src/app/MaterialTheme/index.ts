@@ -54,15 +54,13 @@ const theme = createTheme({
           transition: 'all 0.2s ease',
         },
 
-        containedPrimary: {
+        /* Use a subtle brightness filter on hover for all contained buttons
+           so buttons with custom backgrounds (eg. white) keep their intended hover.
+           Avoid forcing specific backgroundColor here which can override per-button sx. */
+        contained: {
           '&:hover': {
-            backgroundColor: darken('#3FA72F', 0.15),
-          },
-        },
-
-        containedSecondary: {
-          '&:hover': {
-            backgroundColor: darken('#FF8A00', 0.15),
+            filter: 'brightness(0.94)',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
           },
         },
       },
