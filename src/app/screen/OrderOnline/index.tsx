@@ -1,4 +1,6 @@
+import Orders from "./OrderOnline";
+
 function OrderOnline() {
-  return <div>OrderOnline</div>;
+  return <Orders />;
 }
 export default OrderOnline;

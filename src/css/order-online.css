@@ -1,0 +1,378 @@
+.orders-page {
+  background: #ffffff;
+  padding: 70px 0 90px;
+}
+
+.orders-container {
+  max-width: 1400px !important;
+}
+
+/* header */
+.orders-header {
+  margin-bottom: 22px;
+}
+
+.orders-title {
+  font-size: 54px;
+  font-weight: 900;
+  color: #2c2c2c;
+  font-family: "Playfair Display", serif;
+  line-height: 1;
+}
+
+.orders-subtitle {
+  margin-top: 8px;
+  color: #7a7a7a;
+  font-weight: 700;
+}
+
+.orders-search {
+  width: 420px;
+}
+
+.orders-search .MuiOutlinedInput-root {
+  height: 42px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.05);
+}
+
+/* layout */
+.orders-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr 360px;
+  gap: 22px;
+  align-items: start;
+}
+
+/* left */
+.orders-panel {
+  background: #fff;
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.06);
+}
+
+.orders-panel-title {
+  font-weight: 900;
+  color: #2c2c2c;
+  font-size: 16px;
+}
+
+.orders-statusBtn {
+  justify-content: flex-start !important;
+  text-transform: none !important;
+  border-radius: 14px !important;
+  padding: 12px 14px !important;
+  font-weight: 900 !important;
+  background: #f6f6f6 !important;
+  color: #3a2a1e !important;
+}
+
+.orders-statusBtn.active {
+  background: #3d2514 !important;
+  color: #fff !important;
+}
+
+.orders-divider {
+  margin: 18px 0 !important;
+  opacity: 0.18;
+}
+
+.orders-filterRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.orders-filterLabel {
+  font-weight: 800;
+  color: #4d4d4d;
+  font-size: 13px;
+}
+
+.orders-filterChip {
+  font-weight: 900;
+  font-size: 12px;
+  color: #ff9800;
+  background: rgba(255, 152, 0, 0.12);
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+
+/* center cards */
+.orderCard {
+  background: #fff;
+  border-radius: 22px;
+  padding: 18px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.orderCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.09);
+}
+
+.orderCard.active {
+  outline: 2px solid rgba(255, 152, 0, 0.35);
+}
+
+.orderCard-restaurant {
+  font-weight: 900;
+  color: #2c2c2c;
+}
+
+.orderCard-date {
+  margin-top: 6px;
+  font-weight: 700;
+  color: #7a7a7a;
+  font-size: 13px;
+}
+
+/* status pill */
+.orderCard-status {
+  font-weight: 900;
+  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #f4f4f4;
+  color: #3a2a1e;
+}
+
+.orderCard-status.paused {
+  background: rgba(61, 37, 20, 0.12);
+  color: #3d2514;
+}
+
+.orderCard-status.ongoing {
+  background: rgba(91, 60, 140, 0.12);
+  color: #5b3c8c;
+}
+
+.orderCard-status.finished {
+  background: rgba(46, 125, 50, 0.12);
+  color: #2e7d32;
+}
+
+.orderCard-items {
+  overflow: hidden;
+}
+
+.orderMini {
+  width: 92px;
+}
+
+.orderMini-img {
+  width: 92px;
+  height: 62px;
+  border-radius: 14px;
+  object-fit: cover;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.07);
+}
+
+.orderMini-name {
+  margin-top: 8px;
+  font-weight: 900;
+  font-size: 12px;
+  color: #2c2c2c;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.orderMini-qty {
+  margin-top: 4px;
+  font-weight: 900;
+  font-size: 12px;
+  color: #ff9800;
+}
+
+.orderMini-more {
+  width: 60px;
+  height: 62px;
+  border-radius: 14px;
+  background: #f6f6f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  color: #3a2a1e;
+}
+
+.orderCard-meta .MuiRating-iconFilled {
+  color: #ff9800;
+}
+
+.orderCard-eta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 900;
+  font-size: 12px;
+  color: #5b3c8c;
+  background: rgba(91, 60, 140, 0.08);
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+
+.orderCard-eta svg {
+  font-size: 18px;
+}
+
+.orderCard-eta.muted {
+  color: #666;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.orderCard-total {
+  font-weight: 900;
+  font-size: 18px;
+  color: #2c2c2c;
+}
+
+/* right summary sticky */
+.orders-summary {
+  position: sticky;
+  top: 90px;
+  background: #fff;
+  border-radius: 22px;
+  padding: 18px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.08);
+}
+
+.orders-summary-title {
+  background: #5b3c8c;
+  color: #fff;
+  font-weight: 900;
+  text-align: center;
+  padding: 14px;
+  border-radius: 16px;
+  font-size: 18px;
+}
+
+.summary-items {
+  margin-top: 16px;
+  max-height: 360px;
+  overflow: auto;
+  padding-right: 6px;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.12);
+}
+
+.summary-img {
+  width: 54px;
+  height: 42px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.summary-name {
+  font-weight: 900;
+  color: #2c2c2c;
+}
+
+.summary-qty {
+  background: rgba(0, 0, 0, 0.03);
+  padding: 6px 8px;
+  border-radius: 14px;
+}
+
+.summary-qtyBtn {
+  width: 32px !important;
+  height: 32px !important;
+  background: rgba(0, 0, 0, 0.05) !important;
+}
+
+.summary-qtyNum {
+  width: 24px;
+  text-align: center;
+  font-weight: 900;
+}
+
+.summary-qtyText {
+  font-weight: 900;
+  color: #777;
+}
+
+.summary-price {
+  font-weight: 900;
+  color: #ff9800;
+}
+
+.summary-del {
+  color: #ff6b6b !important;
+}
+
+.summary-totals .tlabel {
+  color: #2c2c2c;
+  font-weight: 800;
+}
+
+.summary-totals .tval {
+  color: #ff9800;
+  font-weight: 900;
+}
+
+.summary-totalRow {
+  padding-top: 10px;
+  border-top: 1px dashed rgba(0, 0, 0, 0.14);
+}
+
+.summary-totals .big {
+  font-size: 18px;
+}
+
+.summary-primary {
+  width: 100% !important;
+  border-radius: 16px !important;
+  padding: 14px 16px !important;
+  font-weight: 900 !important;
+  text-transform: none !important;
+}
+
+.summary-secondary {
+  width: 100% !important;
+  border-radius: 16px !important;
+  padding: 12px 16px !important;
+  font-weight: 900 !important;
+  text-transform: none !important;
+}
+
+.summary-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 900;
+  color: #5b3c8c;
+  background: rgba(91, 60, 140, 0.08);
+  padding: 12px 14px;
+  border-radius: 16px;
+}
+
+/* responsive */
+@media (max-width: 1200px) {
+  .orders-layout {
+    grid-template-columns: 1fr;
+  }
+  .orders-summary {
+    position: static;
+  }
+  .orders-search {
+    width: 100%;
+    max-width: 520px;
+  }
+}
+
+@media (max-width: 700px) {
+  .orders-title {
+    font-size: 40px;
+  }
+}
