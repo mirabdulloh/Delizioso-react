@@ -88,20 +88,34 @@ function PopularMenu({ page, setPage, onAdd }: PopularMenuProps) {
         {/* GRID */}
         <Stack className="menu-grid">
           {popularDishes.map((dish) => (
-            <Stack key={dish._id} className="menu-card">
+            <Stack key={dish._id} className="menu-card" spacing={1.5}>
               <Box
                 component="img"
                 src={`${serverApi}/${dish.productImages[0]}`}
                 className="menu-img"
               />
               <Box className="menu-name">{dish.productName}</Box>
-              <Box className="menu-stars">
-                <Rating 
-                  name="read-only" 
-                  value={dish.productRank || 0} 
-                  readOnly 
-                />
-              </Box>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <Box className="menu-stars" sx={{ mt: "2px" }}>
+                  <Rating 
+                    name="read-only" 
+                    value={dish.productRank || 0} 
+                    readOnly 
+                    size="large"
+                  />
+                </Box>
+                <Box sx={{
+                  fontSize: "13px",
+                  fontWeight: 500,
+                  color: "#666",
+                  backgroundColor: "#f5f5f5",
+                  px: 1.5,
+                  py: 0.5,
+                  borderRadius: "8px",
+                }}>
+                  ({dish.productReviewCount || 0} reviews)
+                </Box>
+              </Stack>
               <Box className="menu-desc">
                 {dish.productDesc || "Delicious dish prepared with love"}
               </Box>

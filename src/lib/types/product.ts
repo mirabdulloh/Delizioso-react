@@ -1,4 +1,8 @@
-import { ProductCollection, ProductSize, ProductStatus } from "../enums/product.enum";
+import {
+  ProductCollection,
+  ProductSize,
+  ProductStatus,
+} from "../enums/product.enum";
 
 export interface Product {
   imagePath: any;
@@ -15,8 +19,10 @@ export interface Product {
   productViews: number;
   productLikes: number;
   productRank?: number;
-  createdAt:Date;
-  updatedAt:Date;
+  productReviewCount?: number;
+  productReview?: string[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface ProductInquiry {
