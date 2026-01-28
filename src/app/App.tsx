@@ -60,11 +60,19 @@ function App() {
         <HomeNavbar 
           onLoginClick={() => setLoginOpen(true)}
           onSignupClick={() => setSignupOpen(true)}
+          anchorEl={anchorEl}
+          onAvatarClick={handleLogoutClick}
+          onLogoutMenuClose={handleCloseLogout}
+          onLogoutRequest={handleLogoutRequest}
         />
       ) : (
         <OtherNavbar 
           onLoginClick={() => setLoginOpen(true)}
           onSignupClick={() => setSignupOpen(true)}
+          anchorEl={anchorEl}
+          onAvatarClick={handleLogoutClick}
+          onLogoutMenuClose={handleCloseLogout}
+          onLogoutRequest={handleLogoutRequest}
         />
       )}
 

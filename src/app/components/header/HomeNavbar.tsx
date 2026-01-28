@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button, Container, Stack } from "@mui/material";
+import { Box, Button, Container, Stack, Menu, MenuItem } from "@mui/material";
 
 import { NavLink, useNavigate } from "react-router-dom";
 import { useGlobals } from "../../hooks/useGlobals";
@@ -9,9 +9,13 @@ import "../../../css/navbar.css";
 interface HomeNavbarProps {
   onLoginClick?: () => void;
   onSignupClick?: () => void;
+  anchorEl?: HTMLElement | null;
+  onAvatarClick?: (e: React.MouseEvent<HTMLImageElement>) => void;
+  onLogoutMenuClose?: () => void;
+  onLogoutRequest?: () => void;
 }
 
-function HomeNavbar({ onLoginClick, onSignupClick }: HomeNavbarProps = {}) {
+function HomeNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onLogoutMenuClose, onLogoutRequest }: HomeNavbarProps = {}) {
   const navigate = useNavigate();
   const { authMember } = useGlobals();
   return (
@@ -88,13 +92,30 @@ function HomeNavbar({ onLoginClick, onSignupClick }: HomeNavbarProps = {}) {
                   </Box>
                 </Box>
               ) : (
-                <img
-                  className="user-avatar"
-                  src="/imgs/default_img.jpg"
-                  alt="#"
-                  role="button"
-                  aria-haspopup={"true"}
-                />
+                <>
+                  <img
+                    className="user-avatar"
+                    src="/imgs/default_img.jpg"
+                    alt="#"
+                    role="button"
+                    aria-haspopup={"true"}
+                    onClick={onAvatarClick}
+                  />
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={onLogoutMenuClose}
+                  >
+                    <MenuItem
+                      onClick={() => {
+                        onLogoutRequest?.();
+                        onLogoutMenuClose?.();
+                      }}
+                    >
+                      Logout
+                    </MenuItem>
+                  </Menu>
+                </>
               )}
             </Stack>
           </Stack>

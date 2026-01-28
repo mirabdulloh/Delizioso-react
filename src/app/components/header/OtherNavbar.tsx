@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button, Container, Stack } from "@mui/material";
+import { Box, Button, Container, Stack, Menu, MenuItem } from "@mui/material";
 
 import { NavLink } from "react-router-dom";
 import { useGlobals } from "../../hooks/useGlobals";
@@ -8,9 +8,13 @@ import "../../../css/navbar.css";
 interface OtherNavbarProps {
   onLoginClick?: () => void;
   onSignupClick?: () => void;
+  anchorEl?: HTMLElement | null;
+  onAvatarClick?: (e: React.MouseEvent<HTMLImageElement>) => void;
+  onLogoutMenuClose?: () => void;
+  onLogoutRequest?: () => void;
 }
 
-function OtherNavbar({ onLoginClick, onSignupClick }: OtherNavbarProps = {}) {
+function OtherNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onLogoutMenuClose, onLogoutRequest }: OtherNavbarProps = {}) {
   const { authMember } = useGlobals();
   return (
     <div>
@@ -86,13 +90,30 @@ function OtherNavbar({ onLoginClick, onSignupClick }: OtherNavbarProps = {}) {
                   </Box>
                 </Box>
               ) : (
-                <img
-                  className="user-avatar"
-                  src="/imgs/default_img.jpg"
-                  alt="#"
-                  role="button"
-                  aria-haspopup={"true"}
-                />
+                <>
+                  <img
+                    className="user-avatar"
+                    src="/imgs/default_img.jpg"
+                    alt="#"
+                    role="button"
+                    aria-haspopup={"true"}
+                    onClick={onAvatarClick}
+                  />
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={onLogoutMenuClose}
+                  >
+                    <MenuItem
+                      onClick={() => {
+                        onLogoutRequest?.();
+                        onLogoutMenuClose?.();
+                      }}
+                    >
+                      Logout
+                    </MenuItem>
+                  </Menu>
+                </>
               )}
             </Stack>
           </Stack>
