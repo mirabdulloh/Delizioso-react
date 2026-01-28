@@ -11,10 +11,42 @@ import {
 } from "@mui/material";
 import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
+import { useSelector } from "react-redux";
+import { retrievePopularDishes, retrievePaginationInfo } from "./selector";
+import { serverApi } from "../../../lib/config";
 
 import "../../../css/home.css";
 
-function PopularMenu() {
+interface PopularMenuProps {
+  page: number;
+  setPage: (page: number) => void;
+}
+
+function PopularMenu({ page, setPage }: PopularMenuProps) {
+  const popularDishes = useSelector(retrievePopularDishes);
+  const { totalPages } = useSelector(retrievePaginationInfo);
+  console.log("[PopularMenu] popularDishes from selector:", popularDishes);
+  console.log("[PopularMenu] Current page:", page, "Total pages:", totalPages);
+
+  const handlePreviousPage = () => {
+    if (page > 1) {
+      setPage(page - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (page < totalPages) {
+      setPage(page + 1);
+    }
+  };
+
+  const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
+    console.log("[PopularMenu] Page changed to:", value);
+    if (value <= totalPages) {
+      setPage(value);
+    }
+  };
+
   return (
     <div className="popular-section">
       <Container>
@@ -23,122 +55,52 @@ function PopularMenu() {
 
         {/* GRID */}
         <Stack className="menu-grid">
-          {/* CARD 1 */}
-          <Stack className="menu-card">
-            <Box
-              component="img"
-              src="/imgs/header-img1.png"
-              className="menu-img"
-            />
-            <Box className="menu-name">Ravioli</Box>
-            <Box className="menu-stars">
-              <Rating
-                name="simple-controlled"
-                value={4}
-                //   onChange={(event, newValue) => {
-                //     setValue(newValue);
-                //   }}
+          {popularDishes.map((dish) => (
+            <Stack key={dish._id} className="menu-card">
+              <Box
+                component="img"
+                src={`${serverApi}/${dish.productImages[0]}`}
+                className="menu-img"
               />
-            </Box>
-            <Box className="menu-desc">
-              Lorem ipsum dolor sit amet consectetur Lorem ipsum dolor, sit amet
-              consectetur adipisicing elit. Cumque, beatae consequuntur dicta
-              ipsa enim possimus velit quas sint incidunt, illo numquam neque
-              magnam libero quo.
-            </Box>
+              <Box className="menu-name">{dish.productName}</Box>
+              <Box className="menu-stars">
+                <Rating 
+                  name="read-only" 
+                  value={dish.productRank || 0} 
+                  readOnly 
+                />
+              </Box>
+              <Box className="menu-desc">
+                {dish.productDesc || "Delicious dish prepared with love"}
+              </Box>
 
-            <Stack direction="row" className="menu-footer">
-              <Box className="price">$12.05</Box>
-              <Button
-                variant="contained"
-                color="secondary"
-                className="order-btn"
-              >
-                Order now
-              </Button>
+              <Stack direction="row" className="menu-footer">
+                <Box className="price">${dish.productPrice.toFixed(2)}</Box>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  className="order-btn"
+                >
+                  Order now
+                </Button>
+              </Stack>
             </Stack>
-          </Stack>
-
-          {/* CARD 2 */}
-          <Stack className="menu-card">
-            <Box
-              component="img"
-              src="/imgs/header-img1.png"
-              className="menu-img"
-            />
-            <Box className="menu-name">Ravioli</Box>
-            <Box className="menu-stars">
-              <Rating
-                name="simple-controlled"
-                value={4}
-                //   onChange={(event, newValue) => {
-                //     setValue(newValue);
-                //   }}
-              />
-            </Box>
-            <Box className="menu-desc">
-              Lorem ipsum dolor sit amet consectetur
-            </Box>
-
-            <Stack direction="row" className="menu-footer">
-              <Box className="price">$12.05</Box>
-              <Button
-                variant="contained"
-                color="secondary"
-                className="order-btn"
-              >
-                Order now
-              </Button>
-            </Stack>
-          </Stack>
-
-          {/* CARD 3 */}
-          <Stack className="menu-card">
-            <Box
-              component="img"
-              src="/imgs/header-img1.png"
-              className="menu-img"
-            />
-            <Box className="menu-name">Ravioli</Box>
-            <Box className="menu-stars">
-              <Rating
-                name="simple-controlled"
-                value={4}
-                //   onChange={(event, newValue) => {
-                //     setValue(newValue);
-                //   }}
-              />
-            </Box>
-            <Box className="menu-desc">
-              Lorem ipsum dolor sit amet consectetur
-            </Box>
-
-            <Stack direction="row" className="menu-footer">
-              <Box className="price">$12.05</Box>
-              <Button
-                variant="contained"
-                color="secondary"
-                className="order-btn"
-              >
-                Order now
-              </Button>
-            </Stack>
-          </Stack>
+          ))}
         </Stack>
 
         <Stack className="pagination-wrap" direction="row" alignItems="center">
           <IconButton
             className="pg-arrow"
-            // disabled={page <= 1}
-            // onClick={() => onChange(page - 1)}
+            disabled={page <= 1}
+            onClick={handlePreviousPage}
           >
             <ArrowBackIosNewRoundedIcon fontSize="small" />
           </IconButton>
 
           <Pagination
-            page={1}
-            count={5}
-            // onChange={(_, p) => onChange(p)}
+            page={page}
+            count={totalPages || 1}
+            onChange={handlePageChange}
             siblingCount={1}
             boundaryCount={1}
             hidePrevButton
@@ -153,8 +115,8 @@ function PopularMenu() {
 
           <IconButton
             className="pg-arrow"
-            // disabled={100 >= 8}
-            // onClick={() => onChange(page + 1)}
+            disabled={page >= totalPages}
+            onClick={handleNextPage}
           >
             <ArrowForwardIosRoundedIcon fontSize="small" />
           </IconButton>

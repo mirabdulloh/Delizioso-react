@@ -13,6 +13,8 @@ export interface Product {
   productDesc?: string;
   productImages: string[];
   productViews: number;
+  productLikes: number;
+  productRank?: number;
   createdAt:Date;
   updatedAt:Date;
 }
