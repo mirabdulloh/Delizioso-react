@@ -1,9 +1,12 @@
 import React from "react";
-import { Box, Button, Container, Stack, Menu, MenuItem } from "@mui/material";
+import { Box, Button, Container, Stack, Menu, MenuItem, Avatar, Divider, ListItemIcon } from "@mui/material";
 
 import { NavLink, useNavigate } from "react-router-dom";
 import { useGlobals } from "../../hooks/useGlobals";
 import { sweetFailureProvider } from "../../../lib/sweetAlert";
+import PersonIcon from "@mui/icons-material/Person";
+import LogoutIcon from "@mui/icons-material/Logout";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import "../../../css/navbar.css";
 
 interface HomeNavbarProps {
@@ -93,25 +96,83 @@ function HomeNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onLo
                 </Box>
               ) : (
                 <>
-                  <img
+                  <Avatar
                     className="user-avatar"
                     src="/imgs/default_img.jpg"
-                    alt="#"
-                    role="button"
-                    aria-haspopup={"true"}
+                    alt="User"
                     onClick={onAvatarClick}
+                    sx={{
+                      width: 45,
+                      height: 45,
+                      cursor: "pointer",
+                      border: "2px solid #6366f1",
+                      transition: "all 0.3s ease",
+                      "&:hover": {
+                        transform: "scale(1.1)",
+                        boxShadow: "0 4px 12px rgba(99, 102, 241, 0.4)",
+                      },
+                    }}
                   />
                   <Menu
                     anchorEl={anchorEl}
                     open={Boolean(anchorEl)}
                     onClose={onLogoutMenuClose}
+                    transformOrigin={{ horizontal: "right", vertical: "top" }}
+                    anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                    PaperProps={{
+                      sx: {
+                        mt: 1.5,
+                        minWidth: 220,
+                        borderRadius: "16px",
+                        boxShadow: "0 8px 30px rgba(0, 0, 0, 0.12)",
+                        border: "1px solid rgba(0, 0, 0, 0.05)",
+                        "& .MuiMenuItem-root": {
+                          px: 2.5,
+                          py: 1.5,
+                          borderRadius: "12px",
+                          mx: 1,
+                          my: 0.5,
+                          fontSize: "15px",
+                          fontWeight: 500,
+                          transition: "all 0.2s ease",
+                          "&:hover": {
+                            backgroundColor: "rgba(99, 102, 241, 0.08)",
+                            transform: "translateX(4px)",
+                          },
+                        },
+                      },
+                    }}
                   >
+                    <MenuItem
+                      onClick={() => {
+                        navigate("/member-page");
+                        onLogoutMenuClose?.();
+                      }}
+                    >
+                      <ListItemIcon>
+                        <AccountCircleIcon
+                          fontSize="small"
+                          sx={{ color: "#6366f1" }}
+                        />
+                      </ListItemIcon>
+                      My Profile
+                    </MenuItem>
+                    <Divider sx={{ my: 0.5 }} />
                     <MenuItem
                       onClick={() => {
                         onLogoutRequest?.();
                         onLogoutMenuClose?.();
                       }}
+                      sx={{
+                        color: "#ef4444",
+                        "&:hover": {
+                          backgroundColor: "rgba(239, 68, 68, 0.08) !important",
+                        },
+                      }}
                     >
+                      <ListItemIcon>
+                        <LogoutIcon fontSize="small" sx={{ color: "#ef4444" }} />
+                      </ListItemIcon>
                       Logout
                     </MenuItem>
                   </Menu>
