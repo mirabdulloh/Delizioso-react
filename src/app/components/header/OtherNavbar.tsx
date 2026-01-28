@@ -5,6 +5,8 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useGlobals } from "../../hooks/useGlobals";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
+import Basket from "./Basket";
+import { CartItem } from "../../../lib/types/search";
 import "../../../css/navbar.css";
 
 interface OtherNavbarProps {
@@ -14,9 +16,14 @@ interface OtherNavbarProps {
   onAvatarClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
   onLogoutMenuClose?: () => void;
   onLogoutRequest?: () => void;
+  cartItems: CartItem[];
+  onAdd: (item: CartItem) => void;
+  onRemove: (item: CartItem) => void;
+  onDelete: (item: CartItem) => void;
+  onDeleteAll: () => void;
 }
 
-function OtherNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onLogoutMenuClose, onLogoutRequest }: OtherNavbarProps = {}) {
+function OtherNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onLogoutMenuClose, onLogoutRequest, cartItems, onAdd, onRemove, onDelete, onDeleteAll }: OtherNavbarProps) {
   const { authMember } = useGlobals();
   const navigate = useNavigate();
   return (
@@ -60,14 +67,14 @@ function OtherNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onL
               <Box className={"hover-line"}>
                 <NavLink to="/help">Contact</NavLink>
               </Box>
-              {/* {Basket} */}
-              {/* <Basket
+              {/* Basket */}
+              <Basket
                 cartItems={cartItems}
                 onAdd={onAdd}
                 onRemove={onRemove}
                 onDelete={onDelete}
                 onDeleteAll={onDeleteAll}
-              /> */}
+              />
               {!authMember ? (
                 <Box className="auth-buttons">
                   <Box>

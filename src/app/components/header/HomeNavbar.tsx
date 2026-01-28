@@ -7,6 +7,8 @@ import { sweetFailureProvider } from "../../../lib/sweetAlert";
 import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import Basket from "./Basket";
+import { CartItem } from "../../../lib/types/search";
 import "../../../css/navbar.css";
 
 interface HomeNavbarProps {
@@ -16,9 +18,14 @@ interface HomeNavbarProps {
   onAvatarClick?: (e: React.MouseEvent<HTMLImageElement>) => void;
   onLogoutMenuClose?: () => void;
   onLogoutRequest?: () => void;
+  cartItems: CartItem[];
+  onAdd: (item: CartItem) => void;
+  onRemove: (item: CartItem) => void;
+  onDelete: (item: CartItem) => void;
+  onDeleteAll: () => void;
 }
 
-function HomeNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onLogoutMenuClose, onLogoutRequest }: HomeNavbarProps = {}) {
+function HomeNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onLogoutMenuClose, onLogoutRequest, cartItems, onAdd, onRemove, onDelete, onDeleteAll }: HomeNavbarProps) {
   const navigate = useNavigate();
   const { authMember } = useGlobals();
   return (
@@ -62,14 +69,14 @@ function HomeNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onLo
               <Box className={"hover-line"}>
                 <NavLink to="/help">Contact</NavLink>
               </Box>
-              {/* {Basket} */}
-              {/* <Basket
+              {/* Basket */}
+              <Basket
                 cartItems={cartItems}
                 onAdd={onAdd}
                 onRemove={onRemove}
                 onDelete={onDelete}
                 onDeleteAll={onDeleteAll}
-              /> */}
+              />
               {!authMember ? (
                 <Box className="auth-buttons">
                   <Box>

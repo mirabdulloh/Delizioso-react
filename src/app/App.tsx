@@ -64,6 +64,11 @@ function App() {
           onAvatarClick={handleLogoutClick}
           onLogoutMenuClose={handleCloseLogout}
           onLogoutRequest={handleLogoutRequest}
+          cartItems={cartItems}
+          onAdd={onAdd}
+          onRemove={onRemove}
+          onDelete={onDelete}
+          onDeleteAll={onDeleteAll}
         />
       ) : (
         <OtherNavbar 
@@ -73,6 +78,11 @@ function App() {
           onAvatarClick={handleLogoutClick}
           onLogoutMenuClose={handleCloseLogout}
           onLogoutRequest={handleLogoutRequest}
+          cartItems={cartItems}
+          onAdd={onAdd}
+          onRemove={onRemove}
+          onDelete={onDelete}
+          onDeleteAll={onDeleteAll}
         />
       )}
 
