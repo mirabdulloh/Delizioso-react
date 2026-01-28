@@ -2,20 +2,33 @@ import React from "react";
 import { Box, Stack, Button, Container, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { sweetFailureProvider } from "../../../lib/sweetAlert";
+import { useGlobals } from "../../hooks/useGlobals";
 import "../../../css/home.css";
 
-function OpenCloseTime() {
+interface OpenCloseTimeProps {
+  onLoginClick?: () => void;
+}
+
+function OpenCloseTime({ onLoginClick }: OpenCloseTimeProps = {}) {
   const navigate = useNavigate();
-  const auth = typeof window !== 'undefined' && Boolean(localStorage.getItem('memberNick'));
+  const { authMember } = useGlobals();
 
   const handleOrderClick = () => {
-    if (auth) navigate('/order-online');
-    else sweetFailureProvider('Please sign up first to order.', true);
+    if (authMember) {
+      navigate('/order-online');
+    } else {
+      sweetFailureProvider('Please login first to order.', true);
+      onLoginClick?.();
+    }
   };
 
   const handleReserveClick = () => {
-    if (auth) navigate('/reservation');
-    else sweetFailureProvider('Please sign up first to make a reservation.', true);
+    if (authMember) {
+      navigate('/reservation');
+    } else {
+      sweetFailureProvider('Please login first to make a reservation.', true);
+      onLoginClick?.();
+    }
   };
   return (
     <div className="oct-section">

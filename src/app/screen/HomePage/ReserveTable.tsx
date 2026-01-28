@@ -1,16 +1,24 @@
 import React from "react";
 import { Box, Button, Container, Stack } from "@mui/material";
 import { NavLink, useNavigate } from "react-router-dom";
+import { useGlobals } from "../../hooks/useGlobals";
 import { sweetFailureProvider } from "../../../lib/sweetAlert";
 import "../../../css/home.css";
 
-function ReserveTable() {
+interface ReserveTableProps {
+  onLoginClick?: () => void;
+}
+
+function ReserveTable({ onLoginClick }: ReserveTableProps = {}) {
   const navigate = useNavigate();
-  const auth = typeof window !== 'undefined' && Boolean(localStorage.getItem('memberNick'));
+  const { authMember } = useGlobals();
 
   const handleReserveClick = () => {
-    if (auth) navigate('/reservation');
-    else sweetFailureProvider('Please sign up first to make a reservation.', true);
+    if (authMember) navigate('/reservation');
+    else {
+      sweetFailureProvider('Please login first to make a reservation.', true);
+      onLoginClick?.();
+    }
   };
 
   return (

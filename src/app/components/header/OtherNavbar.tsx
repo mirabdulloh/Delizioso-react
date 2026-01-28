@@ -2,10 +2,16 @@ import React from "react";
 import { Box, Button, Container, Stack } from "@mui/material";
 
 import { NavLink } from "react-router-dom";
+import { useGlobals } from "../../hooks/useGlobals";
 import "../../../css/navbar.css";
 
-function OtherNavbar() {
-  const authMember = typeof window !== "undefined" && Boolean(localStorage.getItem("memberNick"));
+interface OtherNavbarProps {
+  onLoginClick?: () => void;
+  onSignupClick?: () => void;
+}
+
+function OtherNavbar({ onLoginClick, onSignupClick }: OtherNavbarProps = {}) {
+  const { authMember } = useGlobals();
   return (
     <div>
       {" "}
@@ -62,7 +68,7 @@ function OtherNavbar() {
                       color="primary"
                       variant="contained"
                       className="login-button"
-                      onClick={() => true}
+                      onClick={onLoginClick}
                     >
                       Login
                     </Button>
@@ -73,7 +79,7 @@ function OtherNavbar() {
                       color="secondary"
                       variant="contained"
                       className="signUp-button"
-                      onClick={() => true}
+                      onClick={onSignupClick}
                     >
                       Sign Up
                     </Button>

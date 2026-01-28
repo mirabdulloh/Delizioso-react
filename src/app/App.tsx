@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 
 import HomeNavbar from "./components/header/HomeNavbar";
@@ -13,12 +13,60 @@ import AboutUs from "./screen/AboutUs";
 import CS from "./screen/CS";
 import Contact from "./screen/ContactUs/Contact";
 import Reservation from "./screen/Reservation";
+import AuthenticationModal from "./components/auth";
+import { useGlobals } from "./hooks/useGlobals";
+import { sweetErrorHandling, sweetTopSuccessAlert } from "../lib/sweetAlert";
+import { Messages } from "../lib/config";
+import MemberService from "./services/MemberService";
+import useBusket from "./hooks/useBusket";
 
 function App() {
+  const { cartItems, onAdd, onRemove, onDelete, onDeleteAll } = useBusket();
+  const [signupOpen, setSignupOpen] = useState<boolean>(false);
+  const [loginOpen, setLoginOpen] = useState<boolean>(false);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const { setAuthMember } = useGlobals();
+  /** HANDLERS **/
+  const handleSignupClose = () => {
+    setSignupOpen(false);
+  };
+  const handleLoginClose = () => {
+    setLoginOpen(false);
+  };
+
+  const handleLogoutClick = (e: any) => {
+    setAnchorEl(e.currentTarget);
+  };
+
+  const handleCloseLogout = () => {
+    setAnchorEl(null);
+  };
+  const handleLogoutRequest = async () => {
+    try {
+      const member = new MemberService();
+      await member.logout();
+      await sweetTopSuccessAlert("success", 700);
+      setAuthMember(null);
+    } catch (err) {
+      console.log(err);
+
+      sweetErrorHandling(Messages.error1).then();
+    }
+  };
   const location = useLocation();
   return (
     <>
-      {location.pathname === "/" ? <HomeNavbar /> : <OtherNavbar />}
+      {location.pathname === "/" ? (
+        <HomeNavbar 
+          onLoginClick={() => setLoginOpen(true)}
+          onSignupClick={() => setSignupOpen(true)}
+        />
+      ) : (
+        <OtherNavbar 
+          onLoginClick={() => setLoginOpen(true)}
+          onSignupClick={() => setSignupOpen(true)}
+        />
+      )}
 
       <Routes>
         <Route path="/products/*" element={<MenuPage />} />
@@ -28,10 +76,16 @@ function App() {
         <Route path="/order-online" element={<OrderOnline />} />
         <Route path="/help" element={<Contact />} />
         <Route path="/about" element={<AboutUs />} />
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<HomePage onLoginClick={() => setLoginOpen(true)} />} />
       </Routes>
 
       <Footer />
+      <AuthenticationModal
+        signupOpen={signupOpen}
+        loginOpen={loginOpen}
+        handleSignupClose={handleSignupClose}
+        handleLoginClose={handleLoginClose}
+      />
     </>
   );
 }

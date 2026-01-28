@@ -2,13 +2,18 @@ import React from "react";
 import { Box, Button, Container, Stack } from "@mui/material";
 
 import { NavLink, useNavigate } from "react-router-dom";
+import { useGlobals } from "../../hooks/useGlobals";
 import { sweetFailureProvider } from "../../../lib/sweetAlert";
 import "../../../css/navbar.css";
 
-function HomeNavbar() {
+interface HomeNavbarProps {
+  onLoginClick?: () => void;
+  onSignupClick?: () => void;
+}
+
+function HomeNavbar({ onLoginClick, onSignupClick }: HomeNavbarProps = {}) {
   const navigate = useNavigate();
-  const authMember =
-    typeof window !== "undefined" && Boolean(localStorage.getItem("memberNick"));
+  const { authMember } = useGlobals();
   return (
     <div>
       {" "}
@@ -65,7 +70,7 @@ function HomeNavbar() {
                       color="primary"
                       variant="contained"
                       className="login-button"
-                      onClick={() => true}
+                      onClick={onLoginClick}
                     >
                       Login
                     </Button>
@@ -76,7 +81,7 @@ function HomeNavbar() {
                       color="secondary"
                       variant="contained"
                       className="signUp-button"
-                      onClick={() => true}
+                      onClick={onSignupClick}
                     >
                       Sign Up
                     </Button>

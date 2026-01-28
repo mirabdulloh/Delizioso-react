@@ -5,9 +5,16 @@ import TwitterIcon from "@mui/icons-material/Twitter";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import { NavLink } from "react-router-dom";
+import { useGlobals } from "../../hooks/useGlobals";
+import { sweetFailureProvider } from "../../../lib/sweetAlert";
 import "../../../css/footer.css";
 
-function Footer() {
+interface FooterProps {
+  onLoginClick?: () => void;
+}
+
+function Footer({ onLoginClick }: FooterProps = {}) {
+  const { authMember } = useGlobals();
   return (
     <Box className="footer">
       <Container maxWidth="lg">
@@ -58,9 +65,10 @@ function Footer() {
                 <NavLink
                   to="/order-online"
                   onClick={(e: any) => {
-                    if (!localStorage.getItem('memberNick')) {
+                    if (!authMember) {
                       e.preventDefault();
-                      require("../../../lib/sweetAlert").sweetFailureProvider('Please sign up first to order.', true);
+                      sweetFailureProvider('Please login first to order.', true);
+                      onLoginClick?.();
                     }
                   }}
                 >
@@ -69,9 +77,10 @@ function Footer() {
                 <NavLink
                   to="/reservation"
                   onClick={(e: any) => {
-                    if (!localStorage.getItem('memberNick')) {
+                    if (!authMember) {
                       e.preventDefault();
-                      require("../../../lib/sweetAlert").sweetFailureProvider('Please sign up first to make a reservation.', true);
+                      sweetFailureProvider('Please login first to make a reservation.', true);
+                      onLoginClick?.();
                     }
                   }}
                 >
