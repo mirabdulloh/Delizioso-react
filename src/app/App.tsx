@@ -94,7 +94,7 @@ function App() {
         <Route path="/order-online" element={<OrderOnline />} />
         <Route path="/help" element={<Contact />} />
         <Route path="/about" element={<AboutUs />} />
-        <Route path="/" element={<HomePage onLoginClick={() => setLoginOpen(true)} />} />
+        <Route path="/" element={<HomePage onLoginClick={() => setLoginOpen(true)} onAdd={onAdd} />} />
       </Routes>
 
       <Footer />

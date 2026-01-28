@@ -10,9 +10,11 @@ import WelcomePage from "./WelcomePage";
 import { setPopularDishes, setPaginationInfo } from "./slice";
 import ProductService from "../../services/ProductService";
 import { Product } from "../../../lib/types/product";
+import { CartItem } from "../../../lib/types/search";
 
 interface HomePageProps {
   onLoginClick?: () => void;
+  onAdd: (item: CartItem) => void;
 }
 
 /** REDUX SLICE */
@@ -22,7 +24,7 @@ const actionDispatch = (dispatch: Dispatch) => ({
     dispatch(setPaginationInfo(data)),
 });
 
-function HomePage({ onLoginClick }: HomePageProps = {}) {
+function HomePage({ onLoginClick, onAdd = () => {} }: HomePageProps) {
   const { setPopularDishes, setPaginationInfo } = actionDispatch(useDispatch());
   const [page, setPage] = useState(1);
   const ITEMS_PER_PAGE = 3;
@@ -66,7 +68,7 @@ function HomePage({ onLoginClick }: HomePageProps = {}) {
   return (
     <>
       <WelcomePage />
-      <PopularMenu page={page} setPage={setPage} />
+      <PopularMenu page={page} setPage={setPage} onAdd={onAdd} />
       <ReserveTable onLoginClick={onLoginClick} />
       <BestChefs />
       <CostumerReviews />
