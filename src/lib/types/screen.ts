@@ -7,6 +7,7 @@ import { Review } from "./review";
 
 export interface AppRootState {
   homePage: HomePageState;
+  ordersPage: OrdersPageState;
 }
 
 /** HOMEPAGE */

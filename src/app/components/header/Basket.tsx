@@ -51,7 +51,7 @@ export default function Basket(props: BasketProps) {
 
       onDeleteAll();
       setOrderBuilder(new Date());
-      navigate("/orders");
+      navigate("/order-online");
     } catch (err) {
       console.log(err);
       sweetErrorHandling(err).then();

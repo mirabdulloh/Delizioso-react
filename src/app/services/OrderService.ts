@@ -38,11 +38,20 @@ class OrderService {
       const url = `${this.path}/order/all`;
       const query = `?page=${input.page}&limit=${input.limit}&orderStatus=${input.orderStatus}`;
       const result = await axios.get(url + query, { withCredentials: true });
-      console.log("Get My Orders Result:", result.data);
+      console.log(`📦 Get My Orders (${input.orderStatus}) Result:`, result.data);
+
+      // Handle different response structures
+      if (Array.isArray(result.data)) {
+        return result.data as Order[];
+      } else if (result.data?.data && Array.isArray(result.data.data)) {
+        return result.data.data as Order[];
+      } else if (result.data?.orders && Array.isArray(result.data.orders)) {
+        return result.data.orders as Order[];
+      }
 
       return result.data as Order[];
-    } catch (err) {
-      console.log("getMyOrders Error:", err);
+    } catch (err: any) {
+      console.log(`❌ getMyOrders (${input.orderStatus}) Error:`, err?.response?.data || err?.message || err);
       throw err;
     }
   }

@@ -4,7 +4,6 @@ import { Box, Button, Container, Stack, Menu, MenuItem, Avatar, Divider, ListIte
 import { NavLink, useNavigate } from "react-router-dom";
 import { useGlobals } from "../../hooks/useGlobals";
 import { sweetFailureProvider } from "../../../lib/sweetAlert";
-import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Basket from "./Basket";
@@ -152,7 +151,7 @@ function HomeNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onLo
                   >
                     <MenuItem
                       onClick={() => {
-                        navigate("/member-page");
+                        navigate("/my-page");
                         onLogoutMenuClose?.();
                       }}
                     >

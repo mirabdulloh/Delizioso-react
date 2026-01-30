@@ -150,7 +150,7 @@ function OtherNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onL
                   >
                     <MenuItem
                       onClick={() => {
-                        navigate("/member-page");
+                        navigate("/my-page");
                         onLogoutMenuClose?.();
                       }}
                     >

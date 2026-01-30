@@ -1,6 +1,7 @@
 import Orders from "./OrderOnline";
+import type { OrderOnlineProps } from "./OrderOnline";
 
-function OrderOnline() {
-  return <Orders />;
+function OrderOnlineWrapper(props: OrderOnlineProps) {
+  return <Orders {...props} />;
 }
-export default OrderOnline;
+export default OrderOnlineWrapper;

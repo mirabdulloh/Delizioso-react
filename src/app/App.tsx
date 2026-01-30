@@ -13,6 +13,7 @@ import AboutUs from "./screen/AboutUs";
 import CS from "./screen/CS";
 import Contact from "./screen/ContactUs/Contact";
 import Reservation from "./screen/Reservation";
+import UserPage from "./screen/MyPage";
 import AuthenticationModal from "./components/auth";
 import { useGlobals } from "./hooks/useGlobals";
 import { sweetErrorHandling, sweetTopSuccessAlert } from "../lib/sweetAlert";
@@ -91,7 +92,8 @@ function App() {
         <Route path="/promotions" element={<PromotionsAll />} />
         <Route path="/support" element={<CS />} />
         <Route path="/reservation" element={<Reservation />} />
-        <Route path="/order-online" element={<OrderOnline />} />
+        <Route path="/order-online" element={<OrderOnline cartItems={cartItems} onAdd={onAdd} onRemove={onRemove} onDelete={onDelete} />} />
+        <Route path="/my-page" element={<UserPage />} />
         <Route path="/help" element={<Contact />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/" element={<HomePage onLoginClick={() => setLoginOpen(true)} onAdd={onAdd} />} />
