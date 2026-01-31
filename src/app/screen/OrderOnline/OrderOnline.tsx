@@ -25,33 +25,7 @@ import { useGlobals } from "../../hooks/useGlobals";
 import { setPausedOrders, setFinishedOrders, setProcessOrders } from "./slice";
 import { retrievePausedOrders, retrieveFinishedOrders, retrieveProcessOrders } from "./selector";
 import { sweetErrorHandling, sweetSuccessAlert, sweetWarningAlert } from "../../../lib/sweetAlert";
-import { CartItem } from "../../../lib/types/search";
-
-type OrderStatusUI = "PAUSED" | "ONGOING" | "FINISHED";
-
-type OrderItem = {
-  id: string;
-  name: string;
-  img: string;
-  price: number;
-  qty: number;
-};
-
-type OrderUI = {
-  id: string;
-  status: OrderStatusUI;
-  restaurant: string;
-  createdAt: string;
-  etaMin?: number;
-  items: OrderItem[];
-};
-
-export interface OrderOnlineProps {
-  cartItems: CartItem[];
-  onAdd: (item: CartItem) => void;
-  onRemove: (item: CartItem) => void;
-  onDelete: (item: CartItem) => void;
-}
+import { OrderOnlineProps, OrderStatusUI, OrderItem, OrderUI } from "../../../lib/types/order-online";
 
 function calcSubtotal(items: OrderItem[]) {
   return items.reduce((sum, it) => sum + it.price * it.qty, 0);

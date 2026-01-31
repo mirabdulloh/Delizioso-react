@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "@reduxjs/toolkit";
 import Orders from "./OrderOnline";
-import type { OrderOnlineProps } from "./OrderOnline";
+import type { OrderOnlineProps } from "../../../lib/types/order-online";
 import { addToCart, removeFromCart, deleteFromCart } from "./slice";
 import { retrieveCartItems } from "./selector";
 import { CartItem } from "../../../lib/types/search";
