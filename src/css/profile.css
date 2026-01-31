@@ -1,145 +1,275 @@
-/* Profile Page Dashboard Styles */
-
-/* Stat Card Styles */
-.stat-card {
-  text-align: center;
-  margin-bottom: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+/* =========================
+  SETTINGS FORM
+========================= */
+.settings {
+  width: 100%;
 }
 
-.stat-card-icon {
-  font-size: 28px;
-  margin-bottom: 0.5rem;
-}
-
-.stat-card-label {
-  color: #666;
-  font-size: 14px;
-  margin-bottom: 0.25rem;
-}
-
-.stat-card-value {
-  font-size: 24px;
-  font-weight: 600;
-  color: #1976d2;
-}
-
-.stat-card-unit {
-  font-size: 16px;
-  color: #999;
-}
-
-/* Loyalty Points Section */
-.loyalty-section {
-  margin-bottom: 1.5rem;
-}
-
-.loyalty-header {
+.member-media-frame {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 0.5rem;
+  align-items: center;
+  gap: 18px;
+  padding: 18px;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.95),
+    rgba(255, 255, 255, 0.75)
+  );
+  margin-bottom: 22px;
 }
 
-.loyalty-label {
-  font-weight: 600;
+.mb-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 18px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.media-change-box {
+  flex: 1;
+}
+
+.media-change-box span {
+  display: block;
+  font-weight: 900;
+  color: var(--text);
   font-size: 14px;
+  margin: 0;
 }
 
-.loyalty-value {
-  font-weight: 600;
-  color: #1976d2;
-}
-
-.loyalty-progress {
-  height: 8px;
-  border-radius: 4px;
-}
-
-.loyalty-note {
+.media-change-box p {
+  margin: 6px 0 0;
   font-size: 12px;
-  color: #999;
-  margin-top: 0.25rem;
+  color: var(--muted);
 }
 
-/* Statistics Section */
-.statistics-section {
-  margin-bottom: 1.5rem;
+/* remove inline marginLeft */
+.up-del-box {
+  margin-top: 12px;
 }
 
-.statistics-title {
-  font-weight: 600;
+.up-del-box button {
+  border-radius: 12px !important;
+  padding: 10px 14px !important;
+  text-transform: none !important;
+  font-weight: 800 !important;
+  background: linear-gradient(
+    135deg,
+    var(--primary2),
+    var(--primary)
+  ) !important;
+  box-shadow: 0 10px 20px rgba(109, 40, 217, 0.22) !important;
+}
+
+.up-del-box button:hover {
+  transform: translateY(-1px);
+}
+
+.input-frame {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.long-input,
+.short-input {
+  flex: 1;
+}
+
+.spec-label {
+  display: block;
+  font-weight: 900;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.spec-input,
+.spec-textarea {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.85);
+  padding: 14px 14px;
   font-size: 14px;
-  margin-bottom: 1rem;
+  color: var(--text);
+  transition:
+    box-shadow 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease;
 }
 
-.statistics-grid {
+.spec-input:focus,
+.spec-textarea:focus {
+  outline: none;
+  border-color: rgba(109, 40, 217, 0.35);
+  box-shadow: var(--ring);
+  background: #fff;
+}
+
+.spec-textarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.save-box {
+  margin-top: 22px;
+}
+
+.save-box button {
+  width: 100%;
+  border-radius: 16px !important;
+  padding: 14px 16px !important;
+  font-weight: 950 !important;
+  text-transform: none !important;
+  background: linear-gradient(
+    135deg,
+    var(--primary2),
+    var(--primary)
+  ) !important;
+  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.22) !important;
+}
+
+.save-box button:hover {
+  transform: translateY(-2px);
+}
+
+/* =========================
+  RIGHT PROFILE CARD
+========================= */
+.order-info-box {
+  background: var(--card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 30px 26px;
+  box-shadow: var(--shadow-md);
+  text-align: center;
+}
+
+.order-user-img {
+  position: relative;
+  width: 124px;
+  height: 124px;
+  margin: 0 auto 18px;
+}
+
+.order-user-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 22px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.order-user-icon-box {
+  position: absolute;
+  right: -8px;
+  bottom: -8px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  place-items: center;
+  background: linear-gradient(135deg, var(--primary2), var(--primary));
+  border: 4px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 10px 20px rgba(109, 40, 217, 0.25);
 }
 
-@media (max-width: 600px) {
-  .statistics-grid {
-    grid-template-columns: 1fr;
+.order-user-icon-box img {
+  width: 22px;
+  height: 22px;
+  filter: brightness(0) invert(1);
+}
+
+.order-user-name {
+  display: block;
+  font-weight: 950;
+  font-size: 22px;
+  color: var(--text);
+  letter-spacing: -0.6px;
+}
+
+.order-user-prof {
+  display: block;
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--muted);
+  letter-spacing: 0.2px;
+}
+
+.user-media-box {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 22px 0;
+  padding: 18px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.user-media-box svg {
+  width: 22px;
+  height: 22px;
+  padding: 10px;
+  border-radius: 14px;
+  cursor: pointer;
+  color: rgba(109, 40, 217, 0.9);
+  background: rgba(109, 40, 217, 0.08);
+  border: 1px solid rgba(109, 40, 217, 0.14);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease;
+}
+
+.user-media-box svg:hover {
+  transform: translateY(-2px);
+  background: rgba(109, 40, 217, 0.12);
+  box-shadow: 0 10px 20px rgba(109, 40, 217, 0.18);
+}
+
+.user-desc {
+  margin: 18px 0 22px;
+  padding: 16px 16px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.85),
+    rgba(255, 255, 255, 0.65)
+  );
+  color: #3b3f48;
+  line-height: 1.75;
+  text-align: left;
+}
+
+/* responsive */
+@media (max-width: 768px) {
+  .member-media-frame {
+    flex-direction: column;
+    text-align: center;
+  }
+  .input-frame {
+    flex-direction: column;
+  }
+  .order-info-box {
+    padding: 22px 18px;
   }
 }
-
-/* Coupon Card */
-.coupon-card {
-  margin-bottom: 1.5rem;
-  background-color: #f5f5f5;
-  border-radius: 8px;
-  padding: 1rem;
+.upload-title {
+  margin-left: 10px;
 }
-
-.coupon-title {
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.coupon-code {
-  font-size: 14px;
-  margin-bottom: 0.25rem;
-}
-
-.coupon-discount {
-  font-size: 14px;
-  color: #4caf50;
-  font-weight: 600;
-}
-
-.coupon-expiry {
-  font-size: 12px;
-  color: #999;
-  margin-top: 0.25rem;
-}
-
-/* Membership Tier Badge */
-.membership-badge {
-  margin-top: 1rem;
-  text-align: center;
-}
-
-.membership-chip {
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-}
-
-/* Divider */
-.profile-divider {
-  margin: 1rem 0;
-  border: none;
-  border-top: 1px solid #e0e0e0;
-}
-
-/* Order History Section */
-.order-history-section {
-  margin-top: 1.5rem;
-}
-
-.order-history-title {
-  font-weight: 600;
-  font-size: 14px;
-  margin-bottom: 1rem;
+.upload-desc {
+  margin-left: 10px;
 }
