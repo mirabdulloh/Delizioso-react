@@ -23,6 +23,8 @@ export interface Product {
   productReview?: string[];
   createdAt: Date;
   updatedAt: Date;
+  memberLiked?: boolean;
+  discountedPrice?: number;
 }
 
 export interface ProductInquiry {

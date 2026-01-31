@@ -49,12 +49,6 @@ function HomeNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onLo
               <Box className={"hover-line"}>
                 <NavLink to="/products">Menu</NavLink>
               </Box>
-              <Box className={"hover-line"}>
-                <NavLink to="/about">About</NavLink>
-              </Box>
-              <Box className={"hover-line"}>
-                <NavLink to="/support">Support</NavLink>
-              </Box>
               {authMember && (
                 <Box className={"hover-line"}>
                   <NavLink to="/order-online">Order Online</NavLink>
@@ -66,7 +60,10 @@ function HomeNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onLo
                 </Box>
               )}
               <Box className={"hover-line"}>
-                <NavLink to="/help">Contact</NavLink>
+                <NavLink to="/about">About</NavLink>
+              </Box>
+              <Box className={"hover-line"}>
+                <NavLink to="/support">Support</NavLink>
               </Box>
               {/* Basket */}
               <Basket

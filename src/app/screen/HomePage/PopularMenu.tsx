@@ -121,7 +121,7 @@ function PopularMenu({ page, setPage, onAdd }: PopularMenuProps) {
               </Box>
 
               <Stack direction="row" className="menu-footer">
-                <Box className="price">${dish.productPrice.toFixed(2)}</Box>
+                <Box className="price">₩{dish.productPrice.toFixed(2)}</Box>
                 <Button
                   variant="contained"
                   color="secondary"

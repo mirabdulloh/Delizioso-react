@@ -17,6 +17,7 @@ import {
   sweetTopSmallSuccessAlert,
 } from "../../../lib/sweetAlert";
 import MemberService from "../../services/MemberService";
+import FinishedOrders from "./FinishedOrders";
 
 function Settings() {
   const { authMember, setAuthMember } = useGlobals();
@@ -246,7 +247,10 @@ export default function UserPage() {
                   : "No description"}
               </p>
               
-              {/* Coupon section - will be fetched via /member/coupon-progress API */}
+              {/* Finished Orders Section */}
+              <Box sx={{ mt: 3 }}>
+                <FinishedOrders />
+              </Box>
             </Box>
           </Stack>
         </Stack>

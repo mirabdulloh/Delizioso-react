@@ -7,6 +7,13 @@ export interface MemberCoupon {
   expiresAt?: Date | null;
 }
 
+export interface CouponValidationResult {
+  valid: boolean;
+  message?: string;
+  discount?: number;
+  memberCoupon?: MemberCoupon;
+}
+
 export interface AuthData {
   member: Member;
   accessToken: string;

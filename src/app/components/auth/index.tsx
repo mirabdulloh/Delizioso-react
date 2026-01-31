@@ -10,6 +10,7 @@ import {
   Typography,
   Fade,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
@@ -150,6 +151,7 @@ interface AuthenticationModalProps {
 
 export default function AuthenticationModal(props: AuthenticationModalProps) {
   const { signupOpen, loginOpen, handleSignupClose, handleLoginClose } = props;
+  const navigate = useNavigate();
 
   const [memberNick, setMemberNick] = useState<string>("");
   const [memberPhone, setMemberPhone] = useState<string>("");
@@ -204,6 +206,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
       setMemberPhone("");
       setMemberPassword("");
       setShowPassword(false);
+      navigate("/");
     } catch (err) {
       console.log(err);
       handleSignupClose();
@@ -230,6 +233,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
       setMemberNick("");
       setMemberPassword("");
       setShowPassword(false);
+      navigate("/");
     } catch (err) {
       console.log(err);
       handleLoginClose();

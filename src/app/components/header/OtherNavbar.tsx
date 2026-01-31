@@ -48,12 +48,6 @@ function OtherNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onL
               <Box className={"hover-line"}>
                 <NavLink to="/products">Menu</NavLink>
               </Box>
-              <Box className={"hover-line"}>
-                <NavLink to="/about">About</NavLink>
-              </Box>
-              <Box className={"hover-line"}>
-                <NavLink to="/support">Support</NavLink>
-              </Box>
               {authMember && (
                 <Box className={"hover-line"}>
                   <NavLink to="/order-online">Order Online</NavLink>
@@ -65,7 +59,10 @@ function OtherNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onL
                 </Box>
               )}
               <Box className={"hover-line"}>
-                <NavLink to="/help">Contact</NavLink>
+                <NavLink to="/about">About</NavLink>
+              </Box>
+              <Box className={"hover-line"}>
+                <NavLink to="/support">Support</NavLink>
               </Box>
               {/* Basket */}
               <Basket

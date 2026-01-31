@@ -18,6 +18,7 @@ import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
 import "../../../css/order-online.css";
 import { Order } from "../../../lib/types/orders";
 import { OrderStatus } from "../../../lib/enums/order.enum";
+import { CouponValidationResult } from "../../../lib/types/member";
 import OrderService from "../../services/OrderService";
 import MemberService from "../../services/MemberService";
 import { serverApi } from "../../../lib/config";
@@ -137,9 +138,17 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
     try {
       // Call backend API to validate coupon
       const memberService = new MemberService();
-      const result = await memberService.validateCoupon(couponCode.trim());
+      const result: CouponValidationResult = await memberService.validateCoupon(couponCode.trim());
 
       console.log("Coupon validation result:", result);
+
+      // Check if coupon is already used
+      if (result?.memberCoupon?.isUsed) {
+        await sweetErrorHandling({
+          response: { data: { message: "This coupon has already been used" } },
+        });
+        return;
+      }
 
       if (result && result.valid === true) {
         setAppliedCoupon({
@@ -179,6 +188,16 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
   const pausedOrders = useSelector(retrievePausedOrders);
   const finishedOrders = useSelector(retrieveFinishedOrders);
   const processOrders = useSelector(retrieveProcessOrders);
+
+  // Clear orders when user logs out or changes
+  useEffect(() => {
+    if (!authMember) {
+      console.log("❌ User logged out, clearing orders");
+      dispatch(setPausedOrders([]));
+      dispatch(setProcessOrders([]));
+      dispatch(setFinishedOrders([]));
+    }
+  }, [authMember, dispatch]);
 
   // Fetch orders from API
   useEffect(() => {
@@ -234,7 +253,15 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
   const allOrders: OrderUI[] = [
     ...pausedOrders.map(transformOrderToUI),
     ...processOrders.map(transformOrderToUI),
-    ...finishedOrders.map(transformOrderToUI),
+    ...finishedOrders
+      .filter((order) => {
+        // Filter finished orders - keep only those from last 1 day (auto-clear)
+        const orderDate = new Date(order.updatedAt || order.createdAt);
+        const now = new Date();
+        const diffInSeconds = (now.getTime() - orderDate.getTime()) / 1000;
+        return diffInSeconds <= 86400; // 1 day = 86400 seconds
+      })
+      .map(transformOrderToUI),
   ];
 
   const filtered = allOrders.filter((o) => o.status === activeStatus);
@@ -304,6 +331,28 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                   Finished
                 </Button>
               </Stack>
+
+              {activeStatus === "FINISHED" && finishedOrders.length > 0 && (
+                <Button
+                  variant="outlined"
+                  color="error"
+                  size="small"
+                  fullWidth
+                  sx={{ mt: 1.5 }}
+                  onClick={async () => {
+                    const confirmed = await sweetWarningAlert(
+                      "Clear Finished Orders",
+                      "Are you sure you want to clear all finished orders? This action cannot be undone."
+                    );
+                    if (confirmed) {
+                      dispatch(setFinishedOrders([]));
+                      await sweetSuccessAlert("Cleared", "All finished orders have been removed.");
+                    }
+                  }}
+                >
+                  Clear Finished Orders
+                </Button>
+              )}
 
               <Divider className="orders-divider" />
 
@@ -405,6 +454,20 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
           <Box className="orders-right">
             {visibleSelected ? (
               <Box className="orders-summary">
+                {/* DELIVERY ANIMATION FOR ONGOING ORDERS */}
+                {activeStatus === "ONGOING" && (
+                  <Box className="delivery-animation-container">
+                    <Box className="delivery-road">
+                      <Box className="delivery-man">
+                        <LocalShippingRoundedIcon className="delivery-truck-icon" />
+                      </Box>
+                    </Box>
+                    <Box className="delivery-status-text">
+                      Your order is on the way! 🚀
+                    </Box>
+                  </Box>
+                )}
+
                 <Box className="orders-summary-title">
                   {activeStatus === "PAUSED"
                     ? "Checkout"
@@ -589,20 +652,16 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                               await orderService.updateOrder({
                                 orderId: visibleSelected.id,
                                 orderStatus: OrderStatus.PROCESS,
+                                couponCode: appliedCoupon?.code,
                               });
                               
-                              // Mark coupon as used if applied
-                              if (appliedCoupon) {
-                                try {
-                                  const memberService = new MemberService();
-                                  const updatedMember = await memberService.useCoupon(appliedCoupon.code);
-                                  setAuthMember(updatedMember);
-                                  console.log("✅ Coupon marked as used:", appliedCoupon.code);
-                                  setAppliedCoupon(null); // Clear applied coupon after use
-                                } catch (err) {
-                                  console.error("⚠️ Failed to mark coupon as used:", err);
-                                }
-                              }
+                              // Refresh member data to get updated coupon status (isUsed: true)
+                              const memberService = new MemberService();
+                              const freshMember = await memberService.getMemberDetail();
+                              setAuthMember(freshMember); // Update global state with fresh member data
+                              
+                              // Clear applied coupon from UI state
+                              setAppliedCoupon(null);
                               
                               // Show success alert
                               await sweetSuccessAlert(
@@ -611,11 +670,12 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                               );
 
                               console.log("✅ Payment successful - Order status updated to PROCESS");
+                              console.log("✅ Member data refreshed - Coupon marked as used");
                               
                               // Switch to ONGOING tab automatically
                               setActiveStatus("ONGOING");
                               
-                              // Re-fetch orders to update the UI
+                              // Re-fetch orders to update the UI (backend will mark coupon as used)
                               // NOTE: Backend checks on order update - if user now has 5+ FINISHED orders,
                               // generate and assign new reward coupon to memberCoupon (if not already assigned)
                               setOrderBuilder(new Date());
@@ -654,7 +714,48 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                         <AccessTimeRoundedIcon />
                         <span>Estimated arrival: 23 minutes</span>
                       </Box>
-                      <Button className="summary-primary" variant="contained" color="primary">
+                      <Button 
+                        className="summary-primary" 
+                        variant="contained" 
+                        color="primary"
+                        onClick={async () => {
+                          try {
+                            // Ask for confirmation
+                            const confirmed = await sweetWarningAlert(
+                              "Confirm Receipt",
+                              "Did you receive your order?"
+                            );
+
+                            if (!confirmed) return;
+                            
+                            // Update order status from PROCESS to FINISH
+                            if (visibleSelected) {
+                              const orderService = new OrderService();
+                              await orderService.updateOrder({
+                                orderId: visibleSelected.id,
+                                orderStatus: OrderStatus.FINISH,
+                              });
+                              
+                              // Show success alert
+                              await sweetSuccessAlert(
+                                "Order Completed!",
+                                "Thank you! Your order has been marked as completed."
+                              );
+
+                              console.log("✅ Order marked as finished - Order status updated to FINISH");
+                              
+                              // Switch to FINISHED tab automatically
+                              setActiveStatus("FINISHED");
+                              
+                              // Re-fetch orders to update the UI
+                              setOrderBuilder(new Date());
+                            }
+                          } catch (err) {
+                            console.error("❌ Order completion error:", err);
+                            await sweetErrorHandling(err);
+                          }
+                        }}
+                      >
                         I received the order
                       </Button>
                       <Button className="summary-secondary" variant="outlined" onClick={() => navigate("/help")}>
@@ -663,7 +764,54 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                     </>
                   ) : (
                     <>
-                      <Button className="summary-primary" variant="contained" color="secondary">
+                      <Button 
+                        className="summary-primary" 
+                        variant="contained" 
+                        color="secondary"
+                        onClick={async () => {
+                          try {
+                            if (!visibleSelected) return;
+                            
+                            // Ask for confirmation
+                            const confirmed = await sweetWarningAlert(
+                              "Reorder Items",
+                              "Do you want to create a new order with the same items?"
+                            );
+
+                            if (!confirmed) return;
+                            
+                            // Transform order items to CartItem format for createOrder
+                            const cartItems = visibleSelected.items.map((item) => ({
+                              _id: item.id,
+                              quantity: item.qty,
+                              name: item.name,
+                              price: item.price,
+                              image: item.img,
+                            }));
+                            
+                            // Create new order
+                            const orderService = new OrderService();
+                            await orderService.createOrder(cartItems);
+                            
+                            // Show success alert
+                            await sweetSuccessAlert(
+                              "Order Created!",
+                              "Your order has been created and is ready for checkout."
+                            );
+
+                            console.log("✅ Reorder successful - New order created in PAUSED status");
+                            
+                            // Switch to PAUSED tab automatically
+                            setActiveStatus("PAUSED");
+                            
+                            // Re-fetch orders to show the new paused order
+                            setOrderBuilder(new Date());
+                          } catch (err) {
+                            console.error("❌ Reorder error:", err);
+                            await sweetErrorHandling(err);
+                          }
+                        }}
+                      >
                         Order again
                       </Button>
                       <Button className="summary-secondary" variant="outlined">

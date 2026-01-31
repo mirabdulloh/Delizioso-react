@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 
 import HomeNavbar from "./components/header/HomeNavbar";
 import Footer from "./components/footer/Footer";
@@ -27,6 +27,8 @@ function App() {
   const [loginOpen, setLoginOpen] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const { setAuthMember } = useGlobals();
+  const navigate = useNavigate();
+  
   /** HANDLERS **/
   const handleSignupClose = () => {
     setSignupOpen(false);
@@ -48,6 +50,7 @@ function App() {
       await member.logout();
       await sweetTopSuccessAlert("success", 700);
       setAuthMember(null);
+      navigate("/");
     } catch (err) {
       console.log(err);
 

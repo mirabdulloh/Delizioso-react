@@ -14,7 +14,7 @@ class ProductService {
       if (input.productCollection)
         url += `&productCollection=${input.productCollection}`;
       if (input.search) url += `&search=${input.search}`;
-      const result = await axios.get(url);
+      const result = await axios.get(url, { withCredentials: true });
       console.log("getProducts:", result);
 
       return result.data;
@@ -27,12 +27,38 @@ class ProductService {
   public async getProduct(productId: string): Promise<Product> {
     try {
       const url = `${this.path}/product/${productId}`;
-      const result = await axios.get(url, {withCredentials: true});
-      console.log("getProducts:", result);
+      const result = await axios.get(url, { withCredentials: true });
+      console.log("getProduct:", result);
 
       return result.data;
     } catch (err) {
-      console.log("ProductService - getProducts error:", err);
+      console.log("ProductService - getProduct error:", err);
+      throw err;
+    }
+  }
+
+  public async likeProduct(productId: string): Promise<any> {
+    try {
+      const url = `${this.path}/product/like/${productId}`;
+      const result = await axios.post(url, {}, { withCredentials: true });
+      console.log("likeProduct response:", result.data);
+
+      return result.data;
+    } catch (err) {
+      console.log("ProductService - likeProduct error:", err);
+      throw err;
+    }
+  }
+
+  public async getFavoriteProducts(input: ProductInquiry): Promise<Product[]> {
+    try {
+      let url = `${this.path}/product/favorites?order=${input.order}&page=${input.page}&limit=${input.limit}`;
+      const result = await axios.get(url, { withCredentials: true });
+      console.log("getFavoriteProducts:", result.data);
+
+      return result.data;
+    } catch (err) {
+      console.log("ProductService - getFavoriteProducts error:", err);
       throw err;
     }
   }

@@ -257,7 +257,7 @@ export default function Basket(props: BasketProps) {
                           color: "#6366f1",
                         }}
                       >
-                        ${item.price.toFixed(2)}
+                        ₩{item.price.toFixed(2)}
                       </Typography>
 
                       {/* Quantity Controls */}
@@ -324,7 +324,7 @@ export default function Basket(props: BasketProps) {
                     Subtotal
                   </Typography>
                   <Typography sx={{ fontWeight: 600, fontSize: "14px" }}>
-                    ${itemsPrice.toFixed(2)}
+                    ₩{itemsPrice.toFixed(2)}
                   </Typography>
                 </Stack>
                 
@@ -333,7 +333,7 @@ export default function Basket(props: BasketProps) {
                     Shipping
                   </Typography>
                   <Typography sx={{ fontWeight: 600, fontSize: "14px" }}>
-                    ${shippingCost.toFixed(2)}
+                    ₩{shippingCost.toFixed(2)}
                   </Typography>
                 </Stack>
                 
@@ -352,7 +352,7 @@ export default function Basket(props: BasketProps) {
                       WebkitTextFillColor: "transparent",
                     }}
                   >
-                    ${totalPrice}
+                    ₩{totalPrice}
                   </Typography>
                 </Stack>
 
