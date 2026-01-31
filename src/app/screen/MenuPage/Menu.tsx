@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createSelector, Dispatch } from "@reduxjs/toolkit";
 import { Product } from "../../../lib/types/product";
 import { ProductCollection } from "../../../lib/enums/product.enum";
-import { MenuPageProps, UpdateProductLikePayload } from "../../../lib/types/screen";
+import { UpdateProductLikePayload } from "../../../lib/types/screen";
 import ProductService from "../../services/ProductService";
 import { 
   setProducts,
@@ -27,7 +27,7 @@ import {
 } from "./slice";
 import { retrieveProducts, retrieveProductsCache, retrieveLastFetch } from "./selector";
 import { updateProductLike } from "./likesSlice";
-import { addToCart, removeFromCart, deleteFromCart } from "../OrderOnline/slice";
+import { addToCart } from "../OrderOnline/slice";
 import { retrieveCartItems } from "../OrderOnline/selector";
 import { serverApi } from "../../../lib/config";
 import { sweetErrorHandling, sweetTopSmallSuccessAlert } from "../../../lib/sweetAlert";
@@ -41,8 +41,6 @@ const actionDispatch = (dispatch: Dispatch) => ({
   cacheProducts: (payload: { queryKey: string; products: Product[] }) => dispatch(cacheProducts(payload)),
   updateProductLike: (payload: UpdateProductLikePayload) => dispatch(updateProductLike(payload)),
   addToCart: (item: any) => dispatch(addToCart(item)),
-  removeFromCart: (item: any) => dispatch(removeFromCart(item)),
-  deleteFromCart: (item: any) => dispatch(deleteFromCart(item)),
 });
 
 const menuPageRetriever = createSelector(
@@ -56,8 +54,8 @@ const menuPageRetriever = createSelector(
   })
 );
 
-const Menu = (props: MenuPageProps) => {
-  const { setProducts: setProductsAction, cacheProducts: cacheProductsAction, updateProductLike: updateProductLikeAction, addToCart: addToCartAction, removeFromCart: removeFromCartAction, deleteFromCart: deleteFromCartAction } = actionDispatch(useDispatch());
+const Menu = () => {
+  const { setProducts: setProductsAction, cacheProducts: cacheProductsAction, updateProductLike: updateProductLikeAction, addToCart: addToCartAction } = actionDispatch(useDispatch());
   const { products, productsCache, lastFetch } = useSelector(menuPageRetriever);
   const cartItems = useSelector(retrieveCartItems);
   const [loading, setLoading] = useState(false);
@@ -68,9 +66,6 @@ const Menu = (props: MenuPageProps) => {
   
   // Show OrderList only if there are items in cart
   const cartOpen = cartItems && cartItems.length > 0;
-
-  // Destructure cart props
-  const { onAdd, onRemove, onDelete } = props;
 
   const categories = [
     "All Category",
@@ -363,7 +358,6 @@ const Menu = (props: MenuPageProps) => {
                             image: product.productImages[0],
                           };
                           addToCartAction(cartItem);
-                          onAdd?.(cartItem);
                           setClickedButton(product._id);
                           sweetTopSmallSuccessAlert("Added to cart!", 1000);
                           setTimeout(() => setClickedButton(null), 1500);
@@ -386,7 +380,7 @@ const Menu = (props: MenuPageProps) => {
           </Box>
 
           {/* RIGHT: only render if cartOpen */}
-          {cartOpen ? <OrderList onAdd={onAdd} onRemove={onRemove} onDelete={onDelete} /> : null}
+          {cartOpen ? <OrderList /> : null}
         </Box>
       </Container>
     </div>

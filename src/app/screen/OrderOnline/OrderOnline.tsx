@@ -23,8 +23,8 @@ import OrderService from "../../services/OrderService";
 import MemberService from "../../services/MemberService";
 import { serverApi } from "../../../lib/config";
 import { useGlobals } from "../../hooks/useGlobals";
-import { setPausedOrders, setFinishedOrders, setProcessOrders } from "./slice";
-import { retrievePausedOrders, retrieveFinishedOrders, retrieveProcessOrders } from "./selector";
+import { setPausedOrders, setFinishedOrders, setProcessOrders, clearCart } from "./slice";
+import { retrievePausedOrders, retrieveFinishedOrders, retrieveProcessOrders, retrieveCartItems } from "./selector";
 import { sweetErrorHandling, sweetSuccessAlert, sweetWarningAlert } from "../../../lib/sweetAlert";
 import { OrderOnlineProps, OrderStatusUI, OrderItem, OrderUI } from "../../../lib/types/order-online";
 
@@ -248,6 +248,34 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
     fetchOrders();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderBuilder]); // Re-fetch when orderBuilder changes (new order created)
+
+  // Auto-create order from cart items when coming from MenuPage
+  useEffect(() => {
+    const createOrderFromCart = async () => {
+      if (cartItems && cartItems.length > 0) {
+        try {
+          console.log("📦 Creating order from cart items:", cartItems);
+          const orderService = new OrderService();
+          await orderService.createOrder(cartItems);
+          console.log("✅ Order created from cart items - Status: PENDING");
+          
+          // Trigger re-fetch of orders
+          setOrderBuilder(new Date());
+          
+          // Clear cart after order is created
+          dispatch(clearCart());
+        } catch (err) {
+          console.error("❌ Error creating order from cart:", err);
+        }
+      }
+    };
+
+    // Only create order if we have cart items and no existing paused orders
+    if (cartItems && cartItems.length > 0 && pausedOrders.length === 0) {
+      createOrderFromCart();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on component mount
 
   // Transform orders to UI format
   const allOrders: OrderUI[] = [

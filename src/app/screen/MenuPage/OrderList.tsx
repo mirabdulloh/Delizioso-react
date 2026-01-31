@@ -11,7 +11,7 @@ import RemoveRoundedIcon from "@mui/icons-material/RemoveRounded";
 import { retrieveCartItems } from "../OrderOnline/selector";
 import { addToCart, removeFromCart, deleteFromCart } from "../OrderOnline/slice";
 import { CartItem } from "../../../lib/types/search";
-import { MenuPageProps } from "../../../lib/types/screen";
+import { sweetTopSmallSuccessAlert } from "../../../lib/sweetAlert";
 
 import "../../../css/menu.css";
 
@@ -22,7 +22,7 @@ const actionDispatch = (dispatch: Dispatch) => ({
   deleteFromCart: (item: CartItem) => dispatch(deleteFromCart(item)),
 });
 
-function OrderList({ onAdd, onRemove, onDelete }: MenuPageProps) {
+function OrderList() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { addToCart: addToCartAction, removeFromCart: removeFromCartAction, deleteFromCart: deleteFromCartAction } = actionDispatch(dispatch as Dispatch);
@@ -42,7 +42,7 @@ function OrderList({ onAdd, onRemove, onDelete }: MenuPageProps) {
                     className="cart-del"
                     onClick={() => {
                       deleteFromCartAction(item);
-                      onDelete?.(item);
+                      sweetTopSmallSuccessAlert("Removed from cart", 800);
                     }}
                   >
                     <DeleteOutlineRoundedIcon />
@@ -55,7 +55,6 @@ function OrderList({ onAdd, onRemove, onDelete }: MenuPageProps) {
                       className="qty-btn"
                       onClick={() => {
                         removeFromCartAction(item);
-                        onRemove?.(item);
                       }}
                     >
                       <RemoveRoundedIcon />
@@ -64,8 +63,9 @@ function OrderList({ onAdd, onRemove, onDelete }: MenuPageProps) {
                     <IconButton 
                       className="qty-btn"
                       onClick={() => {
-                        addToCartAction(item);
-                        onAdd?.(item);
+                        // Add a single item (quantity: 1) to increment the existing cart item
+                        const singleItem = { ...item, quantity: 1 };
+                        addToCartAction(singleItem);
                       }}
                     >
                       <AddRoundedIcon />

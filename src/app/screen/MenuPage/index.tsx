@@ -16,7 +16,7 @@ function MenuPage({ onAdd, onRemove, onDelete }: MenuPageProps) {
         path=""
         element={
           <>
-            <Menu onAdd={onAdd} onRemove={onRemove} onDelete={onDelete} />
+            <Menu />
             <Promotions />
           </>
         }
