@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Container, Stack, Button, IconButton, Rating, Divider, TextField } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
@@ -24,7 +24,7 @@ import MemberService from "../../services/MemberService";
 import { serverApi } from "../../../lib/config";
 import { useGlobals } from "../../hooks/useGlobals";
 import { setPausedOrders, setFinishedOrders, setProcessOrders, clearCart } from "./slice";
-import { retrievePausedOrders, retrieveFinishedOrders, retrieveProcessOrders, retrieveCartItems } from "./selector";
+import { retrievePausedOrders, retrieveFinishedOrders, retrieveProcessOrders } from "./selector";
 import { sweetErrorHandling, sweetSuccessAlert, sweetWarningAlert } from "../../../lib/sweetAlert";
 import { OrderOnlineProps, OrderStatusUI, OrderItem, OrderUI } from "../../../lib/types/order-online";
 
@@ -250,14 +250,18 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
   }, [orderBuilder]); // Re-fetch when orderBuilder changes (new order created)
 
   // Auto-create order from cart items when coming from MenuPage
+  const hasCreatedOrder = useRef(false); // Track if order has been created
+
   useEffect(() => {
     const createOrderFromCart = async () => {
-      if (cartItems && cartItems.length > 0) {
+      if (cartItems && cartItems.length > 0 && !hasCreatedOrder.current) {
         try {
           console.log("📦 Creating order from cart items:", cartItems);
           const orderService = new OrderService();
           await orderService.createOrder(cartItems);
           console.log("✅ Order created from cart items - Status: PENDING");
+          
+          hasCreatedOrder.current = true; // Mark as created
           
           // Trigger re-fetch of orders
           setOrderBuilder(new Date());

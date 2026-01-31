@@ -8,6 +8,11 @@ export const retrieveProducts = createSelector(
   (menuPage) => menuPage.products || []
 );
 
+export const retrieveChosenProduct = createSelector(
+  selectMenuPage,
+  (menuPage) => menuPage.chosenProduct
+);
+
 export const retrieveProductsCache = createSelector(
   selectMenuPage,
   (menuPage) => menuPage.productsCache

@@ -15,6 +15,7 @@ import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { createSelector, Dispatch } from "@reduxjs/toolkit";
 import { Product } from "../../../lib/types/product";
@@ -55,6 +56,7 @@ const menuPageRetriever = createSelector(
 );
 
 const Menu = () => {
+  const navigate = useNavigate();
   const { setProducts: setProductsAction, cacheProducts: cacheProductsAction, updateProductLike: updateProductLikeAction, addToCart: addToCartAction } = actionDispatch(useDispatch());
   const { products, productsCache, lastFetch } = useSelector(menuPageRetriever);
   const cartItems = useSelector(retrieveCartItems);
@@ -245,6 +247,7 @@ const Menu = () => {
                     key={product._id}
                     className="menu2-card"
                     role="button"
+                    onClick={() => navigate(`/products/${product._id}`)}
                   >
                     {/* icons */}
                     <Box className="menu2-icons">
@@ -349,7 +352,8 @@ const Menu = () => {
                         color="secondary"
                         className="menu2-order"
                         startIcon={<ShoppingCartIcon />}
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           const cartItem = {
                             _id: product._id,
                             quantity: 1,

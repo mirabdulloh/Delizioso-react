@@ -1,0 +1,145 @@
+/* Profile Page Dashboard Styles */
+
+/* Stat Card Styles */
+.stat-card {
+  text-align: center;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card-icon {
+  font-size: 28px;
+  margin-bottom: 0.5rem;
+}
+
+.stat-card-label {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 0.25rem;
+}
+
+.stat-card-value {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1976d2;
+}
+
+.stat-card-unit {
+  font-size: 16px;
+  color: #999;
+}
+
+/* Loyalty Points Section */
+.loyalty-section {
+  margin-bottom: 1.5rem;
+}
+
+.loyalty-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.loyalty-label {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.loyalty-value {
+  font-weight: 600;
+  color: #1976d2;
+}
+
+.loyalty-progress {
+  height: 8px;
+  border-radius: 4px;
+}
+
+.loyalty-note {
+  font-size: 12px;
+  color: #999;
+  margin-top: 0.25rem;
+}
+
+/* Statistics Section */
+.statistics-section {
+  margin-bottom: 1.5rem;
+}
+
+.statistics-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 1rem;
+}
+
+.statistics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 600px) {
+  .statistics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Coupon Card */
+.coupon-card {
+  margin-bottom: 1.5rem;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.coupon-title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.coupon-code {
+  font-size: 14px;
+  margin-bottom: 0.25rem;
+}
+
+.coupon-discount {
+  font-size: 14px;
+  color: #4caf50;
+  font-weight: 600;
+}
+
+.coupon-expiry {
+  font-size: 12px;
+  color: #999;
+  margin-top: 0.25rem;
+}
+
+/* Membership Tier Badge */
+.membership-badge {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.membership-chip {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+/* Divider */
+.profile-divider {
+  margin: 1rem 0;
+  border: none;
+  border-top: 1px solid #e0e0e0;
+}
+
+/* Order History Section */
+.order-history-section {
+  margin-top: 1.5rem;
+}
+
+.order-history-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 1rem;
+}

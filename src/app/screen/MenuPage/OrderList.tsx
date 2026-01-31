@@ -29,7 +29,13 @@ function OrderList() {
   const cartItems = useSelector(retrieveCartItems);
   return (
     <Box className="menu2-right">
-      <Box className="cart">
+      <Box
+        className="cart"
+        sx={{
+          backgroundColor: "rgba(255, 255, 255, 0.7)",
+          backdropFilter: "blur(6px)",
+        }}
+      >
         <Box className="cart-title">Order list</Box>
 
         <Box className="cart-items">

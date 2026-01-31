@@ -3,12 +3,14 @@ import { Product } from "../../../lib/types/product";
 
 export interface MenuPageState {
   products: Product[];
+  chosenProduct: Product | null;
   productsCache: { [key: string]: Product[] };
   lastFetch: { [key: string]: number };
 }
 
 const initialState: MenuPageState = {
   products: [],
+  chosenProduct: null,
   productsCache: {},
   lastFetch: {},
 };
@@ -19,6 +21,10 @@ const menuPageSlice = createSlice({
   reducers: {
     setProducts: (state, action: PayloadAction<Product[]>) => {
       state.products = action.payload;
+    },
+
+    setChosenProduct: (state, action: PayloadAction<Product | null>) => {
+      state.chosenProduct = action.payload;
     },
 
     cacheProducts: (
@@ -43,7 +49,7 @@ const menuPageSlice = createSlice({
   },
 });
 
-export const { setProducts, cacheProducts, clearCache, clearCacheByKey } =
+export const { setProducts, setChosenProduct, cacheProducts, clearCache, clearCacheByKey } =
   menuPageSlice.actions;
 
 const MenuPageReducer = menuPageSlice.reducer;

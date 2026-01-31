@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Dispatch } from "@reduxjs/toolkit";
 import {
   Box,
   Container,
   Stack,
   Button,
   Rating,
-  IconButton,
   TextField,
   InputAdornment,
 } from "@mui/material";
@@ -13,30 +15,119 @@ import {
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
 import RemoveRedEyeRoundedIcon from "@mui/icons-material/RemoveRedEyeRounded";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import RemoveRoundedIcon from "@mui/icons-material/RemoveRounded";
 import LocalFireDepartmentRoundedIcon from "@mui/icons-material/LocalFireDepartmentRounded";
 import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
 
+import { Product } from "../../../lib/types/product";
+import { retrieveChosenProduct, retrieveProducts, retrieveProductsCache } from "./selector";
+import ProductService from "../../services/ProductService";
+import { serverApi } from "../../../lib/config";
+import { setProducts, setChosenProduct, cacheProducts } from "./slice";
+import OrderList from "./OrderList";
 import "../../../css/menu.css";
 
 function ChoosenProduct() {
-  const images = [
-    "/imgs/pastas.jpg",
-    "/imgs/default_img.jpg",
-    "/imgs/pastas.jpg",
-    "/imgs/pastas.jpg",
-  ];
+  const navigate = useNavigate();
+  const dispatch = useDispatch<Dispatch>();
+  const { productId } = useParams<{ productId: string }>();
+  const products = useSelector(retrieveProducts);
+  const productsCache = useSelector(retrieveProductsCache);
+  const chosenProduct = useSelector(retrieveChosenProduct);
+  const [loading, setLoading] = useState(false);
+  const [activeImg, setActiveImg] = useState("/imgs/default_img.jpg");
 
-  const [activeImg, setActiveImg] = useState(images[0]);
-  const [qty, setQty] = useState(1);
+  useEffect(() => {
+    if (!productId) return;
+
+    const cached = products.find((p) => p._id === productId);
+    if (cached) {
+      dispatch(setChosenProduct(cached));
+      const cachedImages = cached.productImages?.length
+        ? cached.productImages.map((img) => `${serverApi}/${img}`)
+        : ["/imgs/default_img.jpg"];
+      setActiveImg(cachedImages[0]);
+    }
+
+    const updateProductInStore = (data: Product) => {
+      const updatedList = products.map((p) => (p._id === data._id ? data : p));
+      if (updatedList.length) {
+        dispatch(setProducts(updatedList));
+      }
+
+      if (productsCache && Object.keys(productsCache).length > 0) {
+        Object.keys(productsCache).forEach((key) => {
+          const list = productsCache[key];
+          if (!list) return;
+          const updated = list.map((p) => (p._id === data._id ? data : p));
+          dispatch(cacheProducts({ queryKey: key, products: updated }));
+        });
+      }
+    };
+
+    const fetchProduct = async () => {
+      try {
+        setLoading(!cached);
+        const productService = new ProductService();
+        const data = await productService.getProduct(productId);
+        dispatch(setChosenProduct(data));
+        updateProductInStore(data);
+        const fetchedImages = data.productImages?.length
+          ? data.productImages.map((img) => `${serverApi}/${img}`)
+          : ["/imgs/default_img.jpg"];
+        setActiveImg(fetchedImages[0]);
+      } catch (err) {
+        console.error("Error loading product:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productId, dispatch]);
+
+  useEffect(() => {
+    if (!chosenProduct) return;
+    if (chosenProduct.productImages?.length) {
+      setActiveImg(`${serverApi}/${chosenProduct.productImages[0]}`);
+    }
+  }, [chosenProduct]);
+
+
+
+  if (loading) {
+    return (
+      <div className="cp-section">
+        <Container className="cp-container">
+          <Box sx={{ textAlign: "center", py: 6 }}>Loading product...</Box>
+        </Container>
+      </div>
+    );
+  }
+
+  if (!chosenProduct) {
+    return (
+      <div className="cp-section">
+        <Container className="cp-container">
+          <Box sx={{ textAlign: "center", py: 6 }}>Product not found</Box>
+          <Button className="cp-back" startIcon={<ArrowBackRoundedIcon />} onClick={() => navigate("/products")}>
+            Back to Menu
+          </Button>
+        </Container>
+      </div>
+    );
+  }
+
+  const images = chosenProduct.productImages?.length
+    ? chosenProduct.productImages.map((img) => `${serverApi}/${img}`)
+    : ["/imgs/default_img.jpg"];
 
   return (
     <div className="cp-section">
       <Container className="cp-container">
         {/* TOP BAR */}
         <Stack direction="row" justifyContent="space-between" alignItems="center" className="cp-topbar">
-          <Button className="cp-back" startIcon={<ArrowBackRoundedIcon />} href="/products">
+          <Button className="cp-back" startIcon={<ArrowBackRoundedIcon />} onClick={() => navigate("/products")}>
             Back
           </Button>
 
@@ -64,11 +155,11 @@ function ChoosenProduct() {
                 <Stack direction="row" spacing={1} className="cp-floatIcons">
                   <Box className="cp-miniPill">
                     <FavoriteBorderRoundedIcon />
-                    <span>124</span>
+                    <span>{chosenProduct.productLikes}</span>
                   </Box>
                   <Box className="cp-miniPill">
                     <RemoveRedEyeRoundedIcon />
-                    <span>1800</span>
+                    <span>{chosenProduct.productViews}</span>
                   </Box>
                 </Stack>
               </Box>
@@ -90,12 +181,12 @@ function ChoosenProduct() {
 
             {/* DETAILS */}
             <Box className="cp-details">
-              <Box className="cp-title">Spaghetti</Box>
+              <Box className="cp-title">{chosenProduct.productName}</Box>
 
               <Stack direction="row" alignItems="center" spacing={2} className="cp-meta">
                 <Stack direction="row" spacing={1} alignItems="center">
                   <Rating value={4} readOnly />
-                  <Box className="cp-rev">(324 reviews)</Box>
+                  <Box className="cp-rev">({chosenProduct.productReviewCount || 0} reviews)</Box>
                 </Stack>
 
                 <Box className="cp-dot" />
@@ -104,8 +195,7 @@ function ChoosenProduct() {
               </Stack>
 
               <Box className="cp-desc">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Egestas consequat mi eget auctor aliquam, diam.
-                Tellus eu augue pretium, volutpat aliquam, donec.
+                {chosenProduct.productDesc || "Delicious item from our menu"}
               </Box>
 
               {/* OPTIONS (hard-coded UI) */}
@@ -132,62 +222,9 @@ function ChoosenProduct() {
             </Box>
           </Box>
 
-          {/* RIGHT: ORDER PANEL (STICKY) */}
+          {/* RIGHT: ORDER PANEL (BASKET) */}
           <Box className="cp-right">
-            <Box className="cp-panel">
-              <Box className="cp-panelTitle">Order Summary</Box>
-
-              <Stack spacing={1.3} mt={2}>
-                <Stack direction="row" justifyContent="space-between" alignItems="baseline">
-                  <Box className="cp-priceLabel">Price</Box>
-                  <Box className="cp-price">$12.05</Box>
-                </Stack>
-
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
-                  <Box className="cp-priceLabel">Quantity</Box>
-
-                  <Stack direction="row" spacing={1} alignItems="center" className="cp-qty">
-                    <IconButton
-                      className="cp-qtyBtn"
-                      onClick={() => setQty((p) => (p > 1 ? p - 1 : 1))}
-                    >
-                      <RemoveRoundedIcon />
-                    </IconButton>
-
-                    <Box className="cp-qtyNum">{qty}</Box>
-
-                    <IconButton className="cp-qtyBtn" onClick={() => setQty((p) => p + 1)}>
-                      <AddRoundedIcon />
-                    </IconButton>
-                  </Stack>
-                </Stack>
-
-                <Box className="cp-line" />
-
-                <Stack direction="row" justifyContent="space-between">
-                  <Box className="cp-priceLabel">Subtotal</Box>
-                  <Box className="cp-subtotal">${(12.05 * qty).toFixed(2)}</Box>
-                </Stack>
-
-                <Stack direction="row" justifyContent="space-between">
-                  <Box className="cp-priceLabel">Delivery</Box>
-                  <Box className="cp-subtotal">$0.00</Box>
-                </Stack>
-
-                <Stack direction="row" justifyContent="space-between" className="cp-totalRow">
-                  <Box className="cp-totalLabel">Total</Box>
-                  <Box className="cp-total">${(12.05 * qty).toFixed(2)}</Box>
-                </Stack>
-
-                <Button variant="contained" color="secondary" className="cp-addBtn">
-                  Add to Basket
-                </Button>
-
-                <Button variant="outlined" className="cp-wishBtn" startIcon={<FavoriteBorderRoundedIcon />}>
-                  Add to wishlist
-                </Button>
-              </Stack>
-            </Box>
+            <OrderList />
           </Box>
         </Box>
       </Container>

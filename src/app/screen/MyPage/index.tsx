@@ -1,4 +1,4 @@
-import { Box, Container, Stack } from "@mui/material";
+import { Box, Container, Stack, Card, CardContent } from "@mui/material";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import TelegramIcon from "@mui/icons-material/Telegram";
@@ -6,6 +6,7 @@ import YouTubeIcon from "@mui/icons-material/YouTube";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 import Button from "@mui/material/Button";
 import "../../../css/userPage.css";
+import "../../../css/profile.css";
 import { useNavigate } from "react-router-dom";
 import { useGlobals } from "../../hooks/useGlobals";
 import { serverApi, Messages } from "../../../lib/config";
@@ -174,9 +175,6 @@ export default function UserPage() {
   const { authMember } = useGlobals();
   const member = authMember;
 
-  console.log("=== MyPage authMember ===", authMember);
-  console.log("=== MyPage member ===", member);
-
   if (!authMember) {
     navigate("/");
     return null;
@@ -186,22 +184,21 @@ export default function UserPage() {
     <div className={"user-page"}>
       <Container>
         <Stack className={"my-page-frame"}>
+          {/* LEFT SECTION - EDIT PROFILE */}
           <Stack className={"my-page-left"}>
             <Box display={"flex"} flexDirection={"column"}>
-              <Box className={"menu-name"}>Modify Member Details</Box>
+              <Box className={"menu-name"}>Edit Profile</Box>
               <Box className={"menu-content"}>
                 <Settings />
               </Box>
             </Box>
           </Stack>
 
+          {/* RIGHT SECTION - PROFILE INFO */}
           <Stack className={"my-page-right"}>
             <Box className={"order-info-box"}>
-              <Box
-                display={"flex"}
-                flexDirection={"column"}
-                alignItems={"center"}
-              >
+              {/* Profile Header */}
+              <Box display={"flex"} flexDirection={"column"} alignItems={"center"}>
                 <div className={"order-user-img"}>
                   <img
                     src={
@@ -223,32 +220,40 @@ export default function UserPage() {
                     />
                   </div>
                 </div>
-                <span className={"order-user-name"}>
-                  {member?.memberNick}
-                </span>
+                <span className={"order-user-name"}>{member?.memberNick}</span>
+                <span className={"order-user-prof"}>{member?.memberType}</span>
                 <span className={"order-user-prof"}>
-                  {member?.memberType}
-                </span>
-                <span className={"order-user-prof"}>
-                  {member?.memberAddress
-                    ? member.memberAddress
-                    : "No Address"}
+                  {member?.memberAddress ? member.memberAddress : "No Address"}
                 </span>
               </Box>
+
+              {/* Social Media */}
               <Box className={"user-media-box"}>
                 <FacebookIcon />
                 <InstagramIcon />
                 <TelegramIcon />
                 <YouTubeIcon />
               </Box>
+
+              {/* Bio */}
               <p className={"user-desc"}>
-                {member?.memberDesc
-                  ? member.memberDesc
-                  : "No description"}
+                {member?.memberDesc ? member.memberDesc : "No description"}
               </p>
-              
-              {/* Finished Orders Section */}
-              <Box sx={{ mt: 3 }}>
+
+              {/* Points Card */}
+              <Card sx={{ mb: 3, backgroundColor: "#f9f9f9", borderRadius: 2 }}>
+                <CardContent sx={{ textAlign: "center" }}>
+                  <Box sx={{ fontSize: 12, color: "#666", mb: 1 }}>Loyalty Points</Box>
+                  <Box sx={{ fontSize: 28, fontWeight: 700, color: "#1976d2" }}>
+                    {member?.memberPoints || 0}
+                  </Box>
+                  <Box sx={{ fontSize: 12, color: "#999", mt: 0.5 }}>pts</Box>
+                </CardContent>
+              </Card>
+
+              {/* Order History */}
+              <Box sx={{ mt: 2 }}>
+                <Box sx={{ fontWeight: 600, fontSize: 14, mb: 2 }}>Recent Orders</Box>
                 <FinishedOrders />
               </Box>
             </Box>
