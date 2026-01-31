@@ -85,16 +85,6 @@ function OrderList() {
         </Box>
 
         <Box className="cart-divider" />
-        <Box className="cart-subtitle">Voucher Code</Box>
-
-        <Stack direction="row" spacing={1} alignItems="center" mt={1}>
-          <Box className="voucher-code">FREETOEAT</Box>
-          <Box className="voucher-add">
-            <AddRoundedIcon />
-          </Box>
-        </Stack>
-
-        <Box className="cart-divider" />
 
         <Stack spacing={1.2} className="cart-totals">
           <Stack direction="row" justifyContent="space-between">
@@ -102,19 +92,9 @@ function OrderList() {
             <Box className="tval">$78.3</Box>
           </Stack>
 
-          <Stack direction="row" justifyContent="space-between">
-            <Box className="tlabel">Tax fee</Box>
-            <Box className="tval">$3.5</Box>
-          </Stack>
-
-          <Stack direction="row" justifyContent="space-between">
-            <Box className="tlabel">Voucher</Box>
-            <Box className="tval">$5.0</Box>
-          </Stack>
-
           <Stack direction="row" justifyContent="space-between" className="total-row">
             <Box className="tlabel">Total</Box>
-            <Box className="tval">$76.8</Box>
+            <Box className="tval">$78.3</Box>
           </Stack>
         </Stack>
 

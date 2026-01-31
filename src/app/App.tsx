@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 import HomeNavbar from "./components/header/HomeNavbar";
 import Footer from "./components/footer/Footer";
@@ -20,6 +21,7 @@ import { sweetErrorHandling, sweetTopSuccessAlert } from "../lib/sweetAlert";
 import { Messages } from "../lib/config";
 import MemberService from "./services/MemberService";
 import useBusket from "./hooks/useBusket";
+import { clearCache } from "./screen/MenuPage/slice";
 
 function App() {
   const { cartItems, onAdd, onRemove, onDelete, onDeleteAll } = useBusket();
@@ -28,6 +30,7 @@ function App() {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const { setAuthMember } = useGlobals();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   
   /** HANDLERS **/
   const handleSignupClose = () => {
@@ -50,6 +53,7 @@ function App() {
       await member.logout();
       await sweetTopSuccessAlert("success", 700);
       setAuthMember(null);
+      dispatch(clearCache()); // Clear Redux cache on logout
       navigate("/");
     } catch (err) {
       console.log(err);

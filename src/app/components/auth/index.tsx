@@ -23,6 +23,8 @@ import { LoginInput, MemberInput } from "../../../lib/types/member";
 import MemberService from "../../services/MemberService";
 import { sweetErrorHandling } from "../../../lib/sweetAlert";
 import { useGlobals } from "../../hooks/useGlobals";
+import { useDispatch } from "react-redux";
+import { clearCache } from "../../screen/MenuPage/slice";
 
 const GlassModal = styled(Box)({
   position: "absolute",
@@ -152,6 +154,7 @@ interface AuthenticationModalProps {
 export default function AuthenticationModal(props: AuthenticationModalProps) {
   const { signupOpen, loginOpen, handleSignupClose, handleLoginClose } = props;
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [memberNick, setMemberNick] = useState<string>("");
   const [memberPhone, setMemberPhone] = useState<string>("");
@@ -201,6 +204,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
       const memberService = new MemberService();
       const result = await memberService.signup(input);
       setAuthMember(result);
+      dispatch(clearCache()); // Clear cache when new user signs up
       handleSignupClose();
       setMemberNick("");
       setMemberPhone("");
@@ -229,6 +233,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
       const memberService = new MemberService();
       const result = await memberService.login(input);
       setAuthMember(result);
+      dispatch(clearCache()); // Clear cache when user logs in
       handleLoginClose();
       setMemberNick("");
       setMemberPassword("");

@@ -122,8 +122,13 @@ const Menu = () => {
       };
 
       const result = await productService.getProducts(inquiry);
-      console.log("Products from API:", result);
-      console.log("memberLiked values:", result.map((p: any) => ({ name: p.productName, memberLiked: p.memberLiked })));
+      console.log("🔍 Products from API:", result);
+      console.log("📍 memberLiked field check:", result.map((p: any) => ({ 
+        id: p._id, 
+        name: p.productName, 
+        memberLiked: p.memberLiked,
+        hasField: 'memberLiked' in p
+      })));
       setProducts(result);
       dispatch(cacheProducts({ queryKey, products: result }));
     } catch (err) {
