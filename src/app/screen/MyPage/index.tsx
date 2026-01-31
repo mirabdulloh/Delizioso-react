@@ -20,19 +20,20 @@ import MemberService from "../../services/MemberService";
 
 function Settings() {
   const { authMember, setAuthMember } = useGlobals();
+  const member = authMember?.member;
   const [memberImage, setMemberImage] = useState<string>(
-    authMember?.memberImg
-      ? `${serverApi}/${authMember.memberImg}`
+    member?.memberImg
+      ? `${serverApi}/${member.memberImg}`
       : "/icons/default-user.svg"
   );
 
   const [memberUpdateInput, setMemberUpdateInput] = useState<MemberUpdateInput>(
     {
-      memberNick: authMember?.memberNick,
-      memberPhone: authMember?.memberPhone,
-      memberAddress: authMember?.memberAddress,
-      memberDesc: authMember?.memberDesc,
-      memberImg: authMember?.memberImg,
+      memberNick: member?.memberNick,
+      memberPhone: member?.memberPhone,
+      memberAddress: member?.memberAddress,
+      memberDesc: member?.memberDesc,
+      memberImg: member?.memberImg,
     }
   );
 
@@ -113,7 +114,7 @@ function Settings() {
           <input
             className={"spec-input mb-nick"}
             type="text"
-            placeholder={authMember?.memberNick}
+            placeholder={member?.memberNick}
             value={memberUpdateInput.memberNick}
             name="memberNick"
             onChange={memberNickHandller}
@@ -126,7 +127,7 @@ function Settings() {
           <input
             className={"spec-input mb-phone"}
             type="text"
-            placeholder={authMember?.memberPhone ?? "no phone"}
+            placeholder={member?.memberPhone ?? "no phone"}
             value={memberUpdateInput.memberPhone}
             name="memberPhone"
             onChange={memberPhoneHandller}
@@ -138,7 +139,7 @@ function Settings() {
             className={"spec-input  mb-address"}
             type="text"
             placeholder={
-              authMember?.memberAddress ? authMember.memberAddress : "no address"
+              member?.memberAddress ? member.memberAddress : "no address"
             }
             value={memberUpdateInput.memberAddress}
             name="memberAddress"
@@ -151,7 +152,7 @@ function Settings() {
           <label className={"spec-label"}>Description</label>
           <textarea
             className={"spec-textarea mb-description"}
-            placeholder={authMember?.memberDesc ? authMember.memberDesc : "no desc"}
+            placeholder={member?.memberDesc ? member.memberDesc : "no desc"}
             value={memberUpdateInput.memberDesc}
             name="memberDesc"
             onChange={memberDecsHandller}
@@ -170,6 +171,10 @@ function Settings() {
 export default function UserPage() {
   const navigate = useNavigate();
   const { authMember } = useGlobals();
+  const member = authMember?.member;
+
+  console.log("=== MyPage authMember ===", authMember);
+  console.log("=== MyPage member ===", member);
 
   if (!authMember) {
     navigate("/");
@@ -199,8 +204,8 @@ export default function UserPage() {
                 <div className={"order-user-img"}>
                   <img
                     src={
-                      authMember?.memberImg
-                        ? `${serverApi}/${authMember.memberImg}`
+                      member?.memberImg
+                        ? `${serverApi}/${member.memberImg}`
                         : "/icons/default-user.svg"
                     }
                     className={"order-user-avatar"}
@@ -209,7 +214,7 @@ export default function UserPage() {
                   <div className={"order-user-icon-box"}>
                     <img
                       src={
-                        authMember?.memberType === MemberType.RESTAURANT
+                        member?.memberType === MemberType.RESTAURANT
                           ? "/icons/restaurant.svg"
                           : "/icons/user-badge.svg"
                       }
@@ -218,14 +223,14 @@ export default function UserPage() {
                   </div>
                 </div>
                 <span className={"order-user-name"}>
-                  {authMember?.memberNick}
+                  {member?.memberNick}
                 </span>
                 <span className={"order-user-prof"}>
-                  {authMember?.memberType}
+                  {member?.memberType}
                 </span>
                 <span className={"order-user-prof"}>
-                  {authMember?.memberAddress
-                    ? authMember.memberAddress
+                  {member?.memberAddress
+                    ? member.memberAddress
                     : "No Address"}
                 </span>
               </Box>
@@ -236,10 +241,12 @@ export default function UserPage() {
                 <YouTubeIcon />
               </Box>
               <p className={"user-desc"}>
-                {authMember?.memberDesc
-                  ? authMember.memberDesc
+                {member?.memberDesc
+                  ? member.memberDesc
                   : "No description"}
               </p>
+              
+              {/* Coupon section - will be fetched via /member/coupon-progress API */}
             </Box>
           </Stack>
         </Stack>

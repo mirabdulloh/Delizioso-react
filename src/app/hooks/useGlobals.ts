@@ -1,12 +1,12 @@
-import React,{createContext, useContext} from "react";
-import { Member } from "../../lib/types/member";
+import {createContext, useContext} from "react";
+import { AuthData } from "../../lib/types/member";
 
 
 interface GlobalInterface{
-    authMember: Member | null;
-    setAuthMember: (member:Member|null)=>void;
-    orderBuilder:Date;
-    setOrderBuilder: (input:Date) => void;
+    authMember: AuthData | null;
+    setAuthMember: (member: AuthData | null) => void;
+    orderBuilder: Date;
+    setOrderBuilder: (input: Date) => void;
 }
 
 

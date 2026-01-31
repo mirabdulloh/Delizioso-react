@@ -5,8 +5,8 @@ import {
   Member,
   MemberInput,
   MemberUpdateInput,
+  AuthData,
 } from "../../lib/types/member";
-import { METHODS } from "http";
 
 class MemberService {
   private readonly path: string;
@@ -28,30 +28,30 @@ class MemberService {
     }
   }
 
-  public async signup(input: MemberInput): Promise<Member> {
+  public async signup(input: MemberInput): Promise<AuthData> {
     try {
       let url = this.path + "/member/signUp";
       const result = await axios.post(url, input, { withCredentials: true });
       console.log("signup:", result);
-      const member: Member = result.data as Member;
-      localStorage.setItem("memberData", JSON.stringify(member));
-      return member;
+      const authData: AuthData = result.data as AuthData;
+      localStorage.setItem("memberData", JSON.stringify(authData));
+      return authData;
     } catch (err) {
       console.log("MemberService - signup error:", err);
       throw err;
     }
   }
 
-  public async login(input: LoginInput): Promise<Member> {
+  public async login(input: LoginInput): Promise<AuthData> {
     try {
       let url = this.path + "/member/login";
       const result = await axios.post(url, input, { withCredentials: true });
-      console.log("signup:", result);
-      const member: Member = result.data as Member;
-      localStorage.setItem("memberData", JSON.stringify(member));
-      return member;
+      console.log("login:", result);
+      const authData: AuthData = result.data as AuthData;
+      localStorage.setItem("memberData", JSON.stringify(authData));
+      return authData;
     } catch (err) {
-      console.log("MemberService - signup error:", err);
+      console.log("MemberService - login error:", err);
       throw err;
     }
   }
@@ -69,7 +69,7 @@ class MemberService {
     }
   }
 
-  public async updateMember(input: MemberUpdateInput): Promise<Member> {
+  public async updateMember(input: MemberUpdateInput): Promise<AuthData> {
     try {
       const formData = new FormData();
       formData.append("memberNick", input.memberNick || "");
@@ -85,13 +85,23 @@ class MemberService {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log("update member",result);
-      const member:Member = result.data
-      localStorage.setItem("memberData",JSON.stringify(member));
-      return member
-      
+      console.log("update member", result);
+      const authData: AuthData = result.data;
+      localStorage.setItem("memberData", JSON.stringify(authData));
+      return authData;
     } catch (err) {
-      console.log("MemberService - logout error:", err);
+      console.log("MemberService - updateMember error:", err);
+      throw err;
+    }
+  }
+  public async validateCoupon(couponCode: string): Promise<{ valid: boolean; discount: number; message?: string }> {
+    try {
+      const url = this.path + "/member/validate-coupon";
+      const result = await axios.post(url, { couponCode }, { withCredentials: true });
+      console.log("validateCoupon:", result);
+      return result.data;
+    } catch (err) {
+      console.log("MemberService - validateCoupon error:", err);
       throw err;
     }
   }

@@ -50,18 +50,6 @@ const GlassModal = styled(Box)({
   },
 });
 
-const GradientBackground = styled(Box)({
-  position: "fixed",
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  background:
-    "linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%)",
-  backdropFilter: "blur(10px)",
-  zIndex: -1,
-});
-
 const StyledCloseButton = styled(IconButton)({
   position: "absolute",
   right: "20px",

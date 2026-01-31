@@ -1,5 +1,17 @@
 import { MemberStatus, MemberType } from "../enums/member.enum";
 
+export interface MemberCoupon {
+  code: string | null;
+  discount: number;
+  isUsed: boolean;
+  expiresAt?: Date | null;
+}
+
+export interface AuthData {
+  member: Member;
+  accessToken: string;
+}
+
 export interface Member {
   _id: string;
   memberType: MemberType;
@@ -11,6 +23,7 @@ export interface Member {
   memberDesc?: string;
   memberImg?: string;
   memberPoints: number;
+  memberCoupon?: MemberCoupon;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -13,19 +13,20 @@ import MemberService from "../../services/MemberService";
 
 export function Settings() {
   const { authMember, setAuthMember } = useGlobals();
+  const member = authMember?.member;
   const [memberImage, setMemberImage] = useState<string>(
-    authMember?.memberImg
-      ? `${serverApi}/${authMember.memberImg}`
+    member?.memberImg
+      ? `${serverApi}/${member.memberImg}`
       : "/icons/default-user.svg"
   );
 
   const [memberUpdateInput, setMemberUpdateInput] = useState<MemberUpdateInput>(
     {
-      memberNick: authMember?.memberNick,
-      memberPhone: authMember?.memberPhone,
-      memberAddress: authMember?.memberAddress,
-      memberDesc: authMember?.memberDesc,
-      memberImg: authMember?.memberImg,
+      memberNick: member?.memberNick,
+      memberPhone: member?.memberPhone,
+      memberAddress: member?.memberAddress,
+      memberDesc: member?.memberDesc,
+      memberImg: member?.memberImg,
     }
   );
 
@@ -107,7 +108,7 @@ export function Settings() {
           <input
             className={"spec-input mb-nick"}
             type="text"
-            placeholder={authMember?.memberNick}
+            placeholder={member?.memberNick}
             value={memberUpdateInput.memberNick}
             name="memberNick"
             onChange={memberNickHandller}
@@ -120,7 +121,7 @@ export function Settings() {
           <input
             className={"spec-input mb-phone"}
             type="text"
-            placeholder={authMember?.memberPhone ?? "no phone"}
+            placeholder={member?.memberPhone ?? "no phone"}
             value={memberUpdateInput.memberPhone}
             name="memberPhone"
             onChange={memberPhoneHandller}
@@ -132,7 +133,7 @@ export function Settings() {
             className={"spec-input  mb-address"}
             type="text"
             placeholder={
-              authMember?.memberAddress ? authMember.memberAddress : "no address"
+              member?.memberAddress ? member.memberAddress : "no address"
             }
             value={memberUpdateInput.memberAddress}
             name="memberAddress"
@@ -145,7 +146,7 @@ export function Settings() {
           <label className={"spec-label"}>Description</label>
           <textarea
             className={"spec-textarea mb-description"}
-            placeholder={authMember?.memberDesc ? authMember.memberDesc : "no desc"}
+            placeholder={member?.memberDesc ? member.memberDesc : "no desc"}
             value={memberUpdateInput.memberDesc}
             name="memberDesc"
             onChange={memberDecsHandller}
