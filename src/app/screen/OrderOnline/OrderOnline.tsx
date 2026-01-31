@@ -716,6 +716,48 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                       >
                         Pay now
                       </Button>
+                      <Button 
+                        className="summary-secondary"
+                        variant="outlined"
+                        color="error"
+                        fullWidth
+                        onClick={async () => {
+                          try {
+                            // Ask for confirmation
+                            const confirmed = await sweetWarningAlert(
+                              "Cancel Order",
+                              "Are you sure you want to cancel this order? This action cannot be undone."
+                            );
+
+                            if (!confirmed) return;
+                            
+                            // Update order status to DELETED
+                            if (visibleSelected) {
+                              const orderService = new OrderService();
+                              await orderService.updateOrder({
+                                orderId: visibleSelected.id,
+                                orderStatus: "DELETED" as any,
+                              });
+                              
+                              // Show success alert
+                              await sweetSuccessAlert(
+                                "Order Cancelled",
+                                "Your order has been cancelled successfully."
+                              );
+
+                              console.log("✅ Order cancelled successfully");
+                              
+                              // Re-fetch orders to update the UI
+                              setOrderBuilder(new Date());
+                            }
+                          } catch (err) {
+                            console.error("❌ Cancel order error:", err);
+                            await sweetErrorHandling(err);
+                          }
+                        }}
+                      >
+                        Cancel Order
+                      </Button>
                       {!hasAddress() && (
                         <Box
                           sx={{
