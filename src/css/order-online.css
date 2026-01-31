@@ -193,6 +193,90 @@
   font-size: 13px;
 }
 
+/* coupon section */
+.coupon-section {
+  margin-bottom: 16px;
+}
+
+.coupon-card {
+  margin-bottom: 16px;
+  padding: 12px;
+  background-color: rgba(255, 193, 7, 0.1);
+  border: 2px solid #ffc107;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.coupon-card:hover {
+  background-color: rgba(255, 193, 7, 0.2);
+  transform: translateY(-2px);
+}
+
+.coupon-card-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.coupon-card-code {
+  font-size: 16px;
+  font-weight: 800;
+  color: #ffc107;
+  letter-spacing: 1px;
+}
+
+.coupon-card-subtitle {
+  font-size: 11px;
+  color: #555;
+  margin-top: 4px;
+}
+
+.coupon-copy-btn {
+  background-color: #ffc107 !important;
+  color: #000 !important;
+}
+
+.coupon-copy-btn:hover {
+  background-color: #ffb300 !important;
+}
+
+.coupon-apply-title {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.coupon-input {
+  flex: 1;
+}
+
+.coupon-apply-btn,
+.coupon-remove-btn {
+  min-width: 80px !important;
+}
+
+.coupon-applied-banner {
+  margin-top: 8px;
+  padding: 8px;
+  background-color: rgba(76, 175, 80, 0.1);
+  border: 1px solid #4caf50;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+.delivery-val.applied {
+  color: #4caf50;
+  text-decoration: line-through;
+}
+
+.coupon-discount-val {
+  color: #4caf50;
+}
+
 /* status pill */
 .orderCard-status {
   font-weight: 900;

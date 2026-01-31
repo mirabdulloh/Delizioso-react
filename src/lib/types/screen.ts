@@ -32,4 +32,5 @@ export interface OrdersPageState {
   pausedOrders: Order[];
   finishedOrders: Order[];
   processOrders: Order[];
+  cartItems: import("./search").CartItem[];
 }

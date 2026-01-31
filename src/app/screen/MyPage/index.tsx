@@ -20,7 +20,7 @@ import MemberService from "../../services/MemberService";
 
 function Settings() {
   const { authMember, setAuthMember } = useGlobals();
-  const member = authMember?.member;
+  const member = authMember;
   const [memberImage, setMemberImage] = useState<string>(
     member?.memberImg
       ? `${serverApi}/${member.memberImg}`
@@ -171,7 +171,7 @@ function Settings() {
 export default function UserPage() {
   const navigate = useNavigate();
   const { authMember } = useGlobals();
-  const member = authMember?.member;
+  const member = authMember;
 
   console.log("=== MyPage authMember ===", authMember);
   console.log("=== MyPage member ===", member);

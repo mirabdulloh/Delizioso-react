@@ -5,7 +5,6 @@ import {
   Member,
   MemberInput,
   MemberUpdateInput,
-  AuthData,
 } from "../../lib/types/member";
 
 class MemberService {
@@ -13,6 +12,15 @@ class MemberService {
   constructor() {
     this.path = serverApi;
   }
+
+  private extractMember(data: any): Member {
+    const member: any = data?.member ?? data;
+    if (member && !member.memberAddress && member.memberAdress) {
+      member.memberAddress = member.memberAdress;
+    }
+    return member as Member;
+  }
+
 
 
   public async getRestaurant(): Promise<Member> {
@@ -28,28 +36,28 @@ class MemberService {
     }
   }
 
-  public async signup(input: MemberInput): Promise<AuthData> {
+  public async signup(input: MemberInput): Promise<Member> {
     try {
       let url = this.path + "/member/signUp";
       const result = await axios.post(url, input, { withCredentials: true });
       console.log("signup:", result);
-      const authData: AuthData = result.data as AuthData;
-      localStorage.setItem("memberData", JSON.stringify(authData));
-      return authData;
+      const member: Member = this.extractMember(result.data);
+      localStorage.setItem("memberData", JSON.stringify(member));
+      return member;
     } catch (err) {
       console.log("MemberService - signup error:", err);
       throw err;
     }
   }
 
-  public async login(input: LoginInput): Promise<AuthData> {
+  public async login(input: LoginInput): Promise<Member> {
     try {
       let url = this.path + "/member/login";
       const result = await axios.post(url, input, { withCredentials: true });
       console.log("login:", result);
-      const authData: AuthData = result.data as AuthData;
-      localStorage.setItem("memberData", JSON.stringify(authData));
-      return authData;
+      const member: Member = this.extractMember(result.data);
+      localStorage.setItem("memberData", JSON.stringify(member));
+      return member;
     } catch (err) {
       console.log("MemberService - login error:", err);
       throw err;
@@ -69,13 +77,14 @@ class MemberService {
     }
   }
 
-  public async updateMember(input: MemberUpdateInput): Promise<AuthData> {
+  public async updateMember(input: MemberUpdateInput): Promise<Member> {
     try {
       const formData = new FormData();
       formData.append("memberNick", input.memberNick || "");
       formData.append("memberPhone", input.memberPhone || "");
       formData.append("memberDesc", input.memberDesc || "");
       formData.append("memberAddress", input.memberAddress || "");
+      formData.append("memberAdress", input.memberAddress || "");
       formData.append("memberImg",input.memberImg || "");
       const result = await axios(`${serverApi}/member/update`, {
         method: "POST",
@@ -86,11 +95,25 @@ class MemberService {
         },
       });
       console.log("update member", result);
-      const authData: AuthData = result.data;
-      localStorage.setItem("memberData", JSON.stringify(authData));
-      return authData;
+      const member: Member = this.extractMember(result.data);
+      localStorage.setItem("memberData", JSON.stringify(member));
+      return member;
     } catch (err) {
       console.log("MemberService - updateMember error:", err);
+      throw err;
+    }
+  }
+
+  public async getMemberDetail(): Promise<Member> {
+    try {
+      const url = this.path + "/member/detail";
+      const result = await axios.get(url, { withCredentials: true });
+      console.log("getMemberDetail:", result);
+      const member: Member = this.extractMember(result.data);
+      localStorage.setItem("memberData", JSON.stringify(member));
+      return member;
+    } catch (err) {
+      console.log("MemberService - getMemberDetail error:", err);
       throw err;
     }
   }
@@ -102,6 +125,20 @@ class MemberService {
       return result.data;
     } catch (err) {
       console.log("MemberService - validateCoupon error:", err);
+      throw err;
+    }
+  }
+
+  public async useCoupon(couponCode: string): Promise<Member> {
+    try {
+      const url = this.path + "/member/use-coupon";
+      const result = await axios.post(url, { couponCode }, { withCredentials: true });
+      console.log("useCoupon:", result);
+      const member: Member = this.extractMember(result.data);
+      localStorage.setItem("memberData", JSON.stringify(member));
+      return member;
+    } catch (err) {
+      console.log("MemberService - useCoupon error:", err);
       throw err;
     }
   }

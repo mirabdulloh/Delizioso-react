@@ -13,7 +13,7 @@ import MemberService from "../../services/MemberService";
 
 export function Settings() {
   const { authMember, setAuthMember } = useGlobals();
-  const member = authMember?.member;
+  const member = authMember;
   const [memberImage, setMemberImage] = useState<string>(
     member?.memberImg
       ? `${serverApi}/${member.memberImg}`

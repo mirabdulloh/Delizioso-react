@@ -1,64 +1,30 @@
-import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { CartItem } from "../../lib/types/search";
+import { addToCart, removeFromCart, deleteFromCart, clearCart } from "../screen/OrderOnline/slice";
+import { retrieveCartItems } from "../screen/OrderOnline/selector";
 
 const useBusket = () => {
-  const cartJson = localStorage.getItem("cartData");
-  const currentCart = cartJson ? JSON.parse(cartJson) : [];
-
-  const [cartItems, setCartItems] = useState<CartItem[]>(currentCart);
+  const dispatch = useDispatch();
+  const cartItems = useSelector(retrieveCartItems);
 
   /** ADD ITEM */
   const onAdd = (input: CartItem) => {
-    const exist = cartItems.find((item) => item._id === input._id);
-
-    let updatedCart;
-
-    if (exist) {
-      updatedCart = cartItems.map((item) =>
-        item._id === input._id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      );
-    } else {
-      updatedCart = [...cartItems, { ...input }];
-    }
-
-    setCartItems(updatedCart);
-    localStorage.setItem("cartData", JSON.stringify(updatedCart));
+    dispatch(addToCart(input));
   };
 
   /** REMOVE ITEM */
   const onRemove = (input: CartItem) => {
-    const exist = cartItems.find((item) => item._id === input._id);
-
-    if (!exist) return;
-
-    let updatedCart;
-
-    if (exist.quantity === 1) {
-      updatedCart = cartItems.filter((item) => item._id !== input._id);
-    } else {
-      updatedCart = cartItems.map((item) =>
-        item._id === input._id
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
-      );
-    }
-
-    setCartItems(updatedCart);
-    localStorage.setItem("cartData", JSON.stringify(updatedCart));
+    dispatch(removeFromCart(input));
   };
 
-
+  /** DELETE ITEM */
   const onDelete = (input: CartItem) => {
-    const updatedCart = cartItems.filter((item) => item._id !== input._id);
-    setCartItems(updatedCart);
-    localStorage.setItem("cartData", JSON.stringify(updatedCart));
+    dispatch(deleteFromCart(input));
   };
 
+  /** CLEAR ALL */
   const onDeleteAll = () => {
-    setCartItems([]);
-    localStorage.removeItem("cartData");
+    dispatch(clearCart());
   }
 
   return { cartItems, onAdd, onRemove, onDelete, onDeleteAll };

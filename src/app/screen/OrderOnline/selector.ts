@@ -17,3 +17,8 @@ export const retrieveProcessOrders = createSelector(
   selectOrdersPage,
   (OrdersPage) => OrdersPage.processOrders || []
 );
+
+export const retrieveCartItems = createSelector(
+  selectOrdersPage,
+  (OrdersPage) => OrdersPage.cartItems || []
+);

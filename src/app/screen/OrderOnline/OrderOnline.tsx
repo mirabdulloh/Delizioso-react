@@ -124,14 +124,13 @@ function transformOrderToUI(order: Order): OrderUI {
 function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps) {
   const navigate = useNavigate();
   const dispatch = useDispatch<Dispatch>();
-  const { orderBuilder, authMember, setOrderBuilder } = useGlobals();
+  const { orderBuilder, authMember, setOrderBuilder, setAuthMember } = useGlobals();
+  const member = (authMember as any)?.member ?? authMember;
+  const availableCoupon = member?.memberCoupon;
+  const showCouponCard = Boolean(availableCoupon?.code && !availableCoupon?.isUsed);
   const [checkoutItems, setCheckoutItems] = useState<OrderItem[]>([]);
   const [couponCode, setCouponCode] = useState<string>("");
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number } | null>(null);
-  const [coupon, setCoupon] = useState<string | null>(null);
-
-  console.log("=== OrderOnline authMember ===", authMember);
-  console.log("=== OrderOnline coupon code ===", coupon);
 
   const handleRemoveQty = useCallback((itemId: string) => {
     setCheckoutItems((prev) =>
@@ -154,18 +153,6 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
   const handleDeleteItem = useCallback((itemId: string) => {
     setCheckoutItems((prev) => prev.filter((item) => item.id !== itemId));
   }, []);
-
-  // Set coupon code from authMember on mount/update
-  useEffect(() => {
-    const c = authMember?.member?.memberCoupon;
-    if (c?.code) {
-      setCoupon(c.code);
-      console.log("=== ✅ Coupon code set ===", c.code);
-    } else {
-      setCoupon(null);
-      console.log("=== ❌ Coupon NOT set ===");
-    }
-  }, [authMember]);
 
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) {
@@ -206,7 +193,7 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
   };
 
   const hasAddress = () => {
-    const address = authMember?.member?.memberAddress;
+    const address = member?.memberAddress || (member as any)?.memberAdress;
     const hasAddr = Boolean(address && address.trim());
     console.log("✅ Has Address:", hasAddr, "Address value:", address);
     return hasAddr;
@@ -292,8 +279,8 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
   const subtotal = checkoutItems.length > 0 ? calcSubtotal(checkoutItems) : (visibleSelected ? calcSubtotal(visibleSelected.items) : 0);
   const deliveryFee = 5;
   const couponDiscount = appliedCoupon ? appliedCoupon.discount : 0;
-  const delivery = appliedCoupon ? 0 : deliveryFee;
-  const total = Math.round((subtotal + delivery) * 100) / 100;
+  const delivery = deliveryFee;
+  const total = Math.round((subtotal + delivery - couponDiscount) * 100) / 100;
 
   return (
     <div className="orders-page">
@@ -501,61 +488,32 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
 
                 {/* COUPON SECTION */}
                 {activeStatus === "PAUSED" && (
-                  <Box sx={{ mb: 2 }}>
-                    {/* Show Available Coupon Card - only if not already applied */}
-                    {coupon && !appliedCoupon && (
-                      <Box
-                        sx={{
-                          mb: 2,
-                          p: 1.5,
-                          backgroundColor: "rgba(255, 193, 7, 0.1)",
-                          border: "2px solid #FFC107",
-                          borderRadius: "10px",
-                          cursor: "pointer",
-                          transition: "all 0.3s ease",
-                          "&:hover": {
-                            backgroundColor: "rgba(255, 193, 7, 0.2)",
-                            transform: "translateY(-2px)",
-                          },
-                        }}
-                        onClick={() => {
-                          setCouponCode(coupon);
-                          handleApplyCoupon();
-                        }}
-                      >
+                  <Box className="coupon-section">
+                    {showCouponCard && (
+                      <Box className="coupon-card">
                         <Stack direction="row" justifyContent="space-between" alignItems="center">
                           <Box>
-                            <Box sx={{ fontSize: "11px", fontWeight: "600", color: "#666", mb: 0.5 }}>
-                              🎉 You have a coupon!
-                            </Box>
-                            <Box sx={{ fontSize: "16px", fontWeight: "800", color: "#FFC107", letterSpacing: "1px" }}>
-                              {coupon}
-                            </Box>
-                            <Box sx={{ fontSize: "11px", color: "#555", mt: 0.5 }}>
-                              Save ${authMember?.member?.memberCoupon?.discount || 5} on delivery
+                            <Box className="coupon-card-title">🎉 You have a coupon!</Box>
+                            <Box className="coupon-card-code">{availableCoupon.code}</Box>
+                            <Box className="coupon-card-subtitle">
+                              Save ${availableCoupon.discount || 5} on delivery
                             </Box>
                           </Box>
                           <IconButton
                             aria-label="Copy coupon code"
                             onClick={(e) => {
                               e.stopPropagation();
-                              if (!coupon) return;
-                              navigator.clipboard?.writeText(coupon).catch(() => undefined);
-                              setCouponCode(coupon);
+                              navigator.clipboard?.writeText(availableCoupon.code).catch(() => undefined);
+                              setCouponCode(availableCoupon.code);
                             }}
-                            sx={{
-                              backgroundColor: "#FFC107",
-                              color: "#000",
-                              "&:hover": { backgroundColor: "#FFB300" },
-                            }}
+                            className="coupon-copy-btn"
                           >
                             <ContentCopyRoundedIcon fontSize="small" />
                           </IconButton>
                         </Stack>
                       </Box>
                     )}
-
-                    <Box sx={{ fontSize: "13px", fontWeight: "700", mb: 1 }}>Apply Coupon</Box>
+                    <Box className="coupon-apply-title">Apply Coupon</Box>
                     <Stack direction="row" spacing={1}>
                       <TextField
                         size="small"
@@ -563,14 +521,14 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                         value={couponCode}
                         onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                         disabled={appliedCoupon !== null}
-                        sx={{ flex: 1 }}
+                        className="coupon-input"
                       />
                       {!appliedCoupon ? (
                         <Button
                           variant="outlined"
                           size="small"
                           onClick={handleApplyCoupon}
-                          sx={{ minWidth: "80px" }}
+                          className="coupon-apply-btn"
                         >
                           Apply
                         </Button>
@@ -580,25 +538,14 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                           size="small"
                           color="error"
                           onClick={() => setAppliedCoupon(null)}
-                          sx={{ minWidth: "80px" }}
+                          className="coupon-remove-btn"
                         >
                           Remove
                         </Button>
                       )}
                     </Stack>
                     {appliedCoupon && (
-                      <Box
-                        sx={{
-                          mt: 1,
-                          p: 1,
-                          backgroundColor: "rgba(76, 175, 80, 0.1)",
-                          border: "1px solid #4CAF50",
-                          borderRadius: "8px",
-                          fontSize: "12px",
-                          color: "#2E7D32",
-                          fontWeight: "600",
-                        }}
-                      >
+                      <Box className="coupon-applied-banner">
                         ✓ Coupon {appliedCoupon.code} applied - Save ${appliedCoupon.discount}!
                       </Box>
                     )}
@@ -613,15 +560,15 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                   </Stack>
                   <Stack direction="row" justifyContent="space-between">
                     <Box className="tlabel">Delivery</Box>
-                    <Box className="tval" sx={{ color: appliedCoupon ? "#4CAF50" : "inherit", textDecoration: appliedCoupon ? "line-through" : "none" }}>
+                    <Box className={`tval delivery-val ${appliedCoupon ? "applied" : ""}`}>
                       ${deliveryFee.toFixed(2)}
                     </Box>
                   </Stack>
                   {appliedCoupon && (
                     <Stack direction="row" justifyContent="space-between">
                       <Box className="tlabel">Coupon Discount</Box>
-                      <Box className="tval" sx={{ color: "#4CAF50" }}>
-                        Free Delivery
+                      <Box className="tval coupon-discount-val">
+                        -${appliedCoupon.discount.toFixed(2)}
                       </Box>
                     </Stack>
                   )}
@@ -670,19 +617,26 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                                 orderStatus: OrderStatus.PROCESS,
                               });
                               
-                                            // Show success alert
+                              // Mark coupon as used if applied
+                              if (appliedCoupon) {
+                                try {
+                                  const memberService = new MemberService();
+                                  const updatedMember = await memberService.useCoupon(appliedCoupon.code);
+                                  setAuthMember(updatedMember);
+                                  console.log("✅ Coupon marked as used:", appliedCoupon.code);
+                                  setAppliedCoupon(null); // Clear applied coupon after use
+                                } catch (err) {
+                                  console.error("⚠️ Failed to mark coupon as used:", err);
+                                }
+                              }
+                              
+                              // Show success alert
                               await sweetSuccessAlert(
                                 "Payment Successful!",
                                 "Your order has been confirmed and is now being prepared."
                               );
 
                               console.log("✅ Payment successful - Order status updated to PROCESS");
-                              
-                              // Mark coupon as used if applied
-                              if (appliedCoupon) {
-                                console.log("📌 Coupon used:", appliedCoupon.code);
-                                // Backend will handle marking coupon as used via updateOrder
-                              }
                               
                               // Switch to ONGOING tab automatically
                               setActiveStatus("ONGOING");
