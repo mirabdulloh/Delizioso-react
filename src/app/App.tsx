@@ -22,6 +22,8 @@ import { Messages } from "../lib/config";
 import MemberService from "./services/MemberService";
 import useBusket from "./hooks/useBusket";
 import { clearCache } from "./screen/MenuPage/slice";
+import { clearLikesCache } from "./screen/MenuPage/likesSlice";
+
 
 function App() {
   const { cartItems, onAdd, onRemove, onDelete, onDeleteAll } = useBusket();
@@ -53,7 +55,8 @@ function App() {
       await member.logout();
       await sweetTopSuccessAlert("success", 700);
       setAuthMember(null);
-      dispatch(clearCache()); // Clear Redux cache on logout
+      dispatch(clearCache()); // Clear products cache on logout
+      dispatch(clearLikesCache()); // Clear likes cache on logout
       navigate("/");
     } catch (err) {
       console.log(err);

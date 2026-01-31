@@ -25,6 +25,7 @@ import { sweetErrorHandling } from "../../../lib/sweetAlert";
 import { useGlobals } from "../../hooks/useGlobals";
 import { useDispatch } from "react-redux";
 import { clearCache } from "../../screen/MenuPage/slice";
+import { clearLikesCache } from "../../screen/MenuPage/likesSlice";
 
 const GlassModal = styled(Box)({
   position: "absolute",
@@ -204,7 +205,8 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
       const memberService = new MemberService();
       const result = await memberService.signup(input);
       setAuthMember(result);
-      dispatch(clearCache()); // Clear cache when new user signs up
+      dispatch(clearCache()); // Clear product cache when new user signs up
+      dispatch(clearLikesCache()); // Clear likes cache when new user signs up
       handleSignupClose();
       setMemberNick("");
       setMemberPhone("");
@@ -233,7 +235,8 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
       const memberService = new MemberService();
       const result = await memberService.login(input);
       setAuthMember(result);
-      dispatch(clearCache()); // Clear cache when user logs in
+      dispatch(clearCache()); // Clear product cache when user logs in
+      dispatch(clearLikesCache()); // Clear likes cache when user logs in
       handleLoginClose();
       setMemberNick("");
       setMemberPassword("");

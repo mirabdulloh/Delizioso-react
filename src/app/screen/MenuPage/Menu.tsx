@@ -7,7 +7,6 @@ import {
   Rating,
   TextField,
   InputAdornment,
-  IconButton,
 } from "@mui/material";
 
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
@@ -16,23 +15,43 @@ import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 
 import { useDispatch, useSelector } from "react-redux";
+import { createSelector, Dispatch } from "@reduxjs/toolkit";
 import { Product } from "../../../lib/types/product";
 import { ProductCollection } from "../../../lib/enums/product.enum";
 import ProductService from "../../services/ProductService";
 import { 
-  cacheProducts, 
-  updateProductLike, 
-  selectCachedProducts 
+  setProducts,
+  cacheProducts,
 } from "./slice";
+import { retrieveProducts, retrieveProductsCache, retrieveLastFetch } from "./selector";
+import { updateProductLike } from "./likesSlice";
 import { serverApi } from "../../../lib/config";
 import { sweetErrorHandling, sweetTopSmallSuccessAlert } from "../../../lib/sweetAlert";
 
 import "../../../css/menu.css";
 import OrderList from "./OrderList";
 
+/** REDUX SLICE AND SELECTOR */
+const actionDispatch = (dispatch: Dispatch) => ({
+  setProducts: (data: Product[]) => dispatch(setProducts(data)),
+  cacheProducts: (payload: { queryKey: string; products: Product[] }) => dispatch(cacheProducts(payload)),
+  updateProductLike: (payload: any) => dispatch(updateProductLike(payload)),
+});
+
+const menuPageRetriever = createSelector(
+  retrieveProducts,
+  retrieveProductsCache,
+  retrieveLastFetch,
+  (products, productsCache, lastFetch) => ({
+    products,
+    productsCache,
+    lastFetch,
+  })
+);
+
 const Menu = () => {
-  const dispatch = useDispatch();
-  const [products, setProducts] = useState<Product[]>([]);
+  const { setProducts: setProductsAction, cacheProducts: cacheProductsAction, updateProductLike: updateProductLikeAction } = actionDispatch(useDispatch());
+  const { products, productsCache, lastFetch } = useSelector(menuPageRetriever);
   const [loading, setLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("All Category");
   const [searchQuery, setSearchQuery] = useState("");
@@ -62,29 +81,25 @@ const Menu = () => {
   };
 
   const queryKey = `${selectedCategory}-${searchQuery}-1`;
-  
-  // Use useSelector to get cached products from Redux store
-  const cached = useSelector((state: any) => {
-    const lastFetch = state.menuPage?.lastFetch?.[queryKey];
-    const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-    
-    if (!lastFetch || Date.now() - lastFetch > CACHE_DURATION) {
-      return null;
-    }
-    return state.menuPage?.productsCache?.[queryKey] || null;
-  });
+
+  // Check if we have cached products
+  const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+  const isCached = 
+    lastFetch[queryKey] && 
+    Date.now() - lastFetch[queryKey] < CACHE_DURATION && 
+    productsCache[queryKey];
 
   useEffect(() => {
-    // If we have cached products, use them
-    if (cached && cached.length > 0) {
+    // If we have valid cached products, use them
+    if (isCached) {
       console.log("Using cached products for:", queryKey);
-      setProducts(cached);
+      setProductsAction(productsCache[queryKey]);
     } else {
-      // Otherwise load from API
       console.log("Loading products from API for:", queryKey);
       loadProducts();
     }
-  }, [queryKey, cached]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryKey]);
 
   const loadProducts = async () => {
     try {
@@ -101,13 +116,13 @@ const Menu = () => {
           };
           const result = await productService.getFavoriteProducts(inquiry);
           console.log("Favorite products from API:", result);
-          setProducts(result);
-          dispatch(cacheProducts({ queryKey, products: result }));
+          setProductsAction(result);
+          cacheProductsAction({ queryKey, products: result });
         } catch (err) {
           console.error("Error loading favorite products:", err);
           // If no favorites, show empty
-          setProducts([]);
-          dispatch(cacheProducts({ queryKey, products: [] }));
+          setProductsAction([]);
+          cacheProductsAction({ queryKey, products: [] });
         }
         return;
       }
@@ -123,14 +138,8 @@ const Menu = () => {
 
       const result = await productService.getProducts(inquiry);
       console.log("🔍 Products from API:", result);
-      console.log("📍 memberLiked field check:", result.map((p: any) => ({ 
-        id: p._id, 
-        name: p.productName, 
-        memberLiked: p.memberLiked,
-        hasField: 'memberLiked' in p
-      })));
-      setProducts(result);
-      dispatch(cacheProducts({ queryKey, products: result }));
+      setProductsAction(result);
+      cacheProductsAction({ queryKey, products: result });
     } catch (err) {
       console.error("Error loading products:", err);
       sweetErrorHandling(err as Error);
@@ -145,38 +154,30 @@ const Menu = () => {
       const result = await productService.likeProduct(product._id);
       
       console.log("API Response for like:", result);
-      console.log("memberLiked:", result.memberLiked);
-      console.log("productLikes:", result.productLikes);
+      
+      // Update likes cache
+      updateProductLikeAction({
+        productId: product._id,
+        liked: result.memberLiked,
+        likesCount: result.productLikes,
+      });
       
       // If user is in Favorite category and unlikes a product, remove it from the list
       if (selectedCategory === "Favorite" && !result.memberLiked) {
-        setProducts(prevProducts =>
-          prevProducts.filter(p => p._id !== product._id)
-        );
+        setProductsAction(products.filter(p => p._id !== product._id));
       } else {
-        // Otherwise just update the like status
-        setProducts(prevProducts =>
-          prevProducts.map(p =>
-            p._id === product._id
+        // Otherwise just update the product in store
+        setProductsAction(products.map(p =>
+          p._id === product._id
               ? { ...p, memberLiked: result.memberLiked, productLikes: result.productLikes }
               : p
           )
         );
       }
       
-      // Update Redux cache with backend response
-      dispatch(updateProductLike({
-        productId: product._id,
-        liked: result.memberLiked,
-        likesCount: result.productLikes,
-      }));
-      
       sweetTopSmallSuccessAlert(result.memberLiked ? "Added to favorites!" : "Removed from favorites", 1000);
     } catch (err: any) {
       console.error("Error liking product:", err);
-      console.error("Error response:", err.response?.data);
-      console.error("Error status:", err.response?.status);
-      console.error("Error message:", err.message);
       sweetErrorHandling(err as Error);
     }
   };
