@@ -13,11 +13,13 @@ import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 import { useDispatch, useSelector } from "react-redux";
 import { createSelector, Dispatch } from "@reduxjs/toolkit";
 import { Product } from "../../../lib/types/product";
 import { ProductCollection } from "../../../lib/enums/product.enum";
+import { MenuPageProps, UpdateProductLikePayload } from "../../../lib/types/screen";
 import ProductService from "../../services/ProductService";
 import { 
   setProducts,
@@ -25,6 +27,8 @@ import {
 } from "./slice";
 import { retrieveProducts, retrieveProductsCache, retrieveLastFetch } from "./selector";
 import { updateProductLike } from "./likesSlice";
+import { addToCart, removeFromCart, deleteFromCart } from "../OrderOnline/slice";
+import { retrieveCartItems } from "../OrderOnline/selector";
 import { serverApi } from "../../../lib/config";
 import { sweetErrorHandling, sweetTopSmallSuccessAlert } from "../../../lib/sweetAlert";
 
@@ -35,7 +39,10 @@ import OrderList from "./OrderList";
 const actionDispatch = (dispatch: Dispatch) => ({
   setProducts: (data: Product[]) => dispatch(setProducts(data)),
   cacheProducts: (payload: { queryKey: string; products: Product[] }) => dispatch(cacheProducts(payload)),
-  updateProductLike: (payload: any) => dispatch(updateProductLike(payload)),
+  updateProductLike: (payload: UpdateProductLikePayload) => dispatch(updateProductLike(payload)),
+  addToCart: (item: any) => dispatch(addToCart(item)),
+  removeFromCart: (item: any) => dispatch(removeFromCart(item)),
+  deleteFromCart: (item: any) => dispatch(deleteFromCart(item)),
 });
 
 const menuPageRetriever = createSelector(
@@ -49,16 +56,21 @@ const menuPageRetriever = createSelector(
   })
 );
 
-const Menu = () => {
-  const { setProducts: setProductsAction, cacheProducts: cacheProductsAction, updateProductLike: updateProductLikeAction } = actionDispatch(useDispatch());
+const Menu = (props: MenuPageProps) => {
+  const { setProducts: setProductsAction, cacheProducts: cacheProductsAction, updateProductLike: updateProductLikeAction, addToCart: addToCartAction, removeFromCart: removeFromCartAction, deleteFromCart: deleteFromCartAction } = actionDispatch(useDispatch());
   const { products, productsCache, lastFetch } = useSelector(menuPageRetriever);
+  const cartItems = useSelector(retrieveCartItems);
   const [loading, setLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("All Category");
   const [searchQuery, setSearchQuery] = useState("");
   const [hoveredLikeId, setHoveredLikeId] = useState<string | null>(null);
+  const [clickedButton, setClickedButton] = useState<string | null>(null);
   
-  // ✅ HARD-CODE: change to true when you want to show cart
-  const cartOpen = true; // false = 4 cards, true = 3 cards + cart
+  // Show OrderList only if there are items in cart
+  const cartOpen = cartItems && cartItems.length > 0;
+
+  // Destructure cart props
+  const { onAdd, onRemove, onDelete } = props;
 
   const categories = [
     "All Category",
@@ -176,7 +188,7 @@ const Menu = () => {
       }
       
       sweetTopSmallSuccessAlert(result.memberLiked ? "Added to favorites!" : "Removed from favorites", 1000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error liking product:", err);
       sweetErrorHandling(err as Error);
     }
@@ -310,8 +322,8 @@ const Menu = () => {
                         component="img" 
                         src={`${serverApi}/${product.productImages[0]}`} 
                         alt={product.productName}
-                        onError={(e: any) => {
-                          e.target.src = '/imgs/default_img.jpg';
+                        onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                          (e.target as HTMLImageElement).src = '/imgs/default_img.jpg';
                         }}
                       />
                     </Box>
@@ -341,8 +353,30 @@ const Menu = () => {
                         variant="contained"
                         color="secondary"
                         className="menu2-order"
+                        startIcon={<ShoppingCartIcon />}
+                        onClick={() => {
+                          const cartItem = {
+                            _id: product._id,
+                            quantity: 1,
+                            name: product.productName,
+                            price: product.discountedPrice || product.productPrice,
+                            image: product.productImages[0],
+                          };
+                          addToCartAction(cartItem);
+                          onAdd?.(cartItem);
+                          setClickedButton(product._id);
+                          sweetTopSmallSuccessAlert("Added to cart!", 1000);
+                          setTimeout(() => setClickedButton(null), 1500);
+                        }}
+                        sx={{
+                          transition: "all 0.3s ease",
+                          transform: clickedButton === product._id ? "scale(0.95)" : "scale(1)",
+                          "&:active": {
+                            transform: "scale(0.95)",
+                          },
+                        }}
                       >
-                        Order now
+                        {clickedButton === product._id ? "Added!" : "Order now"}
                       </Button>
                     </Stack>
                   </Box>
@@ -352,7 +386,7 @@ const Menu = () => {
           </Box>
 
           {/* RIGHT: only render if cartOpen */}
-          {cartOpen ? <OrderList /> : null}
+          {cartOpen ? <OrderList onAdd={onAdd} onRemove={onRemove} onDelete={onDelete} /> : null}
         </Box>
       </Container>
     </div>

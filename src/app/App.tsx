@@ -98,7 +98,7 @@ function App() {
       )}
 
       <Routes>
-        <Route path="/products/*" element={<MenuPage />} />
+        <Route path="/products/*" element={<MenuPage onAdd={onAdd} onRemove={onRemove} onDelete={onDelete} />} />
         <Route path="/promotions" element={<PromotionsAll />} />
         <Route path="/support" element={<CS />} />
         <Route path="/reservation" element={<Reservation />} />

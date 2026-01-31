@@ -2,8 +2,9 @@ import { Routes, Route } from "react-router-dom";
 import ChoosenProduct from "./ChoosenProduct";
 import Menu from "./Menu";
 import Promotions from "./Promotions";
+import { MenuPageProps } from "../../../lib/types/screen";
 
-function MenuPage() {
+function MenuPage({ onAdd, onRemove, onDelete }: MenuPageProps) {
   return (
     <Routes>
       <Route
@@ -15,7 +16,7 @@ function MenuPage() {
         path=""
         element={
           <>
-            <Menu />
+            <Menu onAdd={onAdd} onRemove={onRemove} onDelete={onDelete} />
             <Promotions />
           </>
         }

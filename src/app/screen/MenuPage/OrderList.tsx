@@ -1,87 +1,86 @@
 import React from "react";
 import { Box, Stack, Button, IconButton } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { Dispatch } from "@reduxjs/toolkit";
 
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import RemoveRoundedIcon from "@mui/icons-material/RemoveRounded";
 
+import { retrieveCartItems } from "../OrderOnline/selector";
+import { addToCart, removeFromCart, deleteFromCart } from "../OrderOnline/slice";
+import { CartItem } from "../../../lib/types/search";
+import { MenuPageProps } from "../../../lib/types/screen";
+
 import "../../../css/menu.css";
 
-function OrderList() {
+/** REDUX ACTIONS */
+const actionDispatch = (dispatch: Dispatch) => ({
+  addToCart: (item: CartItem) => dispatch(addToCart(item)),
+  removeFromCart: (item: CartItem) => dispatch(removeFromCart(item)),
+  deleteFromCart: (item: CartItem) => dispatch(deleteFromCart(item)),
+});
+
+function OrderList({ onAdd, onRemove, onDelete }: MenuPageProps) {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { addToCart: addToCartAction, removeFromCart: removeFromCartAction, deleteFromCart: deleteFromCartAction } = actionDispatch(dispatch as Dispatch);
+  const cartItems = useSelector(retrieveCartItems);
   return (
     <Box className="menu2-right">
       <Box className="cart">
         <Box className="cart-title">Order list</Box>
 
         <Box className="cart-items">
-          <Box className="cart-item">
-            <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Box className="cart-item-name">Spaghetti</Box>
-              <IconButton className="cart-del">
-                <DeleteOutlineRoundedIcon />
-              </IconButton>
-            </Stack>
+          {cartItems && cartItems.length > 0 ? (
+            cartItems.map((item: CartItem) => (
+              <Box key={item._id} className="cart-item">
+                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                  <Box className="cart-item-name">{item.name}</Box>
+                  <IconButton 
+                    className="cart-del"
+                    onClick={() => {
+                      deleteFromCartAction(item);
+                      onDelete?.(item);
+                    }}
+                  >
+                    <DeleteOutlineRoundedIcon />
+                  </IconButton>
+                </Stack>
 
-            <Stack direction="row" justifyContent="space-between" alignItems="center" mt={1}>
-              <Stack direction="row" spacing={1} alignItems="center" className="cart-qty">
-                <IconButton className="qty-btn">
-                  <RemoveRoundedIcon />
-                </IconButton>
-                <Box className="qty-num">2</Box>
-                <IconButton className="qty-btn">
-                  <AddRoundedIcon />
-                </IconButton>
-              </Stack>
+                <Stack direction="row" justifyContent="space-between" alignItems="center" mt={1}>
+                  <Stack direction="row" spacing={1} alignItems="center" className="cart-qty">
+                    <IconButton 
+                      className="qty-btn"
+                      onClick={() => {
+                        removeFromCartAction(item);
+                        onRemove?.(item);
+                      }}
+                    >
+                      <RemoveRoundedIcon />
+                    </IconButton>
+                    <Box className="qty-num">{item.quantity}</Box>
+                    <IconButton 
+                      className="qty-btn"
+                      onClick={() => {
+                        addToCartAction(item);
+                        onAdd?.(item);
+                      }}
+                    >
+                      <AddRoundedIcon />
+                    </IconButton>
+                  </Stack>
 
-              <Box className="cart-price">$24.10</Box>
-            </Stack>
-          </Box>
-
-          <Box className="cart-item">
-            <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Box className="cart-item-name">Pizza</Box>
-              <IconButton className="cart-del">
-                <DeleteOutlineRoundedIcon />
-              </IconButton>
-            </Stack>
-
-            <Stack direction="row" justifyContent="space-between" alignItems="center" mt={1}>
-              <Stack direction="row" spacing={1} alignItems="center" className="cart-qty">
-                <IconButton className="qty-btn">
-                  <RemoveRoundedIcon />
-                </IconButton>
-                <Box className="qty-num">2</Box>
-                <IconButton className="qty-btn">
-                  <AddRoundedIcon />
-                </IconButton>
-              </Stack>
-
-              <Box className="cart-price">$35.70</Box>
-            </Stack>
-          </Box>
-
-          <Box className="cart-item">
-            <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Box className="cart-item-name">Caesar salad</Box>
-              <IconButton className="cart-del">
-                <DeleteOutlineRoundedIcon />
-              </IconButton>
-            </Stack>
-
-            <Stack direction="row" justifyContent="space-between" alignItems="center" mt={1}>
-              <Stack direction="row" spacing={1} alignItems="center" className="cart-qty">
-                <IconButton className="qty-btn">
-                  <RemoveRoundedIcon />
-                </IconButton>
-                <Box className="qty-num">2</Box>
-                <IconButton className="qty-btn">
-                  <AddRoundedIcon />
-                </IconButton>
-              </Stack>
-
-              <Box className="cart-price">$18.50</Box>
-            </Stack>
-          </Box>
+                  <Box className="cart-price">₩{(item.price * item.quantity).toFixed(2)}</Box>
+                </Stack>
+              </Box>
+            ))
+          ) : (
+            <Box className="cart-item">
+              <Box className="cart-item-name">No items in cart</Box>
+            </Box>
+          )}
         </Box>
 
         <Box className="cart-divider" />
@@ -89,16 +88,28 @@ function OrderList() {
         <Stack spacing={1.2} className="cart-totals">
           <Stack direction="row" justifyContent="space-between">
             <Box className="tlabel">Subtotal</Box>
-            <Box className="tval">$78.3</Box>
+            <Box className="tval">₩{cartItems?.reduce((sum: number, item: CartItem) => sum + item.price * item.quantity, 0).toFixed(2) || "0.00"}</Box>
           </Stack>
 
           <Stack direction="row" justifyContent="space-between" className="total-row">
             <Box className="tlabel">Total</Box>
-            <Box className="tval">$78.3</Box>
+            <Box className="tval">₩{cartItems?.reduce((sum: number, item: CartItem) => sum + item.price * item.quantity, 0).toFixed(2) || "0.00"}</Box>
           </Stack>
         </Stack>
 
-        <Button className="checkout-btn" variant="contained" color="primary">
+        <Button 
+          className="checkout-btn" 
+          variant="contained" 
+          color="primary"
+          disabled={!cartItems || cartItems.length === 0}
+          onClick={() => navigate("/order-online")}
+          sx={{
+            position: 'sticky',
+            bottom: 0,
+            width: '100%',
+            zIndex: 10,
+          }}
+        >
           Checkout
         </Button>
       </Box>
