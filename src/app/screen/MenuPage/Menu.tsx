@@ -29,7 +29,7 @@ import {
 } from "./slice";
 import { retrieveProducts, retrieveProductsCache, retrieveLastFetch } from "./selector";
 import { updateProductLike } from "./likesSlice";
-import { serverApi, Messages } from "../../../lib/config";
+import { serverApi } from "../../../lib/config";
 import { addToCart } from "../OrderOnline/slice";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { sweetErrorHandling, sweetTopSmallSuccessAlert } from "../../../lib/sweetAlert";

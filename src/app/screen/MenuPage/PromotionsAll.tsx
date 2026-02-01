@@ -18,7 +18,7 @@ import ProductService from "../../services/ProductService";
 import { setPromotions, setPromotionsLoading } from "./slice";
 import { RootState } from "../../store";
 import useBusket from "../../hooks/useBusket";
-import { serverApi, Messages } from "../../../lib/config";
+import { serverApi } from "../../../lib/config";
 import { sweetErrorHandling, sweetTopSmallSuccessAlert } from "../../../lib/sweetAlert";
 import { useGlobals } from "../../hooks/useGlobals";
 
