@@ -1332,6 +1332,7 @@
 /* top bar */
 .cp-topbar {
   margin-bottom: 22px;
+  padding-top: 80px;
 }
 
 .cp-back {
