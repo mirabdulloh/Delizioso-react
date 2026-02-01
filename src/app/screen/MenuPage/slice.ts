@@ -6,6 +6,8 @@ export interface MenuPageState {
   chosenProduct: Product | null;
   productsCache: { [key: string]: Product[] };
   lastFetch: { [key: string]: number };
+  promotions: Product[];
+  promotionsLoading: boolean;
 }
 
 const initialState: MenuPageState = {
@@ -13,6 +15,8 @@ const initialState: MenuPageState = {
   chosenProduct: null,
   productsCache: {},
   lastFetch: {},
+  promotions: [],
+  promotionsLoading: false,
 };
 
 const menuPageSlice = createSlice({
@@ -46,10 +50,19 @@ const menuPageSlice = createSlice({
       delete state.productsCache[queryKey];
       delete state.lastFetch[queryKey];
     },
+
+    setPromotions: (state, action: PayloadAction<Product[]>) => {
+      state.promotions = action.payload;
+      state.promotionsLoading = false;
+    },
+
+    setPromotionsLoading: (state, action: PayloadAction<boolean>) => {
+      state.promotionsLoading = action.payload;
+    },
   },
 });
 
-export const { setProducts, setChosenProduct, cacheProducts, clearCache, clearCacheByKey } =
+export const { setProducts, setChosenProduct, cacheProducts, clearCache, clearCacheByKey, setPromotions, setPromotionsLoading } =
   menuPageSlice.actions;
 
 const MenuPageReducer = menuPageSlice.reducer;

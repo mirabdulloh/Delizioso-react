@@ -62,6 +62,19 @@ class ProductService {
       throw err;
     }
   }
+
+  public async getPromotions(page: number = 1, limit: number = 100): Promise<Product[]> {
+    try {
+      const url = `${this.path}/product/promotions?order=createdAt&page=${page}&limit=${limit}`;
+      const result = await axios.get(url, { withCredentials: true });
+      console.log("getPromotions:", result.data);
+
+      return result.data;
+    } catch (err) {
+      console.log("ProductService - getPromotions error:", err);
+      throw err;
+    }
+  }
 }
 
 export default ProductService;

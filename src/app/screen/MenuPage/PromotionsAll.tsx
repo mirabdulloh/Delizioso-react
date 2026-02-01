@@ -1,5 +1,4 @@
-// PromotionsAll.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Stack,
@@ -8,113 +7,122 @@ import {
   Rating,
   TextField,
   InputAdornment,
+  Pagination,
 } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
 
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
 
-
+import ProductService from "../../services/ProductService";
+import { setPromotions, setPromotionsLoading } from "./slice";
+import { RootState } from "../../store";
+import useBusket from "../../hooks/useBusket";
+import { serverApi } from "../../../lib/config";
+import { sweetTopSmallSuccessAlert } from "../../../lib/sweetAlert";
 
 import "../../../css/menu.css";
 import OrderList from "./OrderList";
 
+const productService = new ProductService();
+
 function PromotionsAll() {
+  const dispatch = useDispatch();
+  const { onAdd } = useBusket();
+  
+  const promotions = useSelector((state: RootState) => state.menuPage.promotions);
+  const loading = useSelector((state: RootState) => state.menuPage.promotionsLoading);
+  
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 8;
+
+  useEffect(() => {
+    const fetchPromotions = async () => {
+      try {
+        dispatch(setPromotionsLoading(true));
+        const data = await productService.getPromotions(currentPage, itemsPerPage);
+        dispatch(setPromotions(data));
+        // Calculate total pages (you may need to get this from backend)
+        if (data.length === itemsPerPage) {
+          setTotalPages(currentPage + 1); // Estimate, better to get from backend
+        }
+      } catch (error) {
+        console.error("Failed to fetch promotions", error);
+        dispatch(setPromotionsLoading(false));
+      }
+    };
+
+    fetchPromotions();
+  }, [dispatch, currentPage]);
+
+  const handleOrder = (product: any) => {
+    onAdd({
+      _id: product._id,
+      quantity: 1,
+      name: product.productName,
+      price: product.productPrice * (1 - (product.productPromotion || 0) / 100),
+      image: product.productImages[0],
+    });
+    sweetTopSmallSuccessAlert(product.productName);
+  };
+
+  const calculateDiscountedPrice = (price: number, discount?: number) => {
+    if (!discount) return price.toFixed(2);
+    return (price * (1 - discount / 100)).toFixed(2);
+  };
+
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setCurrentPage(value);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const filteredPromotions = promotions.filter((item) =>
+    item.productName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   // ✅ HARD CODE: false = 4 cards, true = 3 cards + order list
   const cartOpen = false;
 
-  // ✅ HARD CODE items
-  const promoItems = [
-    {
-      id: 1,
-      name: "Creamy Gnocchi",
-      image: "/imgs/pastas.jpg",
-      rating: 4,
-      reviews: 112,
-      oldPrice: 18.0,
-      newPrice: 12.6,
-      off: 30,
-      likes: 98,
-      views: 1200,
-      desc: "Limited time deal. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      selected: false,
-      tag: "Lunch Deal",
-    },
-    {
-      id: 2,
-      name: "Truffle Pasta",
-      image: "/imgs/pastas.jpg",
-      rating: 5,
-      reviews: 540,
-      oldPrice: 20.0,
-      newPrice: 13.0,
-      off: 35,
-      likes: 305,
-      views: 5400,
-      desc: "Best seller promo. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      selected: false,
-      tag: "Best Seller",
-    },
-    {
-      id: 3,
-      name: "Signature Pizza",
-      image: "/imgs/pastas.jpg",
-      rating: 4,
-      reviews: 86,
-      oldPrice: 24.0,
-      newPrice: 13.2,
-      off: 45,
-      likes: 76,
-      views: 980,
-      desc: "Hot deal today. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      selected: false,
-      tag: "Hot Deal",
-    },
-    {
-      id: 4,
-      name: "Pasta Special",
-      image: "/imgs/pastas.jpg",
-      rating: 4,
-      reviews: 210,
-      oldPrice: 16.0,
-      newPrice: 11.2,
-      off: 30,
-      likes: 211,
-      views: 2300,
-      desc: "Limited time • Free drink",
-      selected: false,
-      tag: "Limited",
-    },
-    {
-      id: 5,
-      name: "Family Combo",
-      image: "/imgs/pastas.jpg",
-      rating: 4,
-      reviews: 64,
-      oldPrice: 30.0,
-      newPrice: 19.9,
-      off: 33,
-      likes: 64,
-      views: 860,
-      desc: "Limited time • Best value",
-      selected: false,
-      tag: "Combo",
-    },
-    {
-      id: 6,
-      name: "Chef Pasta",
-      image: "/imgs/pastas.jpg",
-      rating: 5,
-      reviews: 324,
-      oldPrice: 22.0,
-      newPrice: 14.9,
-      off: 32,
-      likes: 124,
-      views: 1800,
-      desc: "Chef special discount",
-      selected: false,
-      tag: "Chef",
-    },
-  ];
+  if (loading) {
+    return (
+      <div className="promoAll-section">
+        <Container>
+          <Box sx={{ textAlign: 'center', py: 8 }}>
+            <Box sx={{ fontSize: '1.2rem', color: '#666' }}>Loading promotions...</Box>
+          </Box>
+        </Container>
+      </div>
+    );
+  }
+
+  if (promotions.length === 0) {
+    return (
+      <div className="promoAll-section">
+        <Container>
+          <Box className="promoAll-title">Hot Promotions</Box>
+          <Box className="promoAll-subtitle">
+            Discounts 30%+ • Limited time deals
+          </Box>
+          <Box sx={{ 
+            textAlign: 'center', 
+            py: 12, 
+            backgroundColor: '#f8f9fa', 
+            borderRadius: 2,
+            mt: 4
+          }}>
+            <Box sx={{ fontSize: '1.8rem', fontWeight: 600, color: '#333', mb: 2 }}>
+              No Promotions Available
+            </Box>
+            <Box sx={{ fontSize: '1.1rem', color: '#666' }}>
+              Check back later for exciting deals!
+            </Box>
+          </Box>
+        </Container>
+      </div>
+    );
+  }
 
   return (
     <div className="promoAll-section">
@@ -131,6 +139,8 @@ function PromotionsAll() {
             className="promoAll-search"
             placeholder="Search promotions..."
             variant="outlined"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -150,43 +160,45 @@ function PromotionsAll() {
           {/* LEFT */}
           <Box className="promoAll-left">
             <Box className={`promoAll-grid ${cartOpen ? "cols-3" : "cols-4"}`}>
-              {promoItems.map((item) => (
+              {filteredPromotions.map((item) => (
                 <Box
-                  key={item.id}
-                  className={`promoAll-card ${item.selected ? "selected" : ""}`}
+                  key={item._id}
+                  className="promoAll-card"
                   role="button"
                 >
                   {/* % off + tag */}
                   <Box className="promoAll-badges">
-                    <Box className="promoAll-off">-{item.off}%</Box>
-                    
+                    <Box className="promoAll-off">-{item.productPromotion}%</Box>
                   </Box>
 
                   {/* likes / views */}
                   <Box className="promoAll-icons">
                     <Box className="promoAll-pill">
                       <FavoriteBorderRoundedIcon />
-                      <span>{item.likes}</span>
+                      <span>{item.productLikes}</span>
                     </Box>
-                    
                   </Box>
 
                   {/* image */}
                   <Box className="promoAll-imgWrap">
-                    <Box component="img" src={item.image} alt={item.name} />
+                    <Box 
+                      component="img" 
+                      src={`${serverApi}/${item.productImages[0]}`} 
+                      alt={item.productName} 
+                    />
                   </Box>
 
                   {/* name */}
-                  <Box className="promoAll-name">{item.name}</Box>
+                  <Box className="promoAll-name">{item.productName}</Box>
 
                   {/* rating */}
                   <Box className="promoAll-rating">
-                    <Rating value={item.rating} readOnly />
-                    <span className="promoAll-rev">({item.reviews})</span>
+                    <Rating value={item.productRating || 0} readOnly />
+                    <span className="promoAll-rev">({item.productReviewCount || 0})</span>
                   </Box>
 
                   {/* desc */}
-                  <Box className="promoAll-desc">{item.desc}</Box>
+                  <Box className="promoAll-desc">{item.productDesc || 'Limited time deal'}</Box>
 
                   {/* prices + button */}
                   <Stack
@@ -197,10 +209,10 @@ function PromotionsAll() {
                   >
                     <Box className="promoAll-price">
                       <span className="promoAll-old">
-                        ${item.oldPrice.toFixed(2)}
+                        ${item.productPrice.toFixed(2)}
                       </span>
                       <span className="promoAll-new">
-                        ${item.newPrice.toFixed(2)}
+                        ${calculateDiscountedPrice(item.productPrice, item.productPromotion)}
                       </span>
                     </Box>
 
@@ -208,6 +220,7 @@ function PromotionsAll() {
                       variant="contained"
                       color="secondary"
                       className="promoAll-order"
+                      onClick={() => handleOrder(item)}
                     >
                       Order
                     </Button>
@@ -215,6 +228,19 @@ function PromotionsAll() {
                 </Box>
               ))}
             </Box>
+            
+            {/* Pagination */}
+            {!searchTerm && totalPages > 1 && (
+              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, mb: 2 }}>
+                <Pagination 
+                  count={totalPages} 
+                  page={currentPage} 
+                  onChange={handlePageChange}
+                  color="secondary"
+                  size="large"
+                />
+              </Box>
+            )}
           </Box>
 
           {/* RIGHT */}

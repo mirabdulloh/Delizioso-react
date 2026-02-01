@@ -21,6 +21,8 @@ export interface Product {
   productRank?: number;
   productReviewCount?: number;
   productReview?: string[];
+  productPromotion?: number;
+  productRating?: number;
   createdAt: Date;
   updatedAt: Date;
   memberLiked?: boolean;
