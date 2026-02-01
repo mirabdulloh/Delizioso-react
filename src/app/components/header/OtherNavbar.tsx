@@ -6,6 +6,7 @@ import { useGlobals } from "../../hooks/useGlobals";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
 import Basket from "./Basket";
+import NotificationBell from "../NotificationBell";
 import { CartItem } from "../../../lib/types/search";
 import "../../../css/navbar.css";
 
@@ -72,6 +73,8 @@ function OtherNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onL
                 onDelete={onDelete}
                 onDeleteAll={onDeleteAll}
               />
+              {/* Notification Bell */}
+              {authMember && <NotificationBell />}
               {!authMember ? (
                 <Box className="auth-buttons">
                   <Box>

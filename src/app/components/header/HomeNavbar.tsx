@@ -7,6 +7,7 @@ import { sweetFailureProvider } from "../../../lib/sweetAlert";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Basket from "./Basket";
+import NotificationBell from "../NotificationBell";
 import { CartItem } from "../../../lib/types/search";
 import "../../../css/navbar.css";
 
@@ -73,6 +74,8 @@ function HomeNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onLo
                 onDelete={onDelete}
                 onDeleteAll={onDeleteAll}
               />
+              {/* Notification Bell */}
+              {authMember && <NotificationBell />}
               {!authMember ? (
                 <Box className="auth-buttons">
                   <Box>

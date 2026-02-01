@@ -16,6 +16,7 @@ import Contact from "./screen/ContactUs/Contact";
 import Reservation from "./screen/Reservation";
 import UserPage from "./screen/MyPage";
 import AuthenticationModal from "./components/auth";
+import { SocketProvider } from "./context/SocketContext";
 import { useGlobals } from "./hooks/useGlobals";
 import { sweetErrorHandling, sweetTopSuccessAlert } from "../lib/sweetAlert";
 import { Messages } from "../lib/config";
@@ -66,7 +67,7 @@ function App() {
   };
   const location = useLocation();
   return (
-    <>
+    <SocketProvider>
       {location.pathname === "/" ? (
         <HomeNavbar 
           onLoginClick={() => setLoginOpen(true)}
@@ -116,7 +117,7 @@ function App() {
         handleSignupClose={handleSignupClose}
         handleLoginClose={handleLoginClose}
       />
-    </>
+    </SocketProvider>
   );
 }
 

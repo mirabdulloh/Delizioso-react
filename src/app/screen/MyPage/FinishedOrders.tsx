@@ -8,16 +8,20 @@ import { useNavigate } from "react-router-dom";
 import { Order } from "../../../lib/types/orders";
 import { OrderStatus } from "../../../lib/enums/order.enum";
 import OrderService from "../../services/OrderService";
+import ReviewService from "../../services/ReviewService";
+import ReviewModal from "../../components/ReviewModal";
 import { serverApi } from "../../../lib/config";
 import { sweetErrorHandling, sweetSuccessAlert, sweetWarningAlert } from "../../../lib/sweetAlert";
 import "../../../css/finished-orders.css";
 
 interface OrderItem {
   id: string;
+  productId: string;
   name: string;
   img: string;
   price: number;
   qty: number;
+  hasReview?: boolean;
 }
 
 interface OrderUI {
@@ -54,15 +58,20 @@ function formatOrderDate(date: Date): string {
   });
 }
 
-function transformOrderToUI(order: Order): OrderUI {
+function transformOrderToUI(order: Order, existingReviews: any[]): OrderUI {
   const items: OrderItem[] = order.orderItems.map((orderItem, index) => {
     const product = order.productData[index];
+    const hasReview = existingReviews.some(
+      (rev) => String(rev.orderId) === String(order._id) && String(rev.productId._id || rev.productId) === String(product?._id)
+    );
     return {
       id: orderItem._id,
+      productId: product?._id || '',
       name: product?.productName || 'Unknown Product',
       img: product?.productImages?.[0] ? `${serverApi}/${product.productImages[0]}` : '/imgs/pastas.jpg',
       price: orderItem.itemPrice,
       qty: orderItem.itemQuantity,
+      hasReview,
     };
   });
 
@@ -81,17 +90,29 @@ export default function FinishedOrders() {
   const navigate = useNavigate();
   const [finishedOrders, setFinishedOrders] = useState<OrderUI[]>([]);
   const [loading, setLoading] = useState(true);
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [selectedReviewItem, setSelectedReviewItem] = useState<{
+    orderId: string;
+    productId: string;
+    productName: string;
+    productImage: string;
+  } | null>(null);
 
   useEffect(() => {
     const fetchFinishedOrders = async () => {
       try {
         setLoading(true);
         const orderService = new OrderService();
-        const orders = await orderService.getMyOrders({ 
-          page: 1, 
-          limit: 20, 
-          orderStatus: OrderStatus.FINISH 
-        });
+        const reviewService = new ReviewService();
+        
+        const [orders, existingReviews] = await Promise.all([
+          orderService.getMyOrders({ 
+            page: 1, 
+            limit: 20, 
+            orderStatus: OrderStatus.FINISH 
+          }),
+          reviewService.getMyReviews().catch(() => [])
+        ]);
         
         // Filter orders from last 30 days
         const thirtyDaysAgo = new Date();
@@ -102,7 +123,7 @@ export default function FinishedOrders() {
           return orderDate >= thirtyDaysAgo;
         });
 
-        setFinishedOrders(recentOrders.map(transformOrderToUI));
+        setFinishedOrders(recentOrders.map(order => transformOrderToUI(order, existingReviews)));
       } catch (err) {
         console.error("❌ Failed to fetch finished orders:", err);
         setFinishedOrders([]);
@@ -151,10 +172,24 @@ export default function FinishedOrders() {
     }
   };
 
-  const handleWriteReview = (order: OrderUI) => {
-    // TODO: Implement review functionality
-    console.log("Write review for order:", order.id);
-    sweetSuccessAlert("Coming Soon", "Review feature will be available soon!");
+  const handleWriteReview = (item: OrderItem, orderId: string) => {
+    if (item.hasReview) {
+      sweetWarningAlert("Already Reviewed", "You have already reviewed this item.");
+      return;
+    }
+    
+    setSelectedReviewItem({
+      orderId,
+      productId: item.productId,
+      productName: item.name,
+      productImage: item.img,
+    });
+    setReviewModalOpen(true);
+  };
+
+  const handleReviewSuccess = () => {
+    // Refresh orders to update review status
+    window.location.reload();
   };
 
   if (loading) {
@@ -200,19 +235,34 @@ export default function FinishedOrders() {
                   direction="row" 
                   spacing={2} 
                   alignItems="center"
+                  justifyContent="space-between"
                   className="order-item"
                 >
-                  <Box 
-                    component="img" 
-                    src={item.img} 
-                    alt={item.name}
-                    className="item-img"
-                  />
-                  <Box className="item-details">
-                    <Box className="item-name">{item.name}</Box>
-                    <Box className="item-qty">x{item.qty}</Box>
-                  </Box>
-                  <Box className="item-price">${(item.price * item.qty).toFixed(2)}</Box>
+                  <Stack direction="row" spacing={2} alignItems="center" sx={{ flex: 1 }}>
+                    <Box 
+                      component="img" 
+                      src={item.img} 
+                      alt={item.name}
+                      className="item-img"
+                    />
+                    <Box className="item-details">
+                      <Box className="item-name">{item.name}</Box>
+                      <Box className="item-qty">x{item.qty}</Box>
+                    </Box>
+                  </Stack>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <Box className="item-price">${(item.price * item.qty).toFixed(2)}</Box>
+                    <Button
+                      size="small"
+                      variant={item.hasReview ? "text" : "outlined"}
+                      startIcon={<RateReviewRoundedIcon />}
+                      onClick={() => handleWriteReview(item, order.id)}
+                      disabled={item.hasReview}
+                      sx={{ minWidth: 100 }}
+                    >
+                      {item.hasReview ? "Reviewed" : "Review"}
+                    </Button>
+                  </Stack>
                 </Stack>
               ))}
             </Stack>
@@ -224,15 +274,6 @@ export default function FinishedOrders() {
                 Total: <span className="total-amount">${order.subtotal.toFixed(2)}</span>
               </Box>
               <Stack direction="row" spacing={1}>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  startIcon={<RateReviewRoundedIcon />}
-                  onClick={() => handleWriteReview(order)}
-                  className="review-btn"
-                >
-                  Write Review
-                </Button>
                 <Button
                   variant="contained"
                   size="small"
@@ -247,6 +288,19 @@ export default function FinishedOrders() {
           </Box>
         ))}
       </Stack>
+      
+      {/* Review Modal */}
+      {selectedReviewItem && (
+        <ReviewModal
+          open={reviewModalOpen}
+          onClose={() => setReviewModalOpen(false)}
+          orderId={selectedReviewItem.orderId}
+          productId={selectedReviewItem.productId}
+          productName={selectedReviewItem.productName}
+          productImage={selectedReviewItem.productImage}
+          onSuccess={handleReviewSuccess}
+        />
+      )}
     </Box>
   );
 }

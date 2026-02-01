@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Box, Container } from "@mui/material";
 import "../../../css/reservation.css";
-// use the full reservation confirm dialog
 import ReservationConfirmModal from "./ReservationConfirm";
+import ReservationService from "../../services/ReservationService";
 
 type Option = { label: string; value: string };
 
@@ -78,15 +78,21 @@ function Reservation() {
     e.preventDefault();
     if (!canSubmit) return;
 
-    // ✅ open popup (no alert)
-    setOpenConfirm(true);
-
-    // later you will connect API here
-    console.log("Reservation payload:", {
-      reservationDate: date,
-      reservationTime: time,
-      partySize: Number(partySize),
-    });
+    try {
+      const reservationService = new ReservationService();
+      const result = await reservationService.createReservation({
+        date,
+        time,
+        partySize,
+      });
+      // Show confirmation modal
+      setOpenConfirm(true);
+      // Optionally, handle result (show success, clear form, etc)
+      console.log("Reservation created:", result);
+    } catch (err) {
+      alert("Failed to create reservation. Please try again.");
+      console.error("Reservation error:", err);
+    }
   };
 
   const storedMemberNick = typeof window !== 'undefined' ? (localStorage.getItem('memberNick') || '') : '';
