@@ -1,18 +1,23 @@
-import { Box, Container, Card, CardContent } from "@mui/material";
+import { Box, Container, Card, CardContent, Tabs, Tab, Avatar, Chip, IconButton, Stack, Typography } from "@mui/material";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import TelegramIcon from "@mui/icons-material/Telegram";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
+import EditIcon from "@mui/icons-material/Edit";
+import EmailIcon from "@mui/icons-material/Email";
+import PhoneIcon from "@mui/icons-material/Phone";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import StarIcon from "@mui/icons-material/Star";
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import Button from "@mui/material/Button";
 import "../../../css/userPage.css";
 import "../../../css/profile.css";
 import { useNavigate } from "react-router-dom";
 import { useGlobals } from "../../hooks/useGlobals";
 import { serverApi, Messages } from "../../../lib/config";
-import { MemberType } from "../../../lib/enums/member.enum";
 import { MemberUpdateInput } from "../../../lib/types/member";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   sweetErrorHandling,
   sweetTopSmallSuccessAlert,
@@ -30,6 +35,13 @@ function Settings() {
       : "/icons/default-user.svg",
   );
 
+  // Sync memberImage with authMember changes
+  useEffect(() => {
+    if (member?.memberImage) {
+      setMemberImage(`${serverApi}/${member.memberImage}`);
+    }
+  }, [member?.memberImage]);
+
   const [memberUpdateInput, setMemberUpdateInput] = useState<MemberUpdateInput>(
     {
       memberNick: member?.memberNick,
@@ -40,6 +52,20 @@ function Settings() {
       memberEmail: member?.memberEmail,
     },
   );
+
+  // Sync form inputs with authMember changes
+  useEffect(() => {
+    if (member) {
+      setMemberUpdateInput({
+        memberNick: member.memberNick,
+        memberPhone: member.memberPhone,
+        memberAddress: member.memberAddress,
+        memberDesc: member.memberDesc,
+        memberImage: member.memberImage,
+        memberEmail: member.memberEmail,
+      });
+    }
+  }, [member]);
 
   const memberNickHandller = (e: any) => {
     setMemberUpdateInput({ ...memberUpdateInput, memberNick: e.target.value });
@@ -63,11 +89,10 @@ function Settings() {
   const handleSubmitButton = async () => {
     try {
       if (!authMember) throw new Error(Messages.error2);
-      // Removed required fields check so user can update any field independently
       const memberService = new MemberService();
       const result = await memberService.updateMember(memberUpdateInput);
       setAuthMember(result);
-      await sweetTopSmallSuccessAlert("modified successfully", 700);
+      await sweetTopSmallSuccessAlert("Profile updated successfully!", 700);
     } catch (err) {
       console.log(err);
       sweetErrorHandling(err).then();
@@ -91,93 +116,128 @@ function Settings() {
   };
 
   return (
-    <Box className="settings">
-      <Box className="member-media-frame">
-        <img src={memberImage} className="mb-image" alt="Member" />
-
-        <div className="media-change-box">
-          <span className="upload-title">Upload image</span>
-          <p className="upload-desc">JPG, JPEG, PNG formats only!</p>
-
-          <div className="up-del-box">
-            <Button component="label">
-              <CloudDownloadIcon />
+    <Box>
+      {/* Profile Picture Section */}
+      <Card className="profile-picture-card">
+        <Typography variant="h6" className="profile-section-title">
+          Profile Picture
+        </Typography>
+        <Box className="profile-picture-content">
+          <Avatar 
+            key={memberImage}
+            src={memberImage}
+            className="profile-picture-avatar"
+          />
+          <Box className="profile-picture-text">
+            <Typography variant="body2" className="profile-picture-subtitle">
+              Upload a new profile picture
+            </Typography>
+            <Typography variant="caption" className="profile-picture-caption">
+              JPG, JPEG, PNG formats only. Max size 5MB
+            </Typography>
+            <Button 
+              component="label"
+              variant="contained"
+              startIcon={<CloudDownloadIcon />}
+              className="profile-picture-btn"
+            >
+              Choose Image
               <input type="file" hidden onChange={handleImageViewer} />
             </Button>
+          </Box>
+        </Box>
+      </Card>
+
+      {/* Personal Information */}
+      <Card className="personal-info-card">
+        <Typography variant="h6" className="personal-info-title">
+          Personal Information
+        </Typography>
+        
+        <div className="personal-info-grid">
+          <div className="form-field">
+            <Typography variant="body2" className="field-label">
+              Username
+            </Typography>
+            <input
+              className="modern-input"
+              type="text"
+              placeholder="Enter your username"
+              value={memberUpdateInput.memberNick}
+              onChange={memberNickHandller}
+            />
+          </div>
+
+          <div className="form-field">
+            <Typography variant="body2" className="field-label">
+              Email Address
+            </Typography>
+            <input
+              className="modern-input"
+              type="email"
+              placeholder="Enter your email"
+              value={memberUpdateInput.memberEmail || ""}
+              onChange={(e) => setMemberUpdateInput({ ...memberUpdateInput, memberEmail: e.target.value })}
+            />
+          </div>
+
+          <div className="form-field">
+            <Typography variant="body2" className="field-label">
+              Phone Number
+            </Typography>
+            <input
+              className="modern-input"
+              type="text"
+              placeholder="Enter your phone"
+              value={memberUpdateInput.memberPhone}
+              onChange={memberPhoneHandller}
+            />
+          </div>
+
+          <div className="form-field">
+            <Typography variant="body2" className="field-label">
+              Address
+            </Typography>
+            <input
+              className="modern-input"
+              type="text"
+              placeholder="Enter your address"
+              value={memberUpdateInput.memberAddress}
+              onChange={memberAdressHandller}
+            />
+          </div>
+
+          <div className="form-field form-field-full">
+            <Typography variant="body2" className="field-label">
+              About Me
+            </Typography>
+            <textarea
+              className="modern-textarea"
+              placeholder="Tell us about yourself..."
+              value={memberUpdateInput.memberDesc}
+              onChange={memberDecsHandller}
+              rows={4}
+            />
           </div>
         </div>
-      </Box>
+      </Card>
 
-      <Box className="input-frame">
-        <div className="long-input">
-          <label className="spec-label">Username</label>
-          <input
-            className="spec-input mb-nick"
-            type="text"
-            placeholder={member?.memberNick ?? "username"}
-            value={memberUpdateInput.memberNick}
-            name="memberNick"
-            onChange={memberNickHandller}
-          />
-        </div>
-      </Box>
-
-      <Box className="input-frame">
-        <div className="short-input">
-          <label className="spec-label">Phone</label>
-          <input
-            className="spec-input mb-phone"
-            type="text"
-            placeholder={member?.memberPhone ?? "no phone"}
-            value={memberUpdateInput.memberPhone}
-            name="memberPhone"
-            onChange={memberPhoneHandller}
-          />
-        </div>
-
-        <div className="short-input">
-          <label className="spec-label">Email</label>
-          <input
-            className="spec-input mb-email"
-            type="email"
-            placeholder={member?.memberEmail ?? "no email"}
-            value={memberUpdateInput.memberEmail || ""}
-            name="memberEmail"
-            onChange={(e) => setMemberUpdateInput({ ...memberUpdateInput, memberEmail: e.target.value })}
-          />
-        </div>
-      </Box>
-
-      <Box className="input-frame">
-        <div className="long-input">
-          <label className="spec-label">Address</label>
-          <input
-            className="spec-input mb-address"
-            type="text"
-            placeholder={member?.memberAddress ?? "no address"}
-            value={memberUpdateInput.memberAddress}
-            name="memberAddress"
-            onChange={memberAdressHandller}
-          />
-        </div>
-      </Box>
-
-      <Box className="input-frame">
-        <div className="long-input">
-          <label className="spec-label">Description</label>
-          <textarea
-            className="spec-textarea mb-description"
-            placeholder={member?.memberDesc ?? "no desc"}
-            value={memberUpdateInput.memberDesc}
-            name="memberDesc"
-            onChange={memberDecsHandller}
-          />
-        </div>
-      </Box>
-
-      <Box className="save-box">
-        <Button variant="contained" onClick={handleSubmitButton}>
-          Save
+      {/* Action Buttons */}
+      <Box className="action-buttons">
+        <Button 
+          variant="outlined" 
+          size="large"
+          className="cancel-btn"
+        >
+          Cancel
+        </Button>
+        <Button 
+          variant="contained" 
+          size="large"
+          onClick={handleSubmitButton}
+          className="save-btn"
+        >
+          Save Changes
         </Button>
       </Box>
     </Box>
@@ -188,92 +248,164 @@ export default function UserPage() {
   const navigate = useNavigate();
   const { authMember } = useGlobals();
   const member = authMember;
+  const [currentTab, setCurrentTab] = useState(0);
 
   if (!authMember) {
     navigate("/");
     return null;
   }
 
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setCurrentTab(newValue);
+  };
+
   return (
     <div className="user-page">
-      <Container>
-        {/* IMPORTANT: use Box (not Stack) so CSS grid works */}
-        <Box className="my-page-frame">
-          {/* LEFT */}
-          <Box className="my-page-left">
-            <Box display="flex" flexDirection="column">
-              <Box className="menu-name">Edit Profile</Box>
-              <Box className="menu-content">
-                <Settings />
-              </Box>
-            </Box>
+      <Container maxWidth="lg">
+        {/* Profile Header Card */}
+        <Card className="profile-header-card">
+          {/* Cover Image */}
+          <Box className="profile-cover">
+            <IconButton className="edit-cover-btn">
+              <EditIcon sx={{ color: "white" }} />
+            </IconButton>
           </Box>
 
-          {/* RIGHT */}
-          <Box className="my-page-right">
-            <Box className="order-info-box">
-              <Box display="flex" flexDirection="column" alignItems="center">
-                <div className="order-user-img">
-                  <img
+          <CardContent sx={{ pt: 0 }}>
+            <div className="profile-header-content">
+              {/* Profile Info Section */}
+              <div className="profile-info-section">
+                <Box className="profile-avatar-section">
+                  {/* Avatar */}
+                  <Avatar
+                    key={authMember?.memberImage || 'default'}
                     src={
-                      member?.memberImage
-                        ? `${serverApi}/${member.memberImage}`
+                      authMember?.memberImage
+                        ? `${serverApi}/${authMember.memberImage}?t=${Date.now()}`
                         : "/icons/default-user.svg"
                     }
-                    className="order-user-avatar"
-                    alt="User Avatar"
+                    className="profile-header-avatar"
                   />
-                  <div className="order-user-icon-box">
-                    <img
-                      src={
-                        member?.memberType === MemberType.RESTAURANT
-                          ? "/icons/restaurant.svg"
-                          : "/icons/user-badge.svg"
-                      }
-                      alt="Member Type"
-                    />
-                  </div>
-                </div>
 
-                <span className="order-user-name">{member?.memberNick}</span>
-                <span className="order-user-prof">{member?.memberType}</span>
-                <span className="order-user-prof">
-                  {member?.memberAddress ? member.memberAddress : "No Address"}
-                </span>
-              </Box>
+                  {/* User Details */}
+                  <Box className="profile-user-details">
+                    <Box className="profile-name-row">
+                      <Typography variant="h4" className="profile-name">
+                        {member?.memberNick}
+                      </Typography>
+                      <Chip 
+                        label={member?.memberType}
+                        color="secondary"
+                        size="small"
+                        className="member-type-chip"
+                      />
+                    </Box>
 
-              <Box className="user-media-box">
-                <FacebookIcon />
-                <InstagramIcon />
-                <TelegramIcon />
-                <YouTubeIcon />
-              </Box>
+                    <Stack spacing={1} className="contact-info-stack">
+                      {member?.memberEmail && (
+                        <Box className="contact-info-item">
+                          <EmailIcon fontSize="small" />
+                          <Typography variant="body2">{member.memberEmail}</Typography>
+                        </Box>
+                      )}
+                      {member?.memberPhone && (
+                        <Box className="contact-info-item">
+                          <PhoneIcon fontSize="small" />
+                          <Typography variant="body2">{member.memberPhone}</Typography>
+                        </Box>
+                      )}
+                      {member?.memberAddress && (
+                        <Box className="contact-info-item">
+                          <LocationOnIcon fontSize="small" />
+                          <Typography variant="body2">{member.memberAddress}</Typography>
+                        </Box>
+                      )}
+                    </Stack>
 
-              <p className="user-desc">
-                {member?.memberDesc ? member.memberDesc : "No description"}
-              </p>
+                    <Typography variant="body2" className={`profile-description ${!member?.memberDesc ? 'empty' : ''}`}>
+                      {member?.memberDesc || "No description yet. Share something about yourself!"}
+                    </Typography>
 
-              <Card sx={{ mb: 3, borderRadius: 2 }}>
-                <CardContent sx={{ textAlign: "center" }}>
-                  <Box sx={{ fontSize: 12, color: "#666", mb: 1 }}>
-                    Loyalty Points
+                    {/* Social Media */}
+                    <Box className="social-media-icons">
+                      <IconButton size="small" className="social-icon facebook-icon">
+                        <FacebookIcon fontSize="small" />
+                      </IconButton>
+                      <IconButton size="small" className="social-icon instagram-icon">
+                        <InstagramIcon fontSize="small" />
+                      </IconButton>
+                      <IconButton size="small" className="social-icon telegram-icon">
+                        <TelegramIcon fontSize="small" />
+                      </IconButton>
+                      <IconButton size="small" className="social-icon youtube-icon">
+                        <YouTubeIcon fontSize="small" />
+                      </IconButton>
+                    </Box>
                   </Box>
-                  <Box sx={{ fontSize: 28, fontWeight: 800 }}>
-                    {member?.memberPoints || 0}
-                  </Box>
-                  <Box sx={{ fontSize: 12, color: "#999", mt: 0.5 }}>pts</Box>
-                </CardContent>
-              </Card>
-
-              <Box sx={{ mt: 2 }}>
-                <Box sx={{ fontWeight: 800, fontSize: 14, mb: 2 }}>
-                  Recent Orders
                 </Box>
-                <FinishedOrders />
-              </Box>
-            </Box>
-          </Box>
-        </Box>
+              </div>
+
+              {/* Stats Section */}
+              <div className="profile-stats-section">
+                <Box className="stats-wrapper">
+                  <div className="stats-grid">
+                    <div className="stat-item">
+                      <Card className="stat-card points-card">
+                        <StarIcon className="stat-icon points-icon" />
+                        <Typography variant="h5" className="stat-value">
+                          {member?.memberPoints || 0}
+                        </Typography>
+                        <Typography variant="caption" className="stat-label points-label">
+                          Loyalty Points
+                        </Typography>
+                      </Card>
+                    </div>
+                    <div className="stat-item">
+                      <Card className="stat-card orders-card">
+                        <ReceiptLongIcon className="stat-icon orders-icon" />
+                        <Typography variant="h5" className="stat-value">
+                          {/* You can add order count here */}
+                          0
+                        </Typography>
+                        <Typography variant="caption" className="stat-label orders-label">
+                          Total Orders
+                        </Typography>
+                      </Card>
+                    </div>
+                  </div>
+                </Box>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Tabs Section */}
+        <Card className="tabs-card">
+          <Tabs 
+            value={currentTab} 
+            onChange={handleTabChange}
+            className="profile-tabs"
+          >
+            <Tab label="Edit Profile" />
+            <Tab label="Order History" />
+          </Tabs>
+        </Card>
+
+        {/* Content Area */}
+        {currentTab === 0 && (
+          <Card className="content-card">
+            <Settings />
+          </Card>
+        )}
+
+        {currentTab === 1 && (
+          <Card className="content-card">
+            <Typography variant="h6" className="content-title">
+              Order History
+            </Typography>
+            <FinishedOrders />
+          </Card>
+        )}
       </Container>
     </div>
   );

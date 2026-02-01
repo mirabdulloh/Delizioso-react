@@ -85,7 +85,13 @@ class MemberService {
       formData.append("memberDesc", input.memberDesc || "");
       formData.append("memberAddress", input.memberAddress || "");
       formData.append("memberAdress", input.memberAddress || "");
-      formData.append("memberImage", input.memberImage || "");
+      
+      // Only append memberImg if it's a File object
+      if (input.memberImage instanceof File) {
+        formData.append("memberImg", input.memberImage);
+        console.log("Uploading image file:", input.memberImage.name);
+      }
+      
       formData.append("memberEmail", input.memberEmail || "");
       const result = await axios(`${serverApi}/member/update`, {
         method: "POST",

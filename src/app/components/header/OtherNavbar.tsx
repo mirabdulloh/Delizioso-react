@@ -3,6 +3,7 @@ import { Box, Button, Container, Stack, Menu, MenuItem, Avatar, Divider, ListIte
 
 import { NavLink, useNavigate } from "react-router-dom";
 import { useGlobals } from "../../hooks/useGlobals";
+import { serverApi } from "../../../lib/config";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
 import Basket from "./Basket";
@@ -105,7 +106,11 @@ function OtherNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onL
                 <>
                   <Avatar
                     className="user-avatar"
-                    src="/imgs/default_img.jpg"
+                    src={
+                      authMember?.memberImage
+                        ? `${serverApi}/${authMember.memberImage}`
+                        : "/icons/default-user.svg"
+                    }
                     alt="User"
                     onClick={onAvatarClick}
                     sx={{
