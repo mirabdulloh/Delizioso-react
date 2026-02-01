@@ -27,7 +27,7 @@ const actionDispatch = (dispatch: Dispatch) => ({
 function HomePage({ onLoginClick, onAdd = () => {} }: HomePageProps) {
   const { setPopularDishes, setPaginationInfo } = actionDispatch(useDispatch());
   const [page, setPage] = useState(1);
-  const ITEMS_PER_PAGE = 3;
+  const ITEMS_PER_PAGE = 4;
 
   useEffect(() => {
     // Fetch popular dishes by likes
@@ -35,7 +35,7 @@ function HomePage({ onLoginClick, onAdd = () => {} }: HomePageProps) {
     const productService = new ProductService();
     productService
       .getProducts({
-        order: "productLikes",
+        order: "productViews",
         page: page,
         limit: ITEMS_PER_PAGE,
       })

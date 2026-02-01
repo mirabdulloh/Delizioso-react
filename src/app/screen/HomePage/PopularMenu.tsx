@@ -86,46 +86,51 @@ function PopularMenu({ page, setPage, onAdd }: PopularMenuProps) {
         <Box className="popular-title">Our popular menu</Box>
 
         {/* GRID */}
-        <Stack className="menu-grid">
+        <div className="menu-grid menu-grid-4">
           {popularDishes.map((dish) => (
-            <Stack key={dish._id} className="menu-card" spacing={1.5}>
-              <Box
-                component="img"
-                src={`${serverApi}/${dish.productImages[0]}`}
-                className="menu-img"
-              />
-              <Box className="menu-name">{dish.productName}</Box>
-              <Stack direction="row" alignItems="center" spacing={1}>
+            <div key={dish._id} className="menu-card menu-card-small">
+              <Box sx={{ position: 'relative' }}>
+                <Box
+                  component="img"
+                  src={`${serverApi}/${dish.productImages[0]}`}
+                  className="menu-img menu-img-small"
+                />
+                <Box className="menu-views-topright">
+                  <svg style={{marginRight: 2, verticalAlign: 'middle'}} width="18" height="18" fill="#888" viewBox="0 0 24 24"><path d="M12 5c-7.633 0-11 6.5-11 7s3.367 7 11 7 11-6.5 11-7-3.367-7-11-7zm0 12c-5.177 0-8.241-3.93-9.05-5 .809-1.07 3.873-5 9.05-5s8.241 3.93 9.05 5c-.809 1.07-3.873 5-9.05 5zm0-8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3zm0 4c-.552 0-1-.449-1-1s.448-1 1-1 1 .449 1 1-.448 1-1 1z"/></svg>
+                  {dish.productViews}
+                </Box>
+              </Box>
+              <Box className="menu-name menu-name-small">{dish.productName}</Box>
+              <Stack direction="row" alignItems="center" spacing={1} justifyContent="center">
                 <Box className="menu-stars" sx={{ mt: "2px" }}>
                   <Rating 
                     name="read-only" 
                     value={dish.productRank || 0} 
                     readOnly 
-                    size="large"
+                    size="medium"
                   />
                 </Box>
                 <Box sx={{
-                  fontSize: "13px",
+                  fontSize: "12px",
                   fontWeight: 500,
                   color: "#666",
                   backgroundColor: "#f5f5f5",
-                  px: 1.5,
-                  py: 0.5,
+                  px: 1,
+                  py: 0.25,
                   borderRadius: "8px",
                 }}>
                   ({dish.productReviewCount || 0} reviews)
                 </Box>
               </Stack>
-              <Box className="menu-desc">
+              <Box className="menu-desc menu-desc-small">
                 {dish.productDesc || "Delicious dish prepared with love"}
               </Box>
-
-              <Stack direction="row" className="menu-footer">
-                <Box className="price">₩{dish.productPrice.toFixed(2)}</Box>
+              <Stack direction="row" className="menu-footer menu-footer-small">
+                <Box className="price price-small">₩{dish.productPrice.toFixed(2)}</Box>
                 <Button
                   variant="contained"
                   color="secondary"
-                  className="order-btn"
+                  className="order-btn order-btn-small"
                   startIcon={<ShoppingCartIcon />}
                   onClick={() => handleAddToCart(dish)}
                   sx={{
@@ -139,9 +144,9 @@ function PopularMenu({ page, setPage, onAdd }: PopularMenuProps) {
                   {clickedButton === dish._id ? "Added!" : "Order now"}
                 </Button>
               </Stack>
-            </Stack>
+            </div>
           ))}
-        </Stack>
+        </div>
 
         <Stack className="pagination-wrap" direction="row" alignItems="center">
           <IconButton

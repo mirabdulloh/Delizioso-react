@@ -4,8 +4,8 @@ import LocalFireDepartmentRoundedIcon from "@mui/icons-material/LocalFireDepartm
 import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
 
 import "../../../css/menu.css";
-
 import { useNavigate } from "react-router-dom";
+
 
 
 function Promotions() {
