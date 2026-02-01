@@ -4,9 +4,14 @@ import "../../../css/reservation.css";
 import ReservationConfirmModal from "./ReservationConfirm";
 import ReservationService from "../../services/ReservationService";
 
+import { useGlobals } from "../../hooks/useGlobals";
+import { sweetErrorHandling, sweetTopSuccessAlert } from "../../../lib/sweetAlert";
+
+
 type Option = { label: string; value: string };
 
 function Reservation() {
+  const { authMember } = useGlobals();
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [partySize, setPartySize] = useState("");
@@ -74,28 +79,7 @@ function Reservation() {
     ? `${partySize} people (Standard seating)`
     : "—";
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!canSubmit) return;
 
-    try {
-      const reservationService = new ReservationService();
-      const result = await reservationService.createReservation({
-        date,
-        time,
-        partySize,
-      });
-      // Show confirmation modal
-      setOpenConfirm(true);
-      // Optionally, handle result (show success, clear form, etc)
-      console.log("Reservation created:", result);
-    } catch (err) {
-      alert("Failed to create reservation. Please try again.");
-      console.error("Reservation error:", err);
-    }
-  };
-
-  const storedMemberNick = typeof window !== 'undefined' ? (localStorage.getItem('memberNick') || '') : '';
 
   return (
     <div className="resv">
@@ -125,7 +109,7 @@ function Reservation() {
             Book a table
           </Box>
 
-          <Box component="form" className="resv__form" onSubmit={onSubmit}>
+          <Box component="form" className="resv__form">
             <Box component="label" className="resv__field">
               <Box component="span" className="resv__placeholder">{""}</Box>
 
@@ -188,7 +172,14 @@ function Reservation() {
               </Box>
             </Box>
 
-            <Box component="button" className="resv__btn" type="submit" disabled={!canSubmit}>
+
+            <Box
+              component="button"
+              className="resv__btn"
+              type="button"
+              disabled={!canSubmit}
+              onClick={() => setOpenConfirm(true)}
+            >
               Book now
             </Box>
 
@@ -207,7 +198,27 @@ function Reservation() {
         timeLabel={timeLabel}
         partyLabel={partyLabel}
         holdSeconds={holdSeconds}
-        memberNick={storedMemberNick}
+        memberNick={authMember?.memberNick}
+        email={authMember?.memberEmail}
+        phone={authMember?.memberPhone}
+        onConfirm={async (note, name, email, phone) => {
+          // Send all data to backend
+          const reservationService = new ReservationService();
+          try {
+            await reservationService.createReservation({
+              dateTime: `${date}T${time}`,
+              peopleCount: Number(partySize),
+              note,
+              email,
+              name,
+              phoneNumber: phone,
+            });
+            setOpenConfirm(false);
+            sweetTopSuccessAlert("Reservation successful!");
+          } catch (err) {
+            sweetErrorHandling(err);
+          }
+        }}
       />
     </div>
   );

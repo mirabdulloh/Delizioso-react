@@ -15,9 +15,9 @@ export function Settings() {
   const { authMember, setAuthMember } = useGlobals();
   const member = authMember;
   const [memberImage, setMemberImage] = useState<string>(
-    member?.memberImg
-      ? `${serverApi}/${member.memberImg}`
-      : "/icons/default-user.svg"
+    member?.memberImage
+      ? `${serverApi}/${member.memberImage}`
+      : "/icons/default-user.svg",
   );
 
   const [memberUpdateInput, setMemberUpdateInput] = useState<MemberUpdateInput>(
@@ -26,8 +26,8 @@ export function Settings() {
       memberPhone: member?.memberPhone,
       memberAddress: member?.memberAddress,
       memberDesc: member?.memberDesc,
-      memberImg: member?.memberImg,
-    }
+      memberImage: member?.memberImage,
+    },
   );
 
   /** HANDLERS  */
@@ -81,7 +81,7 @@ export function Settings() {
     if (!validateImagetypes.includes(fileType)) {
       sweetErrorHandling(Messages.error5);
     } else {
-      memberUpdateInput.memberImg = file;
+      memberUpdateInput.memberImage = file;
       setMemberUpdateInput({ ...memberUpdateInput });
       setMemberImage(URL.createObjectURL(file));
     }

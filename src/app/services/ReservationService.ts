@@ -1,37 +1,37 @@
 import axios from "axios";
-import { serverApi } from "../../lib/config";
+
+const API_BASE = process.env.REACT_APP_API_URL || "";
 
 export interface ReservationInput {
-  date: string;
-  time: string;
-  partySize: string;
+  dateTime: string;
+  peopleCount: number;
+  note?: string;
+  email: string;
+  name: string;
+  phoneNumber: string;
 }
 
-export interface Reservation {
+export interface ReservationUpdateInput {
   _id: string;
-  date: string;
-  time: string;
-  partySize: string;
-  createdAt: string;
-  // add more fields as needed
+  reservationStatus: string;
+  cancelReason?: string;
 }
 
 class ReservationService {
-  async createReservation(input: ReservationInput) {
-    const res = await axios.post(`${serverApi}/reservation/create`, input, {
-      withCredentials: true,
-    });
+  async createReservation(data: ReservationInput) {
+    const res = await axios.post(`${API_BASE}/member/create/reservation`, data, { withCredentials: true });
     return res.data;
   }
 
-  async getMyReservations() {
-    const res = await axios.get(`${serverApi}/reservation/my`, {
-      withCredentials: true,
-    });
+  async getAllReservations() {
+    const res = await axios.get(`${API_BASE}/getAll/reservations`, { withCredentials: true });
     return res.data;
   }
 
-  // Add more methods as needed (cancel, update, etc)
+  async updateReservation(data: ReservationUpdateInput) {
+    const res = await axios.post(`${API_BASE}/reservation/update`, data, { withCredentials: true });
+    return res.data;
+  }
 }
 
 export default ReservationService;

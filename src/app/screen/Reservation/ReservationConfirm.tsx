@@ -27,8 +27,11 @@ type Props = {
   timeLabel: string;
   partyLabel: string;
   holdSeconds: number;
-  onConfirm?: () => void;
+  onConfirm?: (note: string, name: string, email: string, phone: string) => void;
   memberNick?: string;
+  note?: string;
+  email?: string;
+  phone?: string;
 };
 
 export default function ReservationConfirmModal({
@@ -40,32 +43,27 @@ export default function ReservationConfirmModal({
   holdSeconds,
   onConfirm,
   memberNick,
+  note: noteProp,
+  email: emailProp,
+  phone: phoneProp,
 }: Props) {
   const mm = String(Math.floor(holdSeconds / 60)).padStart(2, "0");
   const ss = String(holdSeconds % 60).padStart(2, "0");
 
   const handleConfirm = async () => {
-    try {
-      await (await import("../../../lib/sweetAlert")).sweetTopSmallSuccessAlert(
-        `Reservation confirmed for ${partyLabel} on ${dateLabel} at ${timeLabel}`,
-      );
-    } catch (e) {
-      // fallback simple alert
-      alert(`Reservation confirmed for ${partyLabel} on ${dateLabel} at ${timeLabel}`);
-    }
-    if (onConfirm) {
-      try { onConfirm(); } catch {}
+    if (formValid) {
+      await onConfirm?.(note, firstName, emailState, phoneState);
     }
     onClose();
   };
 
   // form state
   const [firstName, setFirstName] = React.useState(memberNick || "");
-  const [phone, setPhone] = React.useState("");
-  const [email, setEmail] = React.useState("");
-  const [request, setRequest] = React.useState("");
+  const [phoneState, setPhoneState] = React.useState(phoneProp || "");
+  const [emailState, setEmailState] = React.useState(emailProp || "");
   const [agreeTerms, setAgreeTerms] = React.useState(false);
   const [agreeNews, setAgreeNews] = React.useState(false);
+  const [note, setNote] = React.useState(noteProp || "");
 
   React.useEffect(() => {
     if (memberNick) setFirstName(memberNick);
@@ -80,8 +78,15 @@ export default function ReservationConfirmModal({
 
   const isEmailValid = (v: string) => /\S+@\S+\.\S+/.test(v);
 
-  const formValid =
-    Boolean(firstName && phone && email && agreeTerms && agreeNews && isKoreanPhone(phone) && isEmailValid(email));
+  const formValid = Boolean(
+    firstName &&
+    phoneState &&
+    emailState &&
+    agreeTerms &&
+    agreeNews &&
+    isKoreanPhone(phoneState) &&
+    isEmailValid(emailState),
+  );
 
   return (
     <Dialog
@@ -103,14 +108,21 @@ export default function ReservationConfirmModal({
             className="resv2-heroImg"
             src="/imgs/default_img.jpg"
             alt="Table"
-            onError={(e: any) => (e.currentTarget.src = "/imgs/default_img.jpg")}
+            onError={(e: any) =>
+              (e.currentTarget.src = "/imgs/default_img.jpg")
+            }
           />
         </Box>
 
         <Box className="resv2-title">Reservation detail</Box>
 
         {/* info row */}
-        <Stack className="resv2-meta" direction="row" spacing={3} flexWrap="wrap">
+        <Stack
+          className="resv2-meta"
+          direction="row"
+          spacing={3}
+          flexWrap="wrap"
+        >
           <Box className="resv2-metaItem">
             <CalendarMonthRoundedIcon />
             <span>{dateLabel}</span>
@@ -128,7 +140,9 @@ export default function ReservationConfirmModal({
         {/* hold banner */}
         <Box className="resv2-hold">
           Due to limited availability, we can hold this table for you for{" "}
-          <b>{mm}:{ss}</b>
+          <b>
+            {mm}:{ss}
+          </b>
         </Box>
 
         <Box className="resv2-sectionTitle">Data order</Box>
@@ -146,8 +160,10 @@ export default function ReservationConfirmModal({
           <TextField
             placeholder="Phone number"
             className="resv2-input"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value.replace(/[^\d\+]/g, ""))}
+            value={phoneState}
+            onChange={(e) =>
+              setPhoneState(e.target.value.replace(/[^\d\+]/g, ""))
+            }
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -155,16 +171,20 @@ export default function ReservationConfirmModal({
                 </InputAdornment>
               ),
             }}
-            error={phone.length > 0 && !isKoreanPhone(phone)}
-            helperText={phone.length > 0 && !isKoreanPhone(phone) ? "Enter a valid Korean phone number" : ""}
+            error={phoneState.length > 0 && !isKoreanPhone(phoneState)}
+            helperText={
+              phoneState.length > 0 && !isKoreanPhone(phoneState)
+                ? "Enter a valid Korean phone number"
+                : ""
+            }
             required
           />
 
           <TextField
             placeholder="Email address"
             className="resv2-input"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={emailState}
+            onChange={(e) => setEmailState(e.target.value)}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -172,18 +192,20 @@ export default function ReservationConfirmModal({
                 </InputAdornment>
               ),
             }}
-            error={email.length > 0 && !isEmailValid(email)}
-            helperText={email.length > 0 && !isEmailValid(email) ? "Enter a valid email" : ""}
+            error={emailState.length > 0 && !isEmailValid(emailState)}
+            helperText={
+              emailState.length > 0 && !isEmailValid(emailState)
+                ? "Enter a valid email"
+                : ""
+            }
             required
           />
 
-          {/* occasion removed as requested */}
-
           <TextField
-            placeholder="Add a special request"
+            placeholder="Add a note for your reservation"
             className="resv2-input"
-            value={request}
-            onChange={(e) => setRequest(e.target.value)}
+            value={note}
+            onChange={e => setNote(e.target.value)}
           />
         </Box>
 
@@ -191,11 +213,21 @@ export default function ReservationConfirmModal({
         <Box className="resv2-bottom">
           <Box className="resv2-checks">
             <FormControlLabel
-              control={<Checkbox checked={agreeTerms} onChange={(e) => setAgreeTerms(e.target.checked)} />}
+              control={
+                <Checkbox
+                  checked={agreeTerms}
+                  onChange={(e) => setAgreeTerms(e.target.checked)}
+                />
+              }
               label="I agree with what is stated above"
             />
             <FormControlLabel
-              control={<Checkbox checked={agreeNews} onChange={(e) => setAgreeNews(e.target.checked)} />}
+              control={
+                <Checkbox
+                  checked={agreeNews}
+                  onChange={(e) => setAgreeNews(e.target.checked)}
+                />
+              }
               label="Sign me up to receive dining offers and news from this restaurant by email."
             />
           </Box>
@@ -216,12 +248,15 @@ export default function ReservationConfirmModal({
           </Box>
         </Box>
 
-        <Button className="resv2-confirm" variant="contained" onClick={handleConfirm} disabled={!formValid}>
+        <Button
+          className="resv2-confirm"
+          variant="contained"
+          onClick={handleConfirm}
+          disabled={!formValid}
+        >
           Confirm reservation
         </Button>
       </DialogContent>
     </Dialog>
   );
 }
-
-

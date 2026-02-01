@@ -25,8 +25,8 @@ function Settings() {
   const member = authMember;
 
   const [memberImage, setMemberImage] = useState<string>(
-    member?.memberImg
-      ? `${serverApi}/${member.memberImg}`
+    member?.memberImage
+      ? `${serverApi}/${member.memberImage}`
       : "/icons/default-user.svg",
   );
 
@@ -36,7 +36,8 @@ function Settings() {
       memberPhone: member?.memberPhone,
       memberAddress: member?.memberAddress,
       memberDesc: member?.memberDesc,
-      memberImg: member?.memberImg,
+      memberImage: member?.memberImage,
+      memberEmail: member?.memberEmail,
     },
   );
 
@@ -62,20 +63,10 @@ function Settings() {
   const handleSubmitButton = async () => {
     try {
       if (!authMember) throw new Error(Messages.error2);
-      // ✅ REPLACE YOUR IF CHECK WITH THIS EXACT ONE (no TS error)
-      if (
-        (memberUpdateInput.memberNick ?? "").trim() === "" ||
-        (memberUpdateInput.memberPhone ?? "").trim() === "" ||
-        (memberUpdateInput.memberAddress ?? "").trim() === "" ||
-        (memberUpdateInput.memberDesc ?? "").trim() === ""
-      ) {
-        throw new Error(Messages.error3);
-      }
-
+      // Removed required fields check so user can update any field independently
       const memberService = new MemberService();
       const result = await memberService.updateMember(memberUpdateInput);
       setAuthMember(result);
-
       await sweetTopSmallSuccessAlert("modified successfully", 700);
     } catch (err) {
       console.log(err);
@@ -95,7 +86,7 @@ function Settings() {
       return;
     }
 
-    setMemberUpdateInput({ ...memberUpdateInput, memberImg: file });
+    setMemberUpdateInput({ ...memberUpdateInput, memberImage: file });
     setMemberImage(URL.createObjectURL(file));
   };
 
@@ -145,6 +136,20 @@ function Settings() {
         </div>
 
         <div className="short-input">
+          <label className="spec-label">Email</label>
+          <input
+            className="spec-input mb-email"
+            type="email"
+            placeholder={member?.memberEmail ?? "no email"}
+            value={memberUpdateInput.memberEmail || ""}
+            name="memberEmail"
+            onChange={(e) => setMemberUpdateInput({ ...memberUpdateInput, memberEmail: e.target.value })}
+          />
+        </div>
+      </Box>
+
+      <Box className="input-frame">
+        <div className="long-input">
           <label className="spec-label">Address</label>
           <input
             className="spec-input mb-address"
@@ -211,8 +216,8 @@ export default function UserPage() {
                 <div className="order-user-img">
                   <img
                     src={
-                      member?.memberImg
-                        ? `${serverApi}/${member.memberImg}`
+                      member?.memberImage
+                        ? `${serverApi}/${member.memberImage}`
                         : "/icons/default-user.svg"
                     }
                     className="order-user-avatar"
