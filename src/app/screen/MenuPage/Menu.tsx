@@ -7,6 +7,7 @@ import {
   Rating,
   TextField,
   InputAdornment,
+  Pagination,
 } from "@mui/material";
 
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
@@ -66,6 +67,9 @@ const Menu = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [hoveredLikeId, setHoveredLikeId] = useState<string | null>(null);
   const [clickedButton, setClickedButton] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 8;
 
   const categories = [
     "All Category",
@@ -87,7 +91,7 @@ const Menu = () => {
     return mapping[category];
   };
 
-  const queryKey = `${selectedCategory}-${searchQuery}-1`;
+  const queryKey = `${selectedCategory}-${searchQuery}-${currentPage}`;
 
   // Check if we have cached products
   const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
@@ -97,10 +101,16 @@ const Menu = () => {
     productsCache[queryKey];
 
   useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, searchQuery]);
+
+  useEffect(() => {
     // If we have valid cached products, use them
     if (isCached) {
       console.log("Using cached products for:", queryKey);
-      setProductsAction(productsCache[queryKey]);
+      const cached = productsCache[queryKey];
+      setProductsAction(cached);
+      setTotalPages(cached.length < itemsPerPage ? currentPage : currentPage + 1);
     } else {
       console.log("Loading products from API for:", queryKey);
       loadProducts();
@@ -117,27 +127,29 @@ const Menu = () => {
       if (selectedCategory === "Favorite") {
         try {
           const inquiry = {
-            page: 1,
-            limit: 12,
+            page: currentPage,
+            limit: itemsPerPage,
             order: "createdAt",
           };
           const result = await productService.getFavoriteProducts(inquiry);
           console.log("Favorite products from API:", result);
           setProductsAction(result);
           cacheProductsAction({ queryKey, products: result });
+          setTotalPages(result.length < itemsPerPage ? currentPage : currentPage + 1);
         } catch (err) {
           console.error("Error loading favorite products:", err);
           // If no favorites, show empty
           setProductsAction([]);
           cacheProductsAction({ queryKey, products: [] });
+          setTotalPages(1);
         }
         return;
       }
       
       // Handle other categories
       const inquiry = {
-        page: 1,
-        limit: 12,
+        page: currentPage,
+        limit: itemsPerPage,
         order: "createdAt",
         search: searchQuery || undefined,
         productCollection: selectedCategory !== "All Category" ? categoryToEnum(selectedCategory) : undefined,
@@ -147,12 +159,18 @@ const Menu = () => {
       console.log("🔍 Products from API:", result);
       setProductsAction(result);
       cacheProductsAction({ queryKey, products: result });
+      setTotalPages(result.length < itemsPerPage ? currentPage : currentPage + 1);
     } catch (err) {
       console.error("Error loading products:", err);
       sweetErrorHandling(err as Error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
+    setCurrentPage(value);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleLikeProduct = async (product: Product) => {
@@ -376,6 +394,18 @@ const Menu = () => {
                     </Stack>
                   </Box>
                 ))}
+              </Box>
+            )}
+
+            {!loading && products.length > 0 && totalPages > 1 && (
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+                <Pagination
+                  count={totalPages}
+                  page={currentPage}
+                  onChange={handlePageChange}
+                  color="secondary"
+                  size="large"
+                />
               </Box>
             )}
           </Box>
