@@ -30,7 +30,7 @@ function OtherNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onL
   return (
     <div>
       {" "}
-      <div className="home-navbar">
+      <div className="other-navbar">
         <Container className="navbar-container">
           <Stack className="menu">
             <Box>

@@ -7,6 +7,19 @@
     "Helvetica Neue", Arial, sans-serif;
 }
 
+.other-navbar {
+  background-color: #ffffff;
+  padding: 10px 0;
+  border-bottom: 1px solid #e0e0e0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
 /* Container to manage width and centering */
 .navbar-container {
   margin-top: 35px;

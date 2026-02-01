@@ -13,7 +13,7 @@ import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+
 
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,13 +28,13 @@ import {
 } from "./slice";
 import { retrieveProducts, retrieveProductsCache, retrieveLastFetch } from "./selector";
 import { updateProductLike } from "./likesSlice";
-import { addToCart } from "../OrderOnline/slice";
-import { retrieveCartItems } from "../OrderOnline/selector";
 import { serverApi } from "../../../lib/config";
-import { sweetErrorHandling, sweetTopSmallSuccessAlert } from "../../../lib/sweetAlert";
+import { addToCart } from "../OrderOnline/slice";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { sweetErrorHandling } from "../../../lib/sweetAlert";
 
 import "../../../css/menu.css";
-import OrderList from "./OrderList";
+
 
 /** REDUX SLICE AND SELECTOR */
 const actionDispatch = (dispatch: Dispatch) => ({
@@ -55,19 +55,17 @@ const menuPageRetriever = createSelector(
   })
 );
 
+
 const Menu = () => {
   const navigate = useNavigate();
   const { setProducts: setProductsAction, cacheProducts: cacheProductsAction, updateProductLike: updateProductLikeAction, addToCart: addToCartAction } = actionDispatch(useDispatch());
   const { products, productsCache, lastFetch } = useSelector(menuPageRetriever);
-  const cartItems = useSelector(retrieveCartItems);
+
   const [loading, setLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("All Category");
   const [searchQuery, setSearchQuery] = useState("");
   const [hoveredLikeId, setHoveredLikeId] = useState<string | null>(null);
   const [clickedButton, setClickedButton] = useState<string | null>(null);
-  
-  // Show OrderList only if there are items in cart
-  const cartOpen = cartItems && cartItems.length > 0;
 
   const categories = [
     "All Category",
@@ -184,7 +182,7 @@ const Menu = () => {
         );
       }
       
-      sweetTopSmallSuccessAlert(result.memberLiked ? "Added to favorites!" : "Removed from favorites", 1000);
+
     } catch (err: unknown) {
       console.error("Error liking product:", err);
       sweetErrorHandling(err as Error);
@@ -233,7 +231,7 @@ const Menu = () => {
         </Stack>
 
         {/* layout changes by cartOpen */}
-        <Box className={`menu2-layout ${cartOpen ? "with-cart" : "no-cart"}`}>
+        <Box className="menu2-layout no-cart">
           {/* LEFT */}
           <Box className="menu2-left">
             {loading ? (
@@ -241,7 +239,7 @@ const Menu = () => {
             ) : products.length === 0 ? (
               <Box sx={{ textAlign: 'center', py: 4 }}>No products found</Box>
             ) : (
-              <Box className={`menu2-grid ${cartOpen ? "cols-3" : "cols-4"}`}>
+              <Box className="menu2-grid cols-4">
                 {products.map((product) => (
                   <Box
                     key={product._id}
@@ -346,13 +344,12 @@ const Menu = () => {
                           ? product.discountedPrice.toFixed(2) 
                           : product.productPrice.toFixed(2)}
                       </Box>
-
                       <Button
                         variant="contained"
                         color="secondary"
                         className="menu2-order"
                         startIcon={<ShoppingCartIcon />}
-                        onClick={(e) => {
+                        onClick={e => {
                           e.stopPropagation();
                           const cartItem = {
                             _id: product._id,
@@ -363,8 +360,7 @@ const Menu = () => {
                           };
                           addToCartAction(cartItem);
                           setClickedButton(product._id);
-                          sweetTopSmallSuccessAlert("Added to cart!", 1000);
-                          setTimeout(() => setClickedButton(null), 1500);
+                          setTimeout(() => setClickedButton(null), 1200);
                         }}
                         sx={{
                           transition: "all 0.3s ease",
@@ -383,8 +379,7 @@ const Menu = () => {
             )}
           </Box>
 
-          {/* RIGHT: only render if cartOpen */}
-          {cartOpen ? <OrderList /> : null}
+
         </Box>
       </Container>
     </div>
