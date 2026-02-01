@@ -16,8 +16,10 @@ import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRound
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useSelector } from "react-redux";
 import { retrievePopularDishes, retrievePaginationInfo } from "./selector";
-import { serverApi } from "../../../lib/config";
+import { serverApi, Messages } from "../../../lib/config";
 import { CartItem } from "../../../lib/types/search";
+import { sweetErrorHandling } from "../../../lib/sweetAlert";
+import { useGlobals } from "../../hooks/useGlobals";
 
 import "../../../css/home.css";
 
@@ -30,6 +32,7 @@ interface PopularMenuProps {
 function PopularMenu({ page, setPage, onAdd }: PopularMenuProps) {
   const popularDishes = useSelector(retrievePopularDishes);
   const { totalPages } = useSelector(retrievePaginationInfo);
+  const { authMember } = useGlobals();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [addedItemName, setAddedItemName] = useState("");
   const [clickedButton, setClickedButton] = useState<string | null>(null);
@@ -57,6 +60,10 @@ function PopularMenu({ page, setPage, onAdd }: PopularMenuProps) {
   };
 
   const handleAddToCart = (dish: any) => {
+    if (!authMember) {
+      sweetErrorHandling({ message: "Please sign up first" });
+      return;
+    }
     const cartItem: CartItem = {
       _id: dish._id,
       quantity: 1,

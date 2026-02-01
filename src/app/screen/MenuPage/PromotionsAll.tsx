@@ -18,8 +18,9 @@ import ProductService from "../../services/ProductService";
 import { setPromotions, setPromotionsLoading } from "./slice";
 import { RootState } from "../../store";
 import useBusket from "../../hooks/useBusket";
-import { serverApi } from "../../../lib/config";
-import { sweetTopSmallSuccessAlert } from "../../../lib/sweetAlert";
+import { serverApi, Messages } from "../../../lib/config";
+import { sweetErrorHandling, sweetTopSmallSuccessAlert } from "../../../lib/sweetAlert";
+import { useGlobals } from "../../hooks/useGlobals";
 
 import "../../../css/menu.css";
 import OrderList from "./OrderList";
@@ -29,6 +30,7 @@ const productService = new ProductService();
 function PromotionsAll() {
   const dispatch = useDispatch();
   const { onAdd } = useBusket();
+  const { authMember } = useGlobals();
   
   const promotions = useSelector((state: RootState) => state.menuPage.promotions);
   const loading = useSelector((state: RootState) => state.menuPage.promotionsLoading);
@@ -58,6 +60,10 @@ function PromotionsAll() {
   }, [dispatch, currentPage]);
 
   const handleOrder = (product: any) => {
+    if (!authMember) {
+      sweetErrorHandling({ message: "Please sign up first" });
+      return;
+    }
     onAdd({
       _id: product._id,
       quantity: 1,

@@ -23,8 +23,12 @@ import { retrieveChosenProduct, retrieveProducts, retrieveProductsCache } from "
 import ProductService from "../../services/ProductService";
 import { serverApi } from "../../../lib/config";
 import { setProducts, setChosenProduct, cacheProducts } from "./slice";
-import OrderList from "./OrderList";
 import "../../../css/menu.css";
+import { useGlobals } from "../../hooks/useGlobals";
+import ReviewService, { Review } from "../../services/ReviewService";
+import useBusket from "../../hooks/useBusket";
+import { sweetErrorHandling, sweetTopSmallSuccessAlert } from "../../../lib/sweetAlert";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 function ChoosenProduct() {
   const navigate = useNavigate();
@@ -33,8 +37,14 @@ function ChoosenProduct() {
   const products = useSelector(retrieveProducts);
   const productsCache = useSelector(retrieveProductsCache);
   const chosenProduct = useSelector(retrieveChosenProduct);
+  const { authMember } = useGlobals();
+  const { onAdd } = useBusket();
   const [loading, setLoading] = useState(false);
   const [activeImg, setActiveImg] = useState("/imgs/default_img.jpg");
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviewsTotal, setReviewsTotal] = useState(0);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
+  const [reviewsLimit, setReviewsLimit] = useState(3);
 
   useEffect(() => {
     if (!productId) return;
@@ -93,6 +103,31 @@ function ChoosenProduct() {
     }
   }, [chosenProduct]);
 
+  useEffect(() => {
+    setReviewsLimit(3);
+    setReviews([]);
+    setReviewsTotal(0);
+  }, [productId]);
+
+  useEffect(() => {
+    if (!productId) return;
+    const fetchReviews = async () => {
+      try {
+        setReviewsLoading(true);
+        const reviewService = new ReviewService();
+        const data = await reviewService.getProductReviews(productId, 1, reviewsLimit);
+        setReviews(data.items || []);
+        setReviewsTotal(data.total || 0);
+      } catch (err) {
+        console.error("Error loading reviews:", err);
+      } finally {
+        setReviewsLoading(false);
+      }
+    };
+
+    fetchReviews();
+  }, [productId, reviewsLimit]);
+
 
 
   if (loading) {
@@ -121,6 +156,23 @@ function ChoosenProduct() {
   const images = chosenProduct.productImages?.length
     ? chosenProduct.productImages.map((img) => `${serverApi}/${img}`)
     : ["/imgs/default_img.jpg"];
+
+  const handleAddToCart = () => {
+    if (!authMember) {
+      sweetErrorHandling({ message: "Please sign up first" });
+      return;
+    }
+
+    onAdd({
+      _id: chosenProduct._id,
+      quantity: 1,
+      name: chosenProduct.productName,
+      price: chosenProduct.discountedPrice || chosenProduct.productPrice,
+      image: chosenProduct.productImages?.[0],
+    });
+
+    sweetTopSmallSuccessAlert(chosenProduct.productName);
+  };
 
   return (
     <div className="cp-section">
@@ -185,7 +237,7 @@ function ChoosenProduct() {
 
               <Stack direction="row" alignItems="center" spacing={2} className="cp-meta">
                 <Stack direction="row" spacing={1} alignItems="center">
-                  <Rating value={4} readOnly />
+                  <Rating value={chosenProduct.productRating || 0} readOnly />
                   <Box className="cp-rev">({chosenProduct.productReviewCount || 0} reviews)</Box>
                 </Stack>
 
@@ -219,12 +271,97 @@ function ChoosenProduct() {
                   <Box className="cp-tag">Chef Special</Box>
                 </Box>
               </Stack>
+
+
+
+              {/* REVIEWS */}
+              <Box sx={{ mt: 4 }}>
+                <Box sx={{ fontSize: 18, fontWeight: 700, mb: 1 }}>
+                  Latest Reviews
+                </Box>
+
+                {reviewsLoading ? (
+                  <Box sx={{ color: "#666", py: 2 }}>Loading reviews...</Box>
+                ) : reviews.length === 0 ? (
+                  <Box sx={{ color: "#666", py: 2 }}>No reviews yet</Box>
+                ) : (
+                  <Stack spacing={2}>
+                    {reviews.map((review) => {
+                      const avatar = review.memberId?.memberImage
+                        ? `${serverApi}/${review.memberId.memberImage}`
+                        : "/imgs/default_img.jpg";
+                      return (
+                        <Box key={review._id} sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
+                          <Box
+                            component="img"
+                            src={avatar}
+                            alt={review.memberId?.memberNick || "User"}
+                            sx={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover" }}
+                          />
+                          <Box sx={{ flex: 1 }}>
+                            <Stack direction="row" spacing={1} alignItems="center">
+                              <Box sx={{ fontWeight: 700 }}>
+                                {review.memberId?.memberNick || "Anonymous"}
+                              </Box>
+                              <Rating value={review.rating} readOnly size="small" />
+                              <Box sx={{ color: "#888", fontSize: 12 }}>
+                                {new Date(review.createdAt).toLocaleDateString()}
+                              </Box>
+                            </Stack>
+                            <Box sx={{ color: "#555", mt: 0.5 }}>
+                              {review.comment || "Great food and service!"}
+                            </Box>
+                          </Box>
+                        </Box>
+                      );
+                    })}
+                  </Stack>
+                )}
+
+                {reviewsTotal > reviews.length && !reviewsLoading && (
+                  <Button
+                    variant="text"
+                    sx={{ mt: 2 }}
+                    onClick={() => setReviewsLimit(reviewsTotal)}
+                  >
+                    View more reviews
+                  </Button>
+                )}
+              </Box>
             </Box>
           </Box>
 
-          {/* RIGHT: ORDER PANEL (BASKET) */}
+          {/* RIGHT: CHECKOUT PANEL */}
           <Box className="cp-right">
-            <OrderList />
+            <Box sx={{ 
+              display: "flex", 
+              flexDirection: "column", 
+              alignItems: "center", 
+              justifyContent: "center", 
+              gap: 2,
+              p: 3,
+              backgroundColor: "#f9f9f9",
+              borderRadius: 2,
+              height: "fit-content",
+              minHeight: 200
+            }}>
+              <Box sx={{ fontSize: 28, fontWeight: 700, color: "#333" }}>
+                ₩{(chosenProduct.discountedPrice || chosenProduct.productPrice).toFixed(2)}
+              </Box>
+              <Button
+                variant="contained"
+                color="secondary"
+                size="large"
+                fullWidth
+                startIcon={<ShoppingCartIcon />}
+                onClick={handleAddToCart}
+              >
+                Add to Basket
+              </Button>
+              <Box sx={{ color: "#666", fontSize: 14, textAlign: "center" }}>
+                {authMember ? "Ready to order" : "Sign up to order"}
+              </Box>
+            </Box>
           </Box>
         </Box>
       </Container>

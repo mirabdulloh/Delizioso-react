@@ -66,13 +66,15 @@ function OtherNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onL
                 <NavLink to="/support">Support</NavLink>
               </Box>
               {/* Basket */}
-              <Basket
-                cartItems={cartItems}
-                onAdd={onAdd}
-                onRemove={onRemove}
-                onDelete={onDelete}
-                onDeleteAll={onDeleteAll}
-              />
+              {authMember && (
+                <Basket
+                  cartItems={cartItems}
+                  onAdd={onAdd}
+                  onRemove={onRemove}
+                  onDelete={onDelete}
+                  onDeleteAll={onDeleteAll}
+                />
+              )}
               {/* Notification Bell */}
               {authMember && <NotificationBell />}
               {!authMember ? (

@@ -29,10 +29,11 @@ import {
 } from "./slice";
 import { retrieveProducts, retrieveProductsCache, retrieveLastFetch } from "./selector";
 import { updateProductLike } from "./likesSlice";
-import { serverApi } from "../../../lib/config";
+import { serverApi, Messages } from "../../../lib/config";
 import { addToCart } from "../OrderOnline/slice";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { sweetErrorHandling, sweetTopSmallSuccessAlert } from "../../../lib/sweetAlert";
+import { useGlobals } from "../../hooks/useGlobals";
 
 import "../../../css/menu.css";
 
@@ -61,6 +62,7 @@ const Menu = () => {
   const navigate = useNavigate();
   const { setProducts: setProductsAction, cacheProducts: cacheProductsAction, updateProductLike: updateProductLikeAction, addToCart: addToCartAction } = actionDispatch(useDispatch());
   const { products, productsCache, lastFetch } = useSelector(menuPageRetriever);
+  const { authMember } = useGlobals();
 
   const [loading, setLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("All Category");
@@ -369,6 +371,10 @@ const Menu = () => {
                         startIcon={<ShoppingCartIcon />}
                         onClick={e => {
                           e.stopPropagation();
+                          if (!authMember) {
+                            sweetErrorHandling({ message: "Please sign up first" });
+                            return;
+                          }
                           const cartItem = {
                             _id: product._id,
                             quantity: 1,
