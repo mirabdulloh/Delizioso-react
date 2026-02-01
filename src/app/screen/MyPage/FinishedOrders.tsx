@@ -7,6 +7,7 @@ import InboxRoundedIcon from "@mui/icons-material/InboxRounded";
 import { useNavigate } from "react-router-dom";
 import { Order } from "../../../lib/types/orders";
 import { OrderStatus } from "../../../lib/enums/order.enum";
+import { CartItem } from "../../../lib/types/search";
 import OrderService from "../../services/OrderService";
 import ReviewService from "../../services/ReviewService";
 import ReviewModal from "../../components/ReviewModal";
@@ -139,33 +140,53 @@ export default function FinishedOrders() {
     try {
       const confirmed = await sweetWarningAlert(
         "Reorder Items",
-        "Do you want to create a new order with the same items?"
+        "Do you want to add these items to your cart?"
       );
 
       if (!confirmed) return;
       
-      // Transform order items to CartItem format
-      const cartItems = order.items.map((item) => ({
-        _id: item.id,
+      // Transform order items to CartItem format with all necessary data
+      const cartItems: CartItem[] = order.items.map((item) => ({
+        _id: item.productId,
         quantity: item.qty,
         name: item.name,
         price: item.price,
         image: item.img,
       }));
       
-      // Create new order
-      const orderService = new OrderService();
-      await orderService.createOrder(cartItems);
+      // Store items in localStorage for order-online page
+      const existingCart = localStorage.getItem('cartItems');
+      let currentCart: CartItem[] = [];
+      
+      if (existingCart) {
+        try {
+          currentCart = JSON.parse(existingCart);
+        } catch (err) {
+          console.error("Error parsing existing cart:", err);
+        }
+      }
+      
+      // Merge with existing cart
+      cartItems.forEach(newItem => {
+        const existingIndex = currentCart.findIndex(item => item._id === newItem._id);
+        if (existingIndex >= 0) {
+          currentCart[existingIndex].quantity += newItem.quantity;
+        } else {
+          currentCart.push(newItem);
+        }
+      });
+      
+      localStorage.setItem('cartItems', JSON.stringify(currentCart));
       
       await sweetSuccessAlert(
-        "Order Created!",
-        "Your order has been created. Go to Orders page to complete checkout."
+        "Items Added!",
+        "Items have been added to your cart."
       );
 
       console.log("✅ Reorder successful");
       
-      // Navigate to orders page
-      navigate("/orders");
+      // Navigate to order-online page
+      navigate("/order-online");
     } catch (err) {
       console.error("❌ Reorder error:", err);
       await sweetErrorHandling(err);

@@ -65,16 +65,23 @@ function ReviewModal({
         comment: comment.trim() || undefined,
       });
 
-      await sweetSuccessAlert("Success", "Your review has been submitted!");
+      // Reset form and close modal first
       setRating(5);
       setComment("");
+      setSubmitting(false);
       onClose();
+      
+      // Call onSuccess callback to refresh the order list
       if (onSuccess) onSuccess();
+      
+      // Show success message after modal closes
+      setTimeout(() => {
+        sweetSuccessAlert("Success", "Your review has been submitted!");
+      }, 300);
     } catch (err: any) {
       console.error("Error submitting review:", err);
-      sweetErrorHandling(err);
-    } finally {
       setSubmitting(false);
+      sweetErrorHandling(err);
     }
   };
 

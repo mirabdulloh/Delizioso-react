@@ -282,8 +282,12 @@
 .user-page {
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   min-height: 100vh;
-  padding-top: 40px;
+  padding-top: 80px;
   padding-bottom: 60px;
+}
+
+.user-page .MuiContainer-root {
+  max-width: 1300px !important;
 }
 
 /* Profile Picture Card */
@@ -431,6 +435,7 @@
 }
 
 .profile-cover {
+  padding-top: 80px;
   height: 200px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   position: relative;
