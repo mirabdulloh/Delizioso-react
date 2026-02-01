@@ -8,16 +8,26 @@
 }
 
 .other-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100; /* base z-index */
   background-color: #ffffff;
   padding: 10px 0;
   border-bottom: 1px solid #e0e0e0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
+}
+
+.other-navbar.scrolled {
+  z-index: 1200; /* scrolled z-index */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+}
+
+/* Utility class for page content below fixed navbar */
+.other-navbar-padding {
+  padding-top: 80px;
 }
 
 /* Container to manage width and centering */

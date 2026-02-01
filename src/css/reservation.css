@@ -13,6 +13,7 @@
   grid-template-columns: 1.1fr 0.9fr;
   gap: 56px;
   align-items: center;
+  padding-top: 80px;
 }
 
 /* ensure container doesn't inherit gray backgrounds */

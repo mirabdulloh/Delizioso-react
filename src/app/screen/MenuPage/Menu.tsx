@@ -31,7 +31,7 @@ import { updateProductLike } from "./likesSlice";
 import { serverApi } from "../../../lib/config";
 import { addToCart } from "../OrderOnline/slice";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { sweetErrorHandling } from "../../../lib/sweetAlert";
+import { sweetErrorHandling, sweetTopSmallSuccessAlert } from "../../../lib/sweetAlert";
 
 import "../../../css/menu.css";
 
@@ -359,6 +359,7 @@ const Menu = () => {
                             image: product.productImages[0],
                           };
                           addToCartAction(cartItem);
+                          sweetTopSmallSuccessAlert(product.productName, 1000);
                           setClickedButton(product._id);
                           setTimeout(() => setClickedButton(null), 1200);
                         }}

@@ -1,0 +1,23 @@
+/* Custom SweetAlert2 Toast Success Style */
+.swal2-popup.custom-toast-success {
+  background: #f3fbf6 !important;
+  color: #217a3c !important;
+  border-radius: 20px !important;
+  box-shadow: 0 4px 24px rgba(33, 122, 60, 0.08) !important;
+  padding: 18px 32px !important;
+  min-width: 320px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+.swal2-title.custom-toast-title {
+  color: #217a3c !important;
+  font-weight: 600 !important;
+  font-size: 1.1rem !important;
+  margin: 0 !important;
+}
+.swal2-close.custom-toast-close {
+  color: #217a3c !important;
+  font-size: 1.5rem !important;
+  top: 10px !important;
+  right: 16px !important;
+}
