@@ -75,8 +75,10 @@ function formatOrderDate(date: Date): string {
 
 // Helper function to transform API Order to UI Order
 function transformOrderToUI(order: Order): OrderUI {
-  const items: OrderItem[] = order.orderItems.map((orderItem, index) => {
-    const product = order.productData[index];
+  const items: OrderItem[] = order.orderItems.map((orderItem) => {
+    const product = order.productData.find(
+      (p) => String(p._id) === String(orderItem.productId)
+    );
     return {
       id: orderItem._id,
       name: product?.productName || 'Unknown Product',
@@ -258,6 +260,7 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
         try {
           console.log("📦 Creating order from cart items:", cartItems);
           const orderService = new OrderService();
+          
           await orderService.createOrder(cartItems);
           console.log("✅ Order created from cart items - Status: PENDING");
           
@@ -270,6 +273,7 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
           dispatch(clearCart());
         } catch (err) {
           console.error("❌ Error creating order from cart:", err);
+          await sweetErrorHandling(err);
         }
       }
     };

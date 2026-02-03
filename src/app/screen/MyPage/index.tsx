@@ -10,6 +10,7 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import StarIcon from "@mui/icons-material/Star";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+import RateReviewRoundedIcon from "@mui/icons-material/RateReviewRounded";
 import Button from "@mui/material/Button";
 import "../../../css/userPage.css";
 import "../../../css/profile.css";
@@ -24,6 +25,7 @@ import {
 } from "../../../lib/sweetAlert";
 import MemberService from "../../services/MemberService";
 import FinishedOrders from "./FinishedOrders";
+import MyReviews from "./MyReviews";
 
 function Settings() {
   const { authMember, setAuthMember } = useGlobals();
@@ -222,6 +224,78 @@ function Settings() {
         </div>
       </Card>
 
+      {/* Payment Card (Design Only) */}
+      <Card className="payment-card-design">
+        <Typography variant="h6" className="payment-card-title">
+          Payment Card
+        </Typography>
+        <div className="payment-card-grid">
+          <div className="form-field">
+            <Typography variant="body2" className="field-label">
+              Cardholder Name
+            </Typography>
+            <input
+              className="modern-input"
+              type="text"
+              placeholder="MAX"
+              defaultValue="MAX"
+              
+            />
+          </div>
+
+          <div className="form-field">
+            <Typography variant="body2" className="field-label">
+              Card Number
+            </Typography>
+            <input
+              className="modern-input"
+              type="text"
+              placeholder="**** **** **** 1234"
+              defaultValue="**** **** **** 1234"
+              
+            />
+          </div>
+
+          <div className="form-field">
+            <Typography variant="body2" className="field-label">
+              Expiry Date
+            </Typography>
+            <input
+              className="modern-input"
+              type="text"
+              placeholder="08/28"
+              defaultValue="08/28"
+              
+            />
+          </div>
+
+          <div className="form-field">
+            <Typography variant="body2" className="field-label">
+              CVV
+            </Typography>
+            <input
+              className="modern-input"
+              type="password"
+              placeholder="***"
+              defaultValue="***"
+              
+            />
+          </div>
+        </div>
+
+        <div className="payment-card-visual">
+          <div className="payment-card-icons">
+            <div className="payment-icon visa">VISA</div>
+            <div className="payment-icon mastercard">MC</div>
+            <div className="payment-icon amex">AMEX</div>
+            <div className="payment-icon applepay"></div>
+          </div>
+          <div className="payment-card-caption">
+            Secure payments • Cards supported
+          </div>
+        </div>
+      </Card>
+
       {/* Action Buttons */}
       <Box className="action-buttons">
         <Button 
@@ -388,6 +462,7 @@ export default function UserPage() {
           >
             <Tab label="Edit Profile" />
             <Tab label="Order History" />
+            <Tab label="My Reviews" icon={<RateReviewRoundedIcon />} iconPosition="start" />
           </Tabs>
         </Card>
 
@@ -404,6 +479,12 @@ export default function UserPage() {
               Order History
             </Typography>
             <FinishedOrders />
+          </Card>
+        )}
+
+        {currentTab === 2 && (
+          <Card className="content-card">
+            <MyReviews />
           </Card>
         )}
       </Container>

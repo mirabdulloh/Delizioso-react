@@ -1,0 +1,348 @@
+/* =========================
+   MY REVIEWS SECTION
+========================= */
+
+.my-reviews-container {
+  width: 100%;
+  padding: 24px;
+  border-radius: 16px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.85) 100%
+  );
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reviews-title {
+  font-weight: 700 !important;
+  color: var(--text) !important;
+  font-size: 24px !important;
+  margin-bottom: 8px !important;
+  letter-spacing: -0.5px;
+}
+
+.reviews-subtitle {
+  color: var(--muted) !important;
+  margin-bottom: 20px !important;
+  font-size: 14px !important;
+}
+
+/* Empty State */
+.my-reviews-empty,
+.my-reviews-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  text-align: center;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.85) 100%
+  );
+  border-radius: 16px;
+  border: 1px dashed var(--border);
+  min-height: 400px;
+}
+
+.empty-icon {
+  font-size: 80px !important;
+  color: var(--border) !important;
+  margin-bottom: 16px;
+}
+
+.empty-title {
+  color: var(--text) !important;
+  font-weight: 700 !important;
+  margin-bottom: 8px !important;
+}
+
+.empty-text {
+  color: var(--muted) !important;
+  font-size: 14px !important;
+}
+
+/* Reviews List */
+.reviews-list {
+  width: 100% !important;
+}
+
+/* Individual Review Card */
+.review-card {
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.98) 0%,
+    rgba(248, 248, 248, 0.95) 100%
+  );
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.review-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 8px 24px rgba(109, 40, 217, 0.12);
+  transform: translateY(-2px);
+}
+
+.review-header {
+  padding-bottom: 16px !important;
+}
+
+.review-product-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.review-product-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.product-name {
+  font-weight: 700;
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.rating-text {
+  color: var(--muted) !important;
+  font-size: 12px !important;
+}
+
+.edited-text {
+  color: var(--primary) !important;
+  font-size: 12px !important;
+  font-style: italic;
+}
+
+/* Edit Status Badge */
+.editable-chip {
+  background: rgba(109, 40, 217, 0.08) !important;
+  border-color: var(--primary) !important;
+}
+
+.editable-chip .MuiChip-label {
+  color: var(--primary) !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+}
+
+.expired-chip {
+  background: rgba(244, 67, 54, 0.08) !important;
+  border-color: #f44336 !important;
+}
+
+.expired-chip .MuiChip-label {
+  color: #f44336 !important;
+  font-size: 12px !important;
+}
+
+/* Review Comment */
+.review-divider {
+  margin: 12px 0 !important;
+  border-color: var(--border) !important;
+}
+
+.review-comment {
+  color: var(--text) !important;
+  font-size: 14px !important;
+  line-height: 1.6;
+  padding: 12px 0;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+/* Review Footer */
+.review-footer {
+  padding-top: 12px !important;
+}
+
+.review-date {
+  color: var(--muted) !important;
+  font-size: 12px !important;
+}
+
+.edit-review-btn {
+  border-radius: 8px !important;
+  padding: 6px 12px !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+  border-color: var(--primary) !important;
+  color: var(--primary) !important;
+  transition: all 0.3s ease;
+}
+
+.edit-review-btn:hover {
+  background: rgba(109, 40, 217, 0.08) !important;
+  border-color: var(--primary) !important;
+  transform: translateX(2px);
+}
+
+/* Edit Review Dialog */
+.edit-review-dialog .MuiDialog-paper {
+  border-radius: 16px !important;
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12) !important;
+}
+
+.dialog-content {
+  padding: 28px !important;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dialog-title {
+  font-weight: 700 !important;
+  color: var(--text) !important;
+  margin: 0 !important;
+}
+
+.dialog-product-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  border-radius: 12px;
+  background: rgba(109, 40, 217, 0.04);
+  border: 1px solid rgba(109, 40, 217, 0.1);
+}
+
+.dialog-product-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.dialog-product-name {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 14px;
+  flex: 1;
+  line-height: 1.4;
+}
+
+.dialog-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field-label {
+  font-weight: 600 !important;
+  color: var(--text) !important;
+  font-size: 14px !important;
+}
+
+.comment-input {
+  border-radius: 8px !important;
+}
+
+.comment-input .MuiOutlinedInput-root {
+  border-color: var(--border) !important;
+  font-size: 14px;
+}
+
+.comment-input .MuiOutlinedInput-root:hover {
+  border-color: var(--primary) !important;
+}
+
+.comment-input .MuiOutlinedInput-root.Mui-focused {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.1);
+}
+
+.save-btn {
+  background: linear-gradient(135deg, var(--primary2), var(--primary)) !important;
+  box-shadow: 0 4px 12px rgba(109, 40, 217, 0.3) !important;
+  border-radius: 8px !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease;
+}
+
+.save-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(109, 40, 217, 0.4) !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .my-reviews-container,
+  .my-reviews-empty {
+    padding: 16px;
+  }
+
+  .reviews-title {
+    font-size: 20px !important;
+  }
+
+  .review-card {
+    padding: 16px;
+  }
+
+  .review-product-img {
+    width: 70px;
+    height: 70px;
+  }
+
+  .review-header {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .dialog-content {
+    padding: 20px !important;
+    gap: 16px;
+  }
+
+  .dialog-product-info {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .review-product-img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .review-footer {
+    flex-direction: column !important;
+    gap: 8px !important;
+    align-items: flex-start !important;
+  }
+
+  .edit-review-btn {
+    width: 100% !important;
+  }
+}

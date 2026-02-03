@@ -60,14 +60,19 @@ function formatOrderDate(date: Date): string {
 }
 
 function transformOrderToUI(order: Order, existingReviews: any[]): OrderUI {
-  const items: OrderItem[] = order.orderItems.map((orderItem, index) => {
-    const product = order.productData[index];
+  const items: OrderItem[] = order.orderItems.map((orderItem) => {
+    // Find the matching product by productId instead of relying on array index
+    const product = order.productData.find(
+      (p) => String(p._id) === String(orderItem.productId)
+    );
+    
     const hasReview = existingReviews.some(
       (rev) => String(rev.orderId) === String(order._id) && String(rev.productId._id || rev.productId) === String(product?._id)
     );
+    
     return {
       id: orderItem._id,
-      productId: product?._id || '',
+      productId: product?._id || orderItem.productId,
       name: product?.productName || 'Unknown Product',
       img: product?.productImages?.[0] ? `${serverApi}/${product.productImages[0]}` : '/imgs/pastas.jpg',
       price: orderItem.itemPrice,
