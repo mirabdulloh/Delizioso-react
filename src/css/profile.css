@@ -311,8 +311,8 @@
 }
 
 .profile-picture-avatar {
-  width: 200px;
-  height: 200px;
+  width: 100px !important;
+  height: 100px !important;
   border: 4px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
@@ -525,6 +525,7 @@
 
 /* Profile Header Card */
 .profile-header-card {
+  padding-top: 80px;
   margin-bottom: 32px;
   border-radius: 32px;
   overflow: visible;
@@ -565,8 +566,8 @@
 }
 
 .profile-header-avatar {
-  width: 220px;
-  height: 220px;
+  width: 220px !important;
+  height: 220px !important;
   border: 5px solid white;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   border-radius: 16px;
@@ -574,6 +575,7 @@
 }
 
 .profile-user-details {
+  margin-top: 10px;
   flex: 1;
   padding-top: 90px;
 }

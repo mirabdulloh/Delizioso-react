@@ -335,14 +335,14 @@ export default function UserPage() {
 
   return (
     <div className="user-page">
-      <Container maxWidth="lg">
+      <Container>
         {/* Profile Header Card */}
         <Card className="profile-header-card">
           {/* Cover Image */}
           <Box className="profile-cover">
-            <IconButton className="edit-cover-btn">
+            {/* <IconButton className="edit-cover-btn">
               <EditIcon sx={{ color: "white" }} />
-            </IconButton>
+            </IconButton> */}
           </Box>
 
           <CardContent sx={{ pt: 0 }}>
@@ -439,7 +439,7 @@ export default function UserPage() {
                         <ReceiptLongIcon className="stat-icon orders-icon" />
                         <Typography variant="h5" className="stat-value">
                           {/* You can add order count here */}
-                          0
+                          {member?.memberPoints || 0}
                         </Typography>
                         <Typography variant="caption" className="stat-label orders-label">
                           Total Orders
