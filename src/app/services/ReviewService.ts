@@ -70,7 +70,7 @@ class ReviewService {
   public async updateReview(input: UpdateReviewInput): Promise<Review> {
     try {
       const url = `${this.path}/member/update/review`;
-      const result = await axios.patch(url, input, { withCredentials: true });
+      const result = await axios.post(url, input, { withCredentials: true });
       console.log("updateReview:", result);
       return result.data;
     } catch (err) {
