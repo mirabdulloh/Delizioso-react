@@ -9,7 +9,11 @@ import { CartItem } from "../../../lib/types/search";
 import { OrderItem, OrderUI } from "../../../lib/types/mypage";
 import ReviewModal from "../../components/ReviewModal";
 import { serverApi } from "../../../lib/config";
-import { sweetErrorHandling, sweetSuccessAlert, sweetWarningAlert } from "../../../lib/sweetAlert";
+import {
+  sweetErrorHandling,
+  sweetSuccessAlert,
+  sweetWarningAlert,
+} from "../../../lib/sweetAlert";
 import { addToCart } from "../OrderOnline/slice";
 import { fetchFinishedOrders, fetchMyReviews } from "./slice";
 import {
@@ -49,13 +53,13 @@ function formatOrderDate(date: Date | string): string {
 function transformOrderToUI(order: Order, reviews: any[]): OrderUI {
   const items: OrderItem[] = order.orderItems.map((orderItem) => {
     const product = order.productData.find(
-      (p) => String(p._id) === String(orderItem.productId)
+      (p) => String(p._id) === String(orderItem.productId),
     );
 
     const hasReview = reviews.some(
       (rev) =>
         String(rev.orderId) === String(order._id) &&
-        String(rev.productId._id || rev.productId) === String(product?._id)
+        String(rev.productId._id || rev.productId) === String(product?._id),
     );
 
     return {
@@ -108,26 +112,33 @@ export default function FinishedOrders() {
     try {
       const confirmed = await sweetWarningAlert(
         "Reorder Items",
-        "Do you want to add these items to your cart?"
+        "Do you want to add these items to your cart?",
       );
 
       if (!confirmed) return;
 
       // Add items to Redux cart using dispatch
       order.items.forEach((item) => {
+        console.log("REORDER IMG:", item.img);
+
         const cartItem: CartItem = {
           _id: item.productId,
           quantity: item.qty,
           name: item.name,
           price: item.price,
-          image: item.img,
+          image: item.img.startsWith("http")
+            ? item.img
+            : `${serverApi}/${item.img}`,
         };
 
         // Dispatch to Redux for each item
         dispatch(addToCart(cartItem));
       });
 
-      await sweetSuccessAlert("Items Added!", "Items have been added to your cart. You can review and order them anytime.");
+      await sweetSuccessAlert(
+        "Items Added!",
+        "Items have been added to your cart. You can review and order them anytime.",
+      );
 
       console.log("✅ Reorder successful - items added to cart");
     } catch (err) {
@@ -140,13 +151,13 @@ export default function FinishedOrders() {
     const hasReview = reviews.some(
       (rev) =>
         String(rev.orderId) === String(orderId) &&
-        String(rev.productId._id || rev.productId) === String(item.productId)
+        String(rev.productId._id || rev.productId) === String(item.productId),
     );
 
     if (hasReview) {
       sweetWarningAlert(
         "Already Reviewed",
-        "You have already reviewed this item."
+        "You have already reviewed this item.",
       );
       return;
     }

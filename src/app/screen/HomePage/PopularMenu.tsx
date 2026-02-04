@@ -86,6 +86,9 @@ function PopularMenu({ page, setPage, onAdd }: PopularMenuProps) {
     setSnackbarOpen(false);
   };
 
+  // Filter products to only show those with at least 2 views
+  const filteredDishes = popularDishes.filter((dish) => dish.productViews >= 2);
+
   return (
     <div className="popular-section">
       <Container>
@@ -94,7 +97,7 @@ function PopularMenu({ page, setPage, onAdd }: PopularMenuProps) {
 
         {/* GRID */}
         <div className="menu-grid menu-grid-4">
-          {popularDishes.map((dish) => (
+          {filteredDishes.map((dish) => (
             <div key={dish._id} className="menu-card menu-card-small">
               <Box sx={{ position: "relative" }}>
                 <Box
