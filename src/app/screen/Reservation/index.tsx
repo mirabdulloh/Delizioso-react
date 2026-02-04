@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Box, Container } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import "../../../css/reservation.css";
 import ReservationConfirmModal from "./ReservationConfirm";
 import ReservationService from "../../services/ReservationService";
@@ -11,6 +12,7 @@ import { sweetErrorHandling, sweetTopSuccessAlert } from "../../../lib/sweetAler
 type Option = { label: string; value: string };
 
 function Reservation() {
+  const navigate = useNavigate();
   const { authMember } = useGlobals();
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
@@ -50,6 +52,13 @@ function Reservation() {
   }, []);
 
   const canSubmit = Boolean(date && time && partySize);
+
+  // ✅ Redirect non-authenticated users
+  useEffect(() => {
+    if (!authMember) {
+      navigate("/");
+    }
+  }, [authMember, navigate]);
 
   // ✅ countdown when modal is open
   useEffect(() => {
