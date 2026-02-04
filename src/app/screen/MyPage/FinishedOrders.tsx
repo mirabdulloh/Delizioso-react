@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Box, Stack, Button, IconButton, Rating, Divider } from "@mui/material";
-import LocalShippingRoundedIcon from "@mui/icons-material/LocalShippingRounded";
+import { Box, Stack, Button, Divider } from "@mui/material";
 import RepeatRoundedIcon from "@mui/icons-material/RepeatRounded";
 import RateReviewRoundedIcon from "@mui/icons-material/RateReviewRounded";
 import InboxRoundedIcon from "@mui/icons-material/InboxRounded";
-import { useNavigate } from "react-router-dom";
 import { Order } from "../../../lib/types/orders";
-import { OrderStatus } from "../../../lib/enums/order.enum";
 import { CartItem } from "../../../lib/types/search";
 import { OrderItem, OrderUI } from "../../../lib/types/mypage";
 import ReviewModal from "../../components/ReviewModal";
@@ -19,7 +16,6 @@ import {
   selectFinishedOrders,
   selectMyReviews,
   selectLoadingOrders,
-  selectHasReviewForProduct,
 } from "./selector";
 import { AppDispatch } from "../../store";
 import "../../../css/finished-orders.css";
@@ -87,7 +83,6 @@ function transformOrderToUI(order: Order, reviews: any[]): OrderUI {
 }
 
 export default function FinishedOrders() {
-  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
   // Redux selectors
@@ -132,12 +127,9 @@ export default function FinishedOrders() {
         dispatch(addToCart(cartItem));
       });
 
-      await sweetSuccessAlert("Items Added!", "Items have been added to your cart.");
+      await sweetSuccessAlert("Items Added!", "Items have been added to your cart. You can review and order them anytime.");
 
-      console.log("✅ Reorder successful");
-
-      // Navigate to order-online page
-      navigate("/order-online");
+      console.log("✅ Reorder successful - items added to cart");
     } catch (err) {
       console.error("❌ Reorder error:", err);
       await sweetErrorHandling(err);
@@ -186,9 +178,6 @@ export default function FinishedOrders() {
       <Box className="finished-orders-empty">
         <InboxRoundedIcon style={{ fontSize: 60, color: "#ccc" }} />
         <Box className="empty-text">No finished orders yet</Box>
-        <Button variant="outlined" onClick={() => navigate("/products")}>
-          Browse Menu
-        </Button>
       </Box>
     );
   }

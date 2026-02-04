@@ -19,7 +19,11 @@ import LocalFireDepartmentRoundedIcon from "@mui/icons-material/LocalFireDepartm
 import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
 
 import { Product } from "../../../lib/types/product";
-import { retrieveChosenProduct, retrieveProducts, retrieveProductsCache } from "./selector";
+import {
+  retrieveChosenProduct,
+  retrieveProducts,
+  retrieveProductsCache,
+} from "./selector";
 import ProductService from "../../services/ProductService";
 import { serverApi } from "../../../lib/config";
 import { setProducts, setChosenProduct, cacheProducts } from "./slice";
@@ -27,7 +31,10 @@ import "../../../css/menu.css";
 import { useGlobals } from "../../hooks/useGlobals";
 import ReviewService, { Review } from "../../services/ReviewService";
 import useBusket from "../../hooks/useBusket";
-import { sweetErrorHandling, sweetTopSmallSuccessAlert } from "../../../lib/sweetAlert";
+import {
+  sweetErrorHandling,
+  sweetTopSmallSuccessAlert,
+} from "../../../lib/sweetAlert";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 function ChoosenProduct() {
@@ -115,7 +122,11 @@ function ChoosenProduct() {
       try {
         setReviewsLoading(true);
         const reviewService = new ReviewService();
-        const data = await reviewService.getProductReviews(productId, 1, reviewsLimit);
+        const data = await reviewService.getProductReviews(
+          productId,
+          1,
+          reviewsLimit,
+        );
         setReviews(data.items || []);
         setReviewsTotal(data.total || 0);
       } catch (err) {
@@ -127,8 +138,6 @@ function ChoosenProduct() {
 
     fetchReviews();
   }, [productId, reviewsLimit]);
-
-
 
   if (loading) {
     return (
@@ -145,7 +154,11 @@ function ChoosenProduct() {
       <div className="cp-section">
         <Container className="cp-container">
           <Box sx={{ textAlign: "center", py: 6 }}>Product not found</Box>
-          <Button className="cp-back" startIcon={<ArrowBackRoundedIcon />} onClick={() => navigate("/products")}>
+          <Button
+            className="cp-back"
+            startIcon={<ArrowBackRoundedIcon />}
+            onClick={() => navigate("/products")}
+          >
             Back to Menu
           </Button>
         </Container>
@@ -178,8 +191,17 @@ function ChoosenProduct() {
     <div className="cp-section">
       <Container className="cp-container">
         {/* TOP BAR */}
-        <Stack direction="row" justifyContent="space-between" alignItems="center" className="cp-topbar">
-          <Button className="cp-back" startIcon={<ArrowBackRoundedIcon />} onClick={() => navigate("/products")}>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          className="cp-topbar"
+        >
+          <Button
+            className="cp-back"
+            startIcon={<ArrowBackRoundedIcon />}
+            onClick={() => navigate("/products")}
+          >
             Back
           </Button>
 
@@ -202,7 +224,12 @@ function ChoosenProduct() {
             <Box className="cp-gallery">
               {/* IMAGE */}
               <Box className="cp-mainImgWrap">
-                <Box component="img" src={activeImg} alt="product" className="cp-mainImg" />
+                <Box
+                  component="img"
+                  src={activeImg}
+                  alt="product"
+                  className="cp-mainImg"
+                />
                 {/* FLOAT ICONS */}
                 <Stack direction="row" spacing={1} className="cp-floatIcons">
                   <Box className="cp-miniPill">
@@ -235,10 +262,22 @@ function ChoosenProduct() {
             <Box className="cp-details">
               <Box className="cp-title">{chosenProduct.productName}</Box>
 
-              <Stack direction="row" alignItems="center" spacing={2} className="cp-meta">
+              <Stack
+                direction="row"
+                alignItems="center"
+                spacing={2}
+                className="cp-meta"
+              >
                 <Stack direction="row" spacing={1} alignItems="center">
-                  <Rating value={chosenProduct.productRating || 0} readOnly />
-                  <Box className="cp-rev">({chosenProduct.productReviewCount || 0} reviews)</Box>
+                  <Rating
+                    name={`rating-${chosenProduct._id}`}
+                    value={Number(chosenProduct.productRank) || 0}
+                    readOnly
+                    size="medium"
+                  />
+                  <Box className="cp-rev">
+                    ({chosenProduct.productReviewCount || 0} reviews)
+                  </Box>
                 </Stack>
 
                 <Box className="cp-dot" />
@@ -272,8 +311,6 @@ function ChoosenProduct() {
                 </Box>
               </Stack>
 
-
-
               {/* REVIEWS */}
               <Box sx={{ mt: 4 }}>
                 <Box sx={{ fontSize: 18, fontWeight: 700, mb: 1 }}>
@@ -291,21 +328,43 @@ function ChoosenProduct() {
                         ? `${serverApi}/${review.memberId.memberImage}`
                         : "/imgs/default_img.jpg";
                       return (
-                        <Box key={review._id} sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
+                        <Box
+                          key={review._id}
+                          sx={{
+                            display: "flex",
+                            gap: 2,
+                            alignItems: "flex-start",
+                          }}
+                        >
                           <Box
                             component="img"
                             src={avatar}
                             alt={review.memberId?.memberNick || "User"}
-                            sx={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover" }}
+                            sx={{
+                              width: 44,
+                              height: 44,
+                              borderRadius: "50%",
+                              objectFit: "cover",
+                            }}
                           />
                           <Box sx={{ flex: 1 }}>
-                            <Stack direction="row" spacing={1} alignItems="center">
+                            <Stack
+                              direction="row"
+                              spacing={1}
+                              alignItems="center"
+                            >
                               <Box sx={{ fontWeight: 700 }}>
                                 {review.memberId?.memberNick || "Anonymous"}
                               </Box>
-                              <Rating value={review.rating} readOnly size="small" />
+                              <Rating
+                                value={review.rating}
+                                readOnly
+                                size="small"
+                              />
                               <Box sx={{ color: "#888", fontSize: 12 }}>
-                                {new Date(review.createdAt).toLocaleDateString()}
+                                {new Date(
+                                  review.createdAt,
+                                ).toLocaleDateString()}
                               </Box>
                             </Stack>
                             <Box sx={{ color: "#555", mt: 0.5 }}>
@@ -333,20 +392,25 @@ function ChoosenProduct() {
 
           {/* RIGHT: CHECKOUT PANEL */}
           <Box className="cp-right">
-            <Box sx={{ 
-              display: "flex", 
-              flexDirection: "column", 
-              alignItems: "center", 
-              justifyContent: "center", 
-              gap: 2,
-              p: 3,
-              backgroundColor: "#f9f9f9",
-              borderRadius: 2,
-              height: "fit-content",
-              minHeight: 200
-            }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 2,
+                p: 3,
+                backgroundColor: "#f9f9f9",
+                borderRadius: 2,
+                height: "fit-content",
+                minHeight: 200,
+              }}
+            >
               <Box sx={{ fontSize: 28, fontWeight: 700, color: "#333" }}>
-                ₩{(chosenProduct.discountedPrice || chosenProduct.productPrice).toFixed(2)}
+                ₩
+                {(
+                  chosenProduct.discountedPrice || chosenProduct.productPrice
+                ).toFixed(2)}
               </Box>
               <Button
                 variant="contained"

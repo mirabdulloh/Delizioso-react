@@ -42,6 +42,23 @@ function OrderList() {
           {cartItems && cartItems.length > 0 ? (
             cartItems.map((item: CartItem) => (
               <Box key={item._id} className="cart-item">
+                {/* Product Image */}
+                {item.image && (
+                  <Box
+                    component="img"
+                    src={item.image}
+                    alt={item.name}
+                    className="cart-item-img"
+                    sx={{
+                      width: "100%",
+                      height: "120px",
+                      objectFit: "cover",
+                      borderRadius: "6px",
+                      marginBottom: "8px",
+                    }}
+                  />
+                )}
+                
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                   <Box className="cart-item-name">{item.name}</Box>
                   <IconButton 

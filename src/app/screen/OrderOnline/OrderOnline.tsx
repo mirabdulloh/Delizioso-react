@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Container, Stack, Button, IconButton, Rating, Divider, TextField } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,7 +23,7 @@ import OrderService from "../../services/OrderService";
 import MemberService from "../../services/MemberService";
 import { serverApi } from "../../../lib/config";
 import { useGlobals } from "../../hooks/useGlobals";
-import { setPausedOrders, setFinishedOrders, setProcessOrders, clearCart } from "./slice";
+import { setPausedOrders, setFinishedOrders, setProcessOrders } from "./slice";
 import { retrievePausedOrders, retrieveFinishedOrders, retrieveProcessOrders } from "./selector";
 import { sweetErrorHandling, sweetSuccessAlert, sweetWarningAlert } from "../../../lib/sweetAlert";
 import { OrderOnlineProps, OrderStatusUI, OrderItem, OrderUI } from "../../../lib/types/order-online";
@@ -79,6 +79,12 @@ function transformOrderToUI(order: Order): OrderUI {
     const product = order.productData.find(
       (p) => String(p._id) === String(orderItem.productId)
     );
+    
+    // 🔥 Debug logging
+    if (!product) {
+      console.warn(`⚠️ Product not found for orderItem:`, orderItem.productId, `productData:`, order.productData.map(p => p._id));
+    }
+    
     return {
       id: orderItem._id,
       name: product?.productName || 'Unknown Product',
@@ -250,40 +256,6 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
     fetchOrders();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderBuilder]); // Re-fetch when orderBuilder changes (new order created)
-
-  // Auto-create order from cart items when coming from MenuPage
-  const hasCreatedOrder = useRef(false); // Track if order has been created
-
-  useEffect(() => {
-    const createOrderFromCart = async () => {
-      if (cartItems && cartItems.length > 0 && !hasCreatedOrder.current) {
-        try {
-          console.log("📦 Creating order from cart items:", cartItems);
-          const orderService = new OrderService();
-          
-          await orderService.createOrder(cartItems);
-          console.log("✅ Order created from cart items - Status: PENDING");
-          
-          hasCreatedOrder.current = true; // Mark as created
-          
-          // Trigger re-fetch of orders
-          setOrderBuilder(new Date());
-          
-          // Clear cart after order is created
-          dispatch(clearCart());
-        } catch (err) {
-          console.error("❌ Error creating order from cart:", err);
-          await sweetErrorHandling(err);
-        }
-      }
-    };
-
-    // Only create order if we have cart items and no existing paused orders
-    if (cartItems && cartItems.length > 0 && pausedOrders.length === 0) {
-      createOrderFromCart();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only run once on component mount
 
   // Transform orders to UI format
   const allOrders: OrderUI[] = [
@@ -842,7 +814,7 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                     </>
                   ) : (
                     <>
-                      <Button 
+                      {/* <Button 
                         className="summary-primary" 
                         variant="contained" 
                         color="secondary"
@@ -891,7 +863,7 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                         }}
                       >
                         Order again
-                      </Button>
+                      </Button> */}
                       <Button className="summary-secondary" variant="outlined">
                         Write a review
                       </Button>
