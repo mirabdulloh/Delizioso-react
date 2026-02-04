@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Box,
   Stack,
@@ -12,62 +13,42 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import InboxRoundedIcon from "@mui/icons-material/InboxRounded";
-import { Review } from "../../services/ReviewService";
 import ReviewService from "../../services/ReviewService";
 import { serverApi } from "../../../lib/config";
+import { EditingReview } from "../../../lib/types/mypage";
 import {
   sweetErrorHandling,
   sweetSuccessAlert,
   sweetWarningAlert,
 } from "../../../lib/sweetAlert";
+import { fetchMyReviews, updateReviewInState } from "./slice";
+import { selectMyReviews, selectLoadingReviews } from "./selector";
+import { AppDispatch } from "../../store";
 import "../../../css/my-reviews.css";
 
-interface EditingReview extends Review {
-  tempRating?: number;
-  tempComment?: string;
-  isSubmitting?: boolean;
-}
-
 function MyReviews() {
-  const [reviews, setReviews] = useState<EditingReview[]>([]);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch<AppDispatch>();
+  const reviews = useSelector(selectMyReviews) as EditingReview[];
+  const loading = useSelector(selectLoadingReviews);
+
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [tempRating, setTempRating] = useState<number>(5);
+  const [tempComment, setTempComment] = useState<string>("");
 
   useEffect(() => {
-    fetchMyReviews();
-  }, []);
+    dispatch(fetchMyReviews());
+  }, [dispatch]);
 
-  const fetchMyReviews = async () => {
-    try {
-      setLoading(true);
-      const reviewService = new ReviewService();
-      const reviewList = await reviewService.getMyReviews();
-      setReviews(
-        reviewList.map((r) => ({
-          ...r,
-          tempRating: r.rating,
-          tempComment: r.comment || "",
-        }))
-      );
-    } catch (err) {
-      console.error("Failed to fetch reviews:", err);
-      await sweetErrorHandling(err);
-      setReviews([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const isEditable = (review: Review): boolean => {
+  const isEditable = (review: EditingReview): boolean => {
     if (!review.editableUntil) return false;
     const now = Date.now();
     const until = new Date(review.editableUntil).getTime();
     return now <= until;
   };
 
-  const getRemainingEditDays = (review: Review): number => {
+  const getRemainingEditDays = (review: EditingReview): number => {
     if (!review.editableUntil) return 0;
     const now = Date.now();
     const until = new Date(review.editableUntil).getTime();
@@ -84,6 +65,9 @@ function MyReviews() {
       return;
     }
 
+    // Initialize temp values for the dialog
+    setTempRating(review.rating);
+    setTempComment(review.comment || "");
     setEditingId(review._id);
     setEditDialogOpen(true);
   };
@@ -98,35 +82,28 @@ function MyReviews() {
 
     try {
       const reviewService = new ReviewService();
-      
+
       // Make sure we have valid data
       const updatePayload = {
         reviewId: editingId,
-        rating: editingReview.tempRating || editingReview.rating,
-        comment: editingReview.tempComment || editingReview.comment,
+        rating: tempRating,
+        comment: tempComment,
       };
-      
+
       console.log("Updating review with payload:", updatePayload);
       const updatedReview = await reviewService.updateReview(updatePayload);
       console.log("Review updated successfully:", updatedReview);
 
-      // Update local state with the response
-      setReviews(
-        reviews.map((r) =>
-          r._id === editingId
-            ? {
-                ...updatedReview,
-                tempRating: updatedReview.rating,
-                tempComment: updatedReview.comment,
-              }
-            : r
-        )
-      );
+      // Update Redux state with the updated review
+      dispatch(updateReviewInState(updatedReview as any));
 
       setEditDialogOpen(false);
       setEditingId(null);
       setIsSubmitting(false);
-      await sweetSuccessAlert("Review Updated", "Your review has been updated successfully.");
+      await sweetSuccessAlert(
+        "Review Updated",
+        "Your review has been updated successfully."
+      );
     } catch (err) {
       console.error("Failed to update review:", err);
       setIsSubmitting(false);
@@ -204,12 +181,6 @@ function MyReviews() {
                         {review.rating}/5
                       </Typography>
                     </Stack>
-
-                    {review.lastEditedAt && (
-                      <Typography variant="caption" className="edited-text">
-                        Edited {new Date(review.lastEditedAt).toLocaleDateString()}
-                      </Typography>
-                    )}
                   </Box>
                 </Stack>
 
@@ -320,21 +291,13 @@ function MyReviews() {
               </Typography>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <Rating
-                  value={
-                    reviews.find((r) => r._id === editingId)?.tempRating || 5
-                  }
+                  value={tempRating}
                   onChange={(e, value) => {
-                    setReviews(
-                      reviews.map((r) =>
-                        r._id === editingId
-                          ? { ...r, tempRating: value || 5 }
-                          : r
-                      )
-                    );
+                    setTempRating(value || 5);
                   }}
                 />
                 <Typography variant="body2">
-                  {reviews.find((r) => r._id === editingId)?.tempRating || 5}/5
+                  {tempRating}/5
                 </Typography>
               </Box>
             </Box>
@@ -348,17 +311,9 @@ function MyReviews() {
                 fullWidth
                 multiline
                 rows={4}
-                value={
-                  reviews.find((r) => r._id === editingId)?.tempComment || ""
-                }
+                value={tempComment}
                 onChange={(e) => {
-                  setReviews(
-                    reviews.map((r) =>
-                      r._id === editingId
-                        ? { ...r, tempComment: e.target.value }
-                        : r
-                    )
-                  );
+                  setTempComment(e.target.value);
                 }}
                 placeholder="Write your review..."
                 variant="outlined"

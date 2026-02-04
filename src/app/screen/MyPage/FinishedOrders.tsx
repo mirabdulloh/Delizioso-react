@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Box, Stack, Button, IconButton, Rating, Divider } from "@mui/material";
 import LocalShippingRoundedIcon from "@mui/icons-material/LocalShippingRounded";
 import RepeatRoundedIcon from "@mui/icons-material/RepeatRounded";
@@ -8,73 +9,66 @@ import { useNavigate } from "react-router-dom";
 import { Order } from "../../../lib/types/orders";
 import { OrderStatus } from "../../../lib/enums/order.enum";
 import { CartItem } from "../../../lib/types/search";
-import OrderService from "../../services/OrderService";
-import ReviewService from "../../services/ReviewService";
+import { OrderItem, OrderUI } from "../../../lib/types/mypage";
 import ReviewModal from "../../components/ReviewModal";
 import { serverApi } from "../../../lib/config";
 import { sweetErrorHandling, sweetSuccessAlert, sweetWarningAlert } from "../../../lib/sweetAlert";
+import { addToCart } from "../OrderOnline/slice";
+import { fetchFinishedOrders, fetchMyReviews } from "./slice";
+import {
+  selectFinishedOrders,
+  selectMyReviews,
+  selectLoadingOrders,
+  selectHasReviewForProduct,
+} from "./selector";
+import { AppDispatch } from "../../store";
 import "../../../css/finished-orders.css";
 
-interface OrderItem {
-  id: string;
-  productId: string;
-  name: string;
-  img: string;
-  price: number;
-  qty: number;
-  hasReview?: boolean;
-}
-
-interface OrderUI {
-  id: string;
-  restaurant: string;
-  createdAt: string;
-  items: OrderItem[];
-  subtotal: number;
-}
-
-function formatOrderDate(date: Date): string {
+function formatOrderDate(date: Date | string): string {
   const orderDate = new Date(date);
   const today = new Date();
   const yesterday = new Date(today);
   yesterday.setDate(yesterday.getDate() - 1);
-  
+
   const isToday = orderDate.toDateString() === today.toDateString();
   const isYesterday = orderDate.toDateString() === yesterday.toDateString();
-  
-  const timeStr = orderDate.toLocaleTimeString('en-US', { 
-    hour: '2-digit', 
-    minute: '2-digit',
-    hour12: false 
+
+  const timeStr = orderDate.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
   });
-  
+
   if (isToday) return `Today, ${timeStr}`;
   if (isYesterday) return `Yesterday, ${timeStr}`;
-  
-  return orderDate.toLocaleDateString('en-US', { 
-    month: 'short', 
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
+
+  return orderDate.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 }
 
-function transformOrderToUI(order: Order, existingReviews: any[]): OrderUI {
+function transformOrderToUI(order: Order, reviews: any[]): OrderUI {
   const items: OrderItem[] = order.orderItems.map((orderItem) => {
-    // Find the matching product by productId instead of relying on array index
     const product = order.productData.find(
       (p) => String(p._id) === String(orderItem.productId)
     );
-    
-    const hasReview = existingReviews.some(
-      (rev) => String(rev.orderId) === String(order._id) && String(rev.productId._id || rev.productId) === String(product?._id)
+
+    const hasReview = reviews.some(
+      (rev) =>
+        String(rev.orderId) === String(order._id) &&
+        String(rev.productId._id || rev.productId) === String(product?._id)
     );
-    
+
     return {
       id: orderItem._id,
       productId: product?._id || orderItem.productId,
-      name: product?.productName || 'Unknown Product',
-      img: product?.productImages?.[0] ? `${serverApi}/${product.productImages[0]}` : '/imgs/pastas.jpg',
+      name: product?.productName || "Unknown Product",
+      img: product?.productImages?.[0]
+        ? `${serverApi}/${product.productImages[0]}`
+        : "/imgs/pastas.jpg",
       price: orderItem.itemPrice,
       qty: orderItem.itemQuantity,
       hasReview,
@@ -94,8 +88,13 @@ function transformOrderToUI(order: Order, existingReviews: any[]): OrderUI {
 
 export default function FinishedOrders() {
   const navigate = useNavigate();
-  const [finishedOrders, setFinishedOrders] = useState<OrderUI[]>([]);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch<AppDispatch>();
+
+  // Redux selectors
+  const orders = useSelector(selectFinishedOrders);
+  const reviews = useSelector(selectMyReviews);
+  const loading = useSelector(selectLoadingOrders);
+
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [selectedReviewItem, setSelectedReviewItem] = useState<{
     orderId: string;
@@ -104,42 +103,11 @@ export default function FinishedOrders() {
     productImage: string;
   } | null>(null);
 
+  // Fetch orders and reviews on mount
   useEffect(() => {
-    const fetchFinishedOrders = async () => {
-      try {
-        setLoading(true);
-        const orderService = new OrderService();
-        const reviewService = new ReviewService();
-        
-        const [orders, existingReviews] = await Promise.all([
-          orderService.getMyOrders({ 
-            page: 1, 
-            limit: 20, 
-            orderStatus: OrderStatus.FINISH 
-          }),
-          reviewService.getMyReviews().catch(() => [])
-        ]);
-        
-        // Filter orders from last 30 days
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-        
-        const recentOrders = orders.filter((order) => {
-          const orderDate = new Date(order.updatedAt || order.createdAt);
-          return orderDate >= thirtyDaysAgo;
-        });
-
-        setFinishedOrders(recentOrders.map(order => transformOrderToUI(order, existingReviews)));
-      } catch (err) {
-        console.error("❌ Failed to fetch finished orders:", err);
-        setFinishedOrders([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchFinishedOrders();
-  }, []);
+    dispatch(fetchFinishedOrders());
+    dispatch(fetchMyReviews());
+  }, [dispatch]);
 
   const handleReorder = async (order: OrderUI) => {
     try {
@@ -149,47 +117,25 @@ export default function FinishedOrders() {
       );
 
       if (!confirmed) return;
-      
-      // Transform order items to CartItem format with all necessary data
-      const cartItems: CartItem[] = order.items.map((item) => ({
-        _id: item.productId,
-        quantity: item.qty,
-        name: item.name,
-        price: item.price,
-        image: item.img,
-      }));
-      
-      // Store items in localStorage for order-online page
-      const existingCart = localStorage.getItem('cartItems');
-      let currentCart: CartItem[] = [];
-      
-      if (existingCart) {
-        try {
-          currentCart = JSON.parse(existingCart);
-        } catch (err) {
-          console.error("Error parsing existing cart:", err);
-        }
-      }
-      
-      // Merge with existing cart
-      cartItems.forEach(newItem => {
-        const existingIndex = currentCart.findIndex(item => item._id === newItem._id);
-        if (existingIndex >= 0) {
-          currentCart[existingIndex].quantity += newItem.quantity;
-        } else {
-          currentCart.push(newItem);
-        }
+
+      // Add items to Redux cart using dispatch
+      order.items.forEach((item) => {
+        const cartItem: CartItem = {
+          _id: item.productId,
+          quantity: item.qty,
+          name: item.name,
+          price: item.price,
+          image: item.img,
+        };
+
+        // Dispatch to Redux for each item
+        dispatch(addToCart(cartItem));
       });
-      
-      localStorage.setItem('cartItems', JSON.stringify(currentCart));
-      
-      await sweetSuccessAlert(
-        "Items Added!",
-        "Items have been added to your cart."
-      );
+
+      await sweetSuccessAlert("Items Added!", "Items have been added to your cart.");
 
       console.log("✅ Reorder successful");
-      
+
       // Navigate to order-online page
       navigate("/order-online");
     } catch (err) {
@@ -199,11 +145,20 @@ export default function FinishedOrders() {
   };
 
   const handleWriteReview = (item: OrderItem, orderId: string) => {
-    if (item.hasReview) {
-      sweetWarningAlert("Already Reviewed", "You have already reviewed this item.");
+    const hasReview = reviews.some(
+      (rev) =>
+        String(rev.orderId) === String(orderId) &&
+        String(rev.productId._id || rev.productId) === String(item.productId)
+    );
+
+    if (hasReview) {
+      sweetWarningAlert(
+        "Already Reviewed",
+        "You have already reviewed this item."
+      );
       return;
     }
-    
+
     setSelectedReviewItem({
       orderId,
       productId: item.productId,
@@ -214,8 +169,8 @@ export default function FinishedOrders() {
   };
 
   const handleReviewSuccess = () => {
-    // Refresh orders to update review status
-    window.location.reload();
+    // Refresh reviews from Redux
+    dispatch(fetchMyReviews());
   };
 
   if (loading) {
@@ -226,7 +181,7 @@ export default function FinishedOrders() {
     );
   }
 
-  if (finishedOrders.length === 0) {
+  if (orders.length === 0) {
     return (
       <Box className="finished-orders-empty">
         <InboxRoundedIcon style={{ fontSize: 60, color: "#ccc" }} />
@@ -238,13 +193,21 @@ export default function FinishedOrders() {
     );
   }
 
+  // Transform orders from Redux to UI format
+  const uiOrders = orders.map((order) => transformOrderToUI(order, reviews));
+
   return (
     <Box className="finished-orders-container">
       <Box className="finished-orders-title">Recent Orders (Last 30 Days)</Box>
       <Stack spacing={2} className="finished-orders-list">
-        {finishedOrders.map((order) => (
+        {uiOrders.map((order) => (
           <Box key={order.id} className="finished-order-card">
-            <Stack direction="row" justifyContent="space-between" alignItems="center" className="order-header">
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              className="order-header"
+            >
               <Box>
                 <Box className="order-restaurant">{order.restaurant}</Box>
                 <Box className="order-date">{order.createdAt}</Box>
@@ -256,18 +219,23 @@ export default function FinishedOrders() {
 
             <Stack spacing={1.5} className="order-items">
               {order.items.map((item) => (
-                <Stack 
-                  key={item.id} 
-                  direction="row" 
-                  spacing={2} 
+                <Stack
+                  key={item.id}
+                  direction="row"
+                  spacing={2}
                   alignItems="center"
                   justifyContent="space-between"
                   className="order-item"
                 >
-                  <Stack direction="row" spacing={2} alignItems="center" sx={{ flex: 1 }}>
-                    <Box 
-                      component="img" 
-                      src={item.img} 
+                  <Stack
+                    direction="row"
+                    spacing={2}
+                    alignItems="center"
+                    sx={{ flex: 1 }}
+                  >
+                    <Box
+                      component="img"
+                      src={item.img}
                       alt={item.name}
                       className="item-img"
                     />
@@ -277,7 +245,9 @@ export default function FinishedOrders() {
                     </Box>
                   </Stack>
                   <Stack direction="row" spacing={1} alignItems="center">
-                    <Box className="item-price">${(item.price * item.qty).toFixed(2)}</Box>
+                    <Box className="item-price">
+                      ${(item.price * item.qty).toFixed(2)}
+                    </Box>
                     <Button
                       size="small"
                       variant={item.hasReview ? "text" : "outlined"}
@@ -295,9 +265,17 @@ export default function FinishedOrders() {
 
             <Divider className="order-divider" />
 
-            <Stack direction="row" justifyContent="space-between" alignItems="center" className="order-footer">
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              className="order-footer"
+            >
               <Box className="order-total">
-                Total: <span className="total-amount">${order.subtotal.toFixed(2)}</span>
+                Total:{" "}
+                <span className="total-amount">
+                  ${order.subtotal.toFixed(2)}
+                </span>
               </Box>
               <Stack direction="row" spacing={1}>
                 <Button
@@ -314,7 +292,7 @@ export default function FinishedOrders() {
           </Box>
         ))}
       </Stack>
-      
+
       {/* Review Modal */}
       {selectedReviewItem && (
         <ReviewModal

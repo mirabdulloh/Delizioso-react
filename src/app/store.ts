@@ -3,6 +3,7 @@ import HomePageReducer from "./screen/HomePage/slice";
 import OrdersPageReducer from "./screen/OrderOnline/slice";
 import MenuPageReducer from "./screen/MenuPage/slice";
 import LikesReducer from "./screen/MenuPage/likesSlice";
+import MyPageReducer from "./screen/MyPage/slice";
 import reduxLogger from "redux-logger";
 
 export const store = configureStore({
@@ -15,6 +16,7 @@ export const store = configureStore({
     ordersPage: OrdersPageReducer,
     menuPage: MenuPageReducer,
     likes: LikesReducer,
+    myPage: MyPageReducer,
   },
 });
 
