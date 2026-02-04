@@ -19,7 +19,10 @@ import { setPromotions, setPromotionsLoading } from "./slice";
 import { RootState } from "../../store";
 import useBusket from "../../hooks/useBusket";
 import { serverApi } from "../../../lib/config";
-import { sweetErrorHandling, sweetTopSmallSuccessAlert } from "../../../lib/sweetAlert";
+import {
+  sweetErrorHandling,
+  sweetTopSmallSuccessAlert,
+} from "../../../lib/sweetAlert";
 import { useGlobals } from "../../hooks/useGlobals";
 
 import "../../../css/menu.css";
@@ -31,10 +34,14 @@ function PromotionsAll() {
   const dispatch = useDispatch();
   const { onAdd } = useBusket();
   const { authMember } = useGlobals();
-  
-  const promotions = useSelector((state: RootState) => state.menuPage.promotions);
-  const loading = useSelector((state: RootState) => state.menuPage.promotionsLoading);
-  
+
+  const promotions = useSelector(
+    (state: RootState) => state.menuPage.promotions,
+  );
+  const loading = useSelector(
+    (state: RootState) => state.menuPage.promotionsLoading,
+  );
+
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -44,7 +51,10 @@ function PromotionsAll() {
     const fetchPromotions = async () => {
       try {
         dispatch(setPromotionsLoading(true));
-        const data = await productService.getPromotions(currentPage, itemsPerPage);
+        const data = await productService.getPromotions(
+          currentPage,
+          itemsPerPage,
+        );
         dispatch(setPromotions(data));
         // Calculate total pages (you may need to get this from backend)
         if (data.length === itemsPerPage) {
@@ -79,13 +89,16 @@ function PromotionsAll() {
     return (price * (1 - discount / 100)).toFixed(2);
   };
 
-  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number,
+  ) => {
     setCurrentPage(value);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const filteredPromotions = promotions.filter((item) =>
-    item.productName.toLowerCase().includes(searchTerm.toLowerCase())
+    item.productName.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // ✅ HARD CODE: false = 4 cards, true = 3 cards + order list
@@ -95,8 +108,10 @@ function PromotionsAll() {
     return (
       <div className="promoAll-section">
         <Container>
-          <Box sx={{ textAlign: 'center', py: 8 }}>
-            <Box sx={{ fontSize: '1.2rem', color: '#666' }}>Loading promotions...</Box>
+          <Box sx={{ textAlign: "center", py: 8 }}>
+            <Box sx={{ fontSize: "1.2rem", color: "#666" }}>
+              Loading promotions...
+            </Box>
           </Box>
         </Container>
       </div>
@@ -111,17 +126,21 @@ function PromotionsAll() {
           <Box className="promoAll-subtitle">
             Discounts 30%+ • Limited time deals
           </Box>
-          <Box sx={{ 
-            textAlign: 'center', 
-            py: 12, 
-            backgroundColor: '#f8f9fa', 
-            borderRadius: 2,
-            mt: 4
-          }}>
-            <Box sx={{ fontSize: '1.8rem', fontWeight: 600, color: '#333', mb: 2 }}>
+          <Box
+            sx={{
+              textAlign: "center",
+              py: 12,
+              backgroundColor: "#f8f9fa",
+              borderRadius: 2,
+              mt: 4,
+            }}
+          >
+            <Box
+              sx={{ fontSize: "1.8rem", fontWeight: 600, color: "#333", mb: 2 }}
+            >
               No Promotions Available
             </Box>
-            <Box sx={{ fontSize: '1.1rem', color: '#666' }}>
+            <Box sx={{ fontSize: "1.1rem", color: "#666" }}>
               Check back later for exciting deals!
             </Box>
           </Box>
@@ -132,7 +151,7 @@ function PromotionsAll() {
 
   return (
     <div className="promoAll-section">
-      <Container >
+      <Container>
         {/* title */}
         <Box className="promoAll-title">Hot Promotions</Box>
         <Box className="promoAll-subtitle">
@@ -157,8 +176,6 @@ function PromotionsAll() {
           />
         </Box>
 
- 
-
         {/* layout */}
         <Box
           className={`promoAll-layout ${cartOpen ? "with-cart" : "no-cart"}`}
@@ -167,14 +184,12 @@ function PromotionsAll() {
           <Box className="promoAll-left">
             <Box className={`promoAll-grid ${cartOpen ? "cols-3" : "cols-4"}`}>
               {filteredPromotions.map((item) => (
-                <Box
-                  key={item._id}
-                  className="promoAll-card"
-                  role="button"
-                >
+                <Box key={item._id} className="promoAll-card" role="button">
                   {/* % off + tag */}
                   <Box className="promoAll-badges">
-                    <Box className="promoAll-off">-{item.productPromotion}%</Box>
+                    <Box className="promoAll-off">
+                      -{item.productPromotion}%
+                    </Box>
                   </Box>
 
                   {/* likes / views */}
@@ -187,10 +202,10 @@ function PromotionsAll() {
 
                   {/* image */}
                   <Box className="promoAll-imgWrap">
-                    <Box 
-                      component="img" 
-                      src={`${serverApi}/${item.productImages[0]}`} 
-                      alt={item.productName} 
+                    <Box
+                      component="img"
+                      src={`${serverApi}/${item.productImages[0]}`}
+                      alt={item.productName}
                     />
                   </Box>
 
@@ -199,12 +214,31 @@ function PromotionsAll() {
 
                   {/* rating */}
                   <Box className="promoAll-rating">
-                    <Rating value={item.productRating || 0} readOnly />
-                    <span className="promoAll-rev">({item.productReviewCount || 0})</span>
+                    <Rating
+                      name={`rating-${item._id}`}
+                      value={Number(item.productRank) || 0}
+                      readOnly
+                      size="medium"
+                    />
+                    <Box
+                      sx={{
+                        fontSize: "12px",
+                        fontWeight: 500,
+                        color: "#666",
+                        backgroundColor: "#f5f5f5",
+                        px: 1,
+                        py: 0.25,
+                        borderRadius: "8px",
+                      }}
+                    >
+                      ({item.productReviewCount || 0} reviews)
+                    </Box>
                   </Box>
 
                   {/* desc */}
-                  <Box className="promoAll-desc">{item.productDesc || 'Limited time deal'}</Box>
+                  <Box className="promoAll-desc">
+                    {item.productDesc || "Limited time deal"}
+                  </Box>
 
                   {/* prices + button */}
                   <Stack
@@ -218,7 +252,11 @@ function PromotionsAll() {
                         ${item.productPrice.toFixed(2)}
                       </span>
                       <span className="promoAll-new">
-                        ${calculateDiscountedPrice(item.productPrice, item.productPromotion)}
+                        $
+                        {calculateDiscountedPrice(
+                          item.productPrice,
+                          item.productPromotion,
+                        )}
                       </span>
                     </Box>
 
@@ -234,13 +272,15 @@ function PromotionsAll() {
                 </Box>
               ))}
             </Box>
-            
+
             {/* Pagination */}
             {!searchTerm && totalPages > 1 && (
-              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, mb: 2 }}>
-                <Pagination 
-                  count={totalPages} 
-                  page={currentPage} 
+              <Box
+                sx={{ display: "flex", justifyContent: "center", mt: 4, mb: 2 }}
+              >
+                <Pagination
+                  count={totalPages}
+                  page={currentPage}
                   onChange={handlePageChange}
                   color="secondary"
                   size="large"

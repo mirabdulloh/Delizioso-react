@@ -92,7 +92,12 @@ const myPageSlice = createSlice({
     updateReviewInState: (state, action: PayloadAction<Review>) => {
       const index = state.reviews.findIndex((r) => r._id === action.payload._id);
       if (index >= 0) {
-        state.reviews[index] = action.payload;
+        // Keep the existing productId data, only update review fields
+        state.reviews[index] = {
+          ...state.reviews[index],
+          rating: action.payload.rating,
+          comment: action.payload.comment,
+        };
       }
     },
     removeReviewFromState: (state, action: PayloadAction<string>) => {

@@ -15,7 +15,6 @@ import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 
-
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { createSelector, Dispatch } from "@reduxjs/toolkit";
@@ -23,26 +22,31 @@ import { Product } from "../../../lib/types/product";
 import { ProductCollection } from "../../../lib/enums/product.enum";
 import { UpdateProductLikePayload } from "../../../lib/types/screen";
 import ProductService from "../../services/ProductService";
-import { 
-  setProducts,
-  cacheProducts,
-} from "./slice";
-import { retrieveProducts, retrieveProductsCache, retrieveLastFetch } from "./selector";
+import { setProducts, cacheProducts } from "./slice";
+import {
+  retrieveProducts,
+  retrieveProductsCache,
+  retrieveLastFetch,
+} from "./selector";
 import { updateProductLike } from "./likesSlice";
 import { serverApi } from "../../../lib/config";
 import { addToCart } from "../OrderOnline/slice";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { sweetErrorHandling, sweetTopSmallSuccessAlert } from "../../../lib/sweetAlert";
+import {
+  sweetErrorHandling,
+  sweetTopSmallSuccessAlert,
+} from "../../../lib/sweetAlert";
 import { useGlobals } from "../../hooks/useGlobals";
 
 import "../../../css/menu.css";
 
-
 /** REDUX SLICE AND SELECTOR */
 const actionDispatch = (dispatch: Dispatch) => ({
   setProducts: (data: Product[]) => dispatch(setProducts(data)),
-  cacheProducts: (payload: { queryKey: string; products: Product[] }) => dispatch(cacheProducts(payload)),
-  updateProductLike: (payload: UpdateProductLikePayload) => dispatch(updateProductLike(payload)),
+  cacheProducts: (payload: { queryKey: string; products: Product[] }) =>
+    dispatch(cacheProducts(payload)),
+  updateProductLike: (payload: UpdateProductLikePayload) =>
+    dispatch(updateProductLike(payload)),
   addToCart: (item: any) => dispatch(addToCart(item)),
 });
 
@@ -54,13 +58,17 @@ const menuPageRetriever = createSelector(
     products,
     productsCache,
     lastFetch,
-  })
+  }),
 );
-
 
 const Menu = () => {
   const navigate = useNavigate();
-  const { setProducts: setProductsAction, cacheProducts: cacheProductsAction, updateProductLike: updateProductLikeAction, addToCart: addToCartAction } = actionDispatch(useDispatch());
+  const {
+    setProducts: setProductsAction,
+    cacheProducts: cacheProductsAction,
+    updateProductLike: updateProductLikeAction,
+    addToCart: addToCartAction,
+  } = actionDispatch(useDispatch());
   const { products, productsCache, lastFetch } = useSelector(menuPageRetriever);
   const { authMember } = useGlobals();
 
@@ -85,10 +93,10 @@ const Menu = () => {
   // Map category names to enum values
   const categoryToEnum = (category: string): ProductCollection | undefined => {
     const mapping: { [key: string]: ProductCollection } = {
-      "Breakfast": ProductCollection.BREAKFAST,
-      "Lunch": ProductCollection.LUNCH,
-      "Dinner": ProductCollection.DINNER,
-      "Drink": ProductCollection.DRINK,
+      Breakfast: ProductCollection.BREAKFAST,
+      Lunch: ProductCollection.LUNCH,
+      Dinner: ProductCollection.DINNER,
+      Drink: ProductCollection.DRINK,
     };
     return mapping[category];
   };
@@ -97,9 +105,9 @@ const Menu = () => {
 
   // Check if we have cached products
   const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-  const isCached = 
-    lastFetch[queryKey] && 
-    Date.now() - lastFetch[queryKey] < CACHE_DURATION && 
+  const isCached =
+    lastFetch[queryKey] &&
+    Date.now() - lastFetch[queryKey] < CACHE_DURATION &&
     productsCache[queryKey];
 
   useEffect(() => {
@@ -112,7 +120,9 @@ const Menu = () => {
       console.log("Using cached products for:", queryKey);
       const cached = productsCache[queryKey];
       setProductsAction(cached);
-      setTotalPages(cached.length < itemsPerPage ? currentPage : currentPage + 1);
+      setTotalPages(
+        cached.length < itemsPerPage ? currentPage : currentPage + 1,
+      );
     } else {
       console.log("Loading products from API for:", queryKey);
       loadProducts();
@@ -124,7 +134,7 @@ const Menu = () => {
     try {
       setLoading(true);
       const productService = new ProductService();
-      
+
       // Handle Favorite category separately
       if (selectedCategory === "Favorite") {
         try {
@@ -137,7 +147,9 @@ const Menu = () => {
           console.log("Favorite products from API:", result);
           setProductsAction(result);
           cacheProductsAction({ queryKey, products: result });
-          setTotalPages(result.length < itemsPerPage ? currentPage : currentPage + 1);
+          setTotalPages(
+            result.length < itemsPerPage ? currentPage : currentPage + 1,
+          );
         } catch (err) {
           console.error("Error loading favorite products:", err);
           // If no favorites, show empty
@@ -147,24 +159,32 @@ const Menu = () => {
         }
         return;
       }
-      
+
       // Handle other categories
       const inquiry = {
         page: currentPage,
         limit: itemsPerPage,
         order: "createdAt",
         search: searchQuery || undefined,
-        productCollection: selectedCategory !== "All Category" ? categoryToEnum(selectedCategory) : undefined,
+        productCollection:
+          selectedCategory !== "All Category"
+            ? categoryToEnum(selectedCategory)
+            : undefined,
       };
 
       const result = await productService.getProducts(inquiry);
       console.log("🔍 Products from API:", result);
       setProductsAction(result);
       cacheProductsAction({ queryKey, products: result });
-      setTotalPages(result.length < itemsPerPage ? currentPage : currentPage + 1);
+      setTotalPages(
+        result.length < itemsPerPage ? currentPage : currentPage + 1,
+      );
     } catch (err) {
       console.error("Error loading products:", err);
-      sweetErrorHandling(err as Error);
+      // Clear products instead of showing alert when there's no data
+      setProductsAction([]);
+      cacheProductsAction({ queryKey, products: [] });
+      setTotalPages(1);
     } finally {
       setLoading(false);
     }
@@ -179,30 +199,33 @@ const Menu = () => {
     try {
       const productService = new ProductService();
       const result = await productService.likeProduct(product._id);
-      
+
       console.log("API Response for like:", result);
-      
+
       // Update likes cache
       updateProductLikeAction({
         productId: product._id,
         liked: result.memberLiked,
         likesCount: result.productLikes,
       });
-      
+
       // If user is in Favorite category and unlikes a product, remove it from the list
       if (selectedCategory === "Favorite" && !result.memberLiked) {
-        setProductsAction(products.filter(p => p._id !== product._id));
+        setProductsAction(products.filter((p) => p._id !== product._id));
       } else {
         // Otherwise just update the product in store
-        setProductsAction(products.map(p =>
-          p._id === product._id
-              ? { ...p, memberLiked: result.memberLiked, productLikes: result.productLikes }
-              : p
-          )
+        setProductsAction(
+          products.map((p) =>
+            p._id === product._id
+              ? {
+                  ...p,
+                  memberLiked: result.memberLiked,
+                  productLikes: result.productLikes,
+                }
+              : p,
+          ),
         );
       }
-      
-
     } catch (err: unknown) {
       console.error("Error liking product:", err);
       sweetErrorHandling(err as Error);
@@ -255,9 +278,9 @@ const Menu = () => {
           {/* LEFT */}
           <Box className="menu2-left">
             {loading ? (
-              <Box sx={{ textAlign: 'center', py: 4 }}>Loading products...</Box>
+              <Box sx={{ textAlign: "center", py: 4 }}>Loading products...</Box>
             ) : products.length === 0 ? (
-              <Box sx={{ textAlign: 'center', py: 4 }}>No products found</Box>
+              <Box sx={{ textAlign: "center", py: 4 }}>There is no product for that category for now</Box>
             ) : (
               <Box className="menu2-grid cols-4">
                 {products.map((product) => (
@@ -269,7 +292,7 @@ const Menu = () => {
                   >
                     {/* icons */}
                     <Box className="menu2-icons">
-                      <Box 
+                      <Box
                         className="menu2-pill"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -277,69 +300,94 @@ const Menu = () => {
                         }}
                         onMouseEnter={() => setHoveredLikeId(product._id)}
                         onMouseLeave={() => setHoveredLikeId(null)}
-                        sx={{ 
-                          cursor: 'pointer',
-                          transition: 'all 0.3s ease',
-                          background: 'rgba(255, 255, 255, 0.9)',
-                          border: '1px solid rgba(0,0,0,0.1)',
-                          boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '4px',
-                          padding: '6px 12px',
-                          borderRadius: '20px',
-                          '&:hover': {
-                            transform: 'scale(1.05)',
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
+                        sx={{
+                          cursor: "pointer",
+                          transition: "all 0.3s ease",
+                          background: "rgba(255, 255, 255, 0.9)",
+                          border: "1px solid rgba(0,0,0,0.1)",
+                          boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "4px",
+                          padding: "6px 12px",
+                          borderRadius: "20px",
+                          "&:hover": {
+                            transform: "scale(1.05)",
+                            boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
                           },
-                          '&:active': {
-                            transform: 'scale(0.95)',
+                          "&:active": {
+                            transform: "scale(0.95)",
                           },
                         }}
                       >
-                        {product.memberLiked || hoveredLikeId === product._id ? (
-                          <FavoriteRoundedIcon sx={{ 
-                            fontSize: '18px',
-                            color: '#ff4757',
-                            transition: 'all 0.3s ease',
-                          }} />
+                        {product.memberLiked ||
+                        hoveredLikeId === product._id ? (
+                          <FavoriteRoundedIcon
+                            sx={{
+                              fontSize: "18px",
+                              color: "#ff4757",
+                              transition: "all 0.3s ease",
+                            }}
+                          />
                         ) : (
-                          <FavoriteBorderRoundedIcon sx={{ 
-                            fontSize: '18px',
-                            color: '#999',
-                            transition: 'all 0.3s ease',
-                          }} />
+                          <FavoriteBorderRoundedIcon
+                            sx={{
+                              fontSize: "18px",
+                              color: "#999",
+                              transition: "all 0.3s ease",
+                            }}
+                          />
                         )}
-                        <span style={{ 
-                          marginLeft: '0px', 
-                          fontWeight: product.memberLiked ? 700 : 500,
-                          fontSize: '14px',
-                          color: product.memberLiked ? '#ff4757' : (hoveredLikeId === product._id ? '#ff4757' : '#999'),
-                          transition: 'all 0.3s ease',
-                          display: 'inline-block',
-                        }}>
+                        <span
+                          style={{
+                            marginLeft: "0px",
+                            fontWeight: product.memberLiked ? 700 : 500,
+                            fontSize: "14px",
+                            color: product.memberLiked
+                              ? "#ff4757"
+                              : hoveredLikeId === product._id
+                                ? "#ff4757"
+                                : "#999",
+                            transition: "all 0.3s ease",
+                            display: "inline-block",
+                          }}
+                        >
                           {product.productLikes}
                         </span>
                       </Box>
-                      <Box className="menu2-pill" sx={{
-                        background: 'rgba(255, 255, 255, 0.9)',
-                        border: '1px solid rgba(0,0,0,0.1)',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                      }}>
-                        <VisibilityOutlinedIcon sx={{ fontSize: '18px', color: '#666' }} />
-                        <span style={{ marginLeft: '4px', fontSize: '14px', color: '#666' }}>
+                      <Box
+                        className="menu2-pill"
+                        sx={{
+                          background: "rgba(255, 255, 255, 0.9)",
+                          border: "1px solid rgba(0,0,0,0.1)",
+                          boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                        }}
+                      >
+                        <VisibilityOutlinedIcon
+                          sx={{ fontSize: "18px", color: "#666" }}
+                        />
+                        <span
+                          style={{
+                            marginLeft: "4px",
+                            fontSize: "14px",
+                            color: "#666",
+                          }}
+                        >
                           {product.productViews}
                         </span>
                       </Box>
                     </Box>
 
                     <Box className="menu2-imgWrap">
-                      <Box 
-                        component="img" 
-                        src={`${serverApi}/${product.productImages[0]}`} 
+                      <Box
+                        component="img"
+                        src={`${serverApi}/${product.productImages[0]}`}
                         alt={product.productName}
-                        onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                          (e.target as HTMLImageElement).src = '/imgs/default_img.jpg';
+                        onError={(
+                          e: React.SyntheticEvent<HTMLImageElement>,
+                        ) => {
+                          (e.target as HTMLImageElement).src =
+                            "/imgs/default_img.jpg";
                         }}
                       />
                     </Box>
@@ -347,11 +395,30 @@ const Menu = () => {
                     <Box className="menu2-name">{product.productName}</Box>
 
                     <Box className="menu2-rating">
-                      <Rating value={4} readOnly size="small" />
-                      <span className="menu2-rev">(0)</span>
+                      <Rating
+                        name={`rating-${product._id}`}
+                        value={Number(product.productRank) || 0}
+                        readOnly
+                        size="medium"
+                      />
+                      <Box
+                        sx={{
+                          fontSize: "12px",
+                          fontWeight: 500,
+                          color: "#666",
+                          backgroundColor: "#f5f5f5",
+                          px: 1,
+                          py: 0.25,
+                          borderRadius: "8px",
+                        }}
+                      >
+                        ({product.productReviewCount || 0} reviews)
+                      </Box>
                     </Box>
 
-                    <Box className="menu2-desc">{product.productDesc || "Delicious item from our menu"}</Box>
+                    <Box className="menu2-desc">
+                      {product.productDesc || "Delicious item from our menu"}
+                    </Box>
 
                     <Stack
                       direction="row"
@@ -360,8 +427,9 @@ const Menu = () => {
                       className="menu2-foot"
                     >
                       <Box className="menu2-price">
-                        ₩{product.discountedPrice 
-                          ? product.discountedPrice.toFixed(2) 
+                        ₩
+                        {product.discountedPrice
+                          ? product.discountedPrice.toFixed(2)
                           : product.productPrice.toFixed(2)}
                       </Box>
                       <Button
@@ -369,17 +437,20 @@ const Menu = () => {
                         color="secondary"
                         className="menu2-order"
                         startIcon={<ShoppingCartIcon />}
-                        onClick={e => {
+                        onClick={(e) => {
                           e.stopPropagation();
                           if (!authMember) {
-                            sweetErrorHandling({ message: "Please sign up first" });
+                            sweetErrorHandling({
+                              message: "Please sign up first",
+                            });
                             return;
                           }
                           const cartItem = {
                             _id: product._id,
                             quantity: 1,
                             name: product.productName,
-                            price: product.discountedPrice || product.productPrice,
+                            price:
+                              product.discountedPrice || product.productPrice,
                             image: product.productImages[0],
                           };
                           addToCartAction(cartItem);
@@ -389,7 +460,10 @@ const Menu = () => {
                         }}
                         sx={{
                           transition: "all 0.3s ease",
-                          transform: clickedButton === product._id ? "scale(0.95)" : "scale(1)",
+                          transform:
+                            clickedButton === product._id
+                              ? "scale(0.95)"
+                              : "scale(1)",
                           "&:active": {
                             transform: "scale(0.95)",
                           },
@@ -415,8 +489,6 @@ const Menu = () => {
               </Box>
             )}
           </Box>
-
-
         </Box>
       </Container>
     </div>
