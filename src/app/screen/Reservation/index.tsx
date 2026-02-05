@@ -214,8 +214,12 @@ function Reservation() {
           // Send all data to backend
           const reservationService = new ReservationService();
           try {
+            // Create date in UTC without timezone conversion
+            // User enters 12:00 PM, we want to store it as 12:00 UTC (not convert from local time)
+            const dateTimeString = `${date}T${time}:00.000Z`;
+            
             await reservationService.createReservation({
-              dateTime: `${date}T${time}`,
+              dateTime: dateTimeString,
               peopleCount: Number(partySize),
               note,
               email,
