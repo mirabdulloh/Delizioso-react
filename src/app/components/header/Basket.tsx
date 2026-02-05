@@ -186,7 +186,11 @@ export default function Basket(props: BasketProps) {
           ) : (
             <Stack spacing={2} sx={{ maxHeight: 360, overflowY: "auto", mb: 2 }}>
               {cartItems?.map((item: CartItem) => {
-                const imgPath = `${serverApi}/${item.image}`;
+                // Normalize image URL - don't double-prefix if already a full URL or path
+                const imgPath = 
+                  !item.image || item.image.startsWith("http://") || item.image.startsWith("https://") || item.image.startsWith("/")
+                    ? item.image 
+                    : `${serverApi}/${item.image}`;
                 return (
                   <Box
                     key={item._id}

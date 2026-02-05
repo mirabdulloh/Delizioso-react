@@ -121,14 +121,22 @@ export default function FinishedOrders() {
       order.items.forEach((item) => {
         console.log("REORDER IMG:", item.img);
 
+        const normalizeImage = (img: string) => {
+          if (!img) return "/imgs/pastas.jpg";
+          // If already has full URL (http or https), return as-is
+          if (img.startsWith("http://") || img.startsWith("https://")) return img;
+          // If starts with /, it's already a path, don't add serverApi
+          if (img.startsWith("/")) return img;
+          // Otherwise, add serverApi prefix
+          return `${serverApi}/${img.replace(/^\/+/, "")}`;
+        };
+
         const cartItem: CartItem = {
           _id: item.productId,
           quantity: item.qty,
           name: item.name,
           price: item.price,
-          image: item.img.startsWith("http")
-            ? item.img
-            : `${serverApi}/${item.img}`,
+          image: normalizeImage(item.img),
         };
 
         // Dispatch to Redux for each item
