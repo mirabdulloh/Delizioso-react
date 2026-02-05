@@ -59,7 +59,7 @@ function transformOrderToUI(order: Order, reviews: any[]): OrderUI {
     const hasReview = reviews.some(
       (rev) =>
         String(rev.orderId) === String(order._id) &&
-        String(rev.productId._id || rev.productId) === String(product?._id),
+        String(rev.productId?._id ?? rev.productId) === String(product?._id),
     );
 
     return {

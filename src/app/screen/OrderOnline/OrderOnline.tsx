@@ -285,11 +285,237 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
   const visibleSelected =
     selectedOrder && selectedOrder.status === activeStatus ? selectedOrder : filtered[0] ?? null;
 
+  // Get the original backend order object (not transformed)
+  const getRawOrder = () => {
+    const orderId = visibleSelected?.id;
+    if (!orderId) return null;
+    if (activeStatus === "PAUSED") {
+      return pausedOrders.find(o => o._id === orderId);
+    } else if (activeStatus === "ONGOING") {
+      return processOrders.find(o => o._id === orderId);
+    } else {
+      return finishedOrders.find(o => o._id === orderId);
+    }
+  };
+
+  const rawOrder = getRawOrder();
   const subtotal = checkoutItems.length > 0 ? calcSubtotal(checkoutItems) : (visibleSelected ? calcSubtotal(visibleSelected.items) : 0);
-  const deliveryFee = 5;
-  const couponDiscount = appliedCoupon ? appliedCoupon.discount : 0;
+  
+  // Calculate prices based on order stage
+  let deliveryFee: number;
+  let couponDiscount: number;
+  let total: number;
+
+  if (activeStatus === "PAUSED") {
+    // PENDING stage: Calculate based on appliedCoupon in checkout
+    deliveryFee = appliedCoupon ? 0 : 5;
+    couponDiscount = appliedCoupon?.discount ?? 0;
+    total = Math.round((subtotal + deliveryFee - couponDiscount) * 100) / 100;
+  } else {
+    // PROCESS & FINISH stages: Read from backend order (values set at payment time)
+    deliveryFee = rawOrder?.deliveryFee ?? 5;
+    couponDiscount = rawOrder?.couponDiscount ?? 0;
+    total = rawOrder?.totalAmount ?? Math.round((subtotal + deliveryFee - couponDiscount) * 100) / 100;
+  }
+
   const delivery = deliveryFee;
-  const total = Math.round((subtotal + delivery - couponDiscount) * 100) / 100;
+
+  const handleDownloadReceipt = async () => {
+    if (!visibleSelected) return;
+
+    const items = visibleSelected.items;
+    const receiptHTML = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>Order Receipt</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              max-width: 400px;
+              margin: 0 auto;
+              padding: 20px;
+              background-color: #f5f5f5;
+            }
+            .receipt {
+              background-color: white;
+              padding: 20px;
+              border-radius: 8px;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
+            .header {
+              text-align: center;
+              border-bottom: 2px solid #333;
+              padding-bottom: 15px;
+              margin-bottom: 15px;
+            }
+            .restaurant-name {
+              font-size: 18px;
+              font-weight: bold;
+              color: #333;
+            }
+            .order-date {
+              font-size: 12px;
+              color: #666;
+              margin-top: 5px;
+            }
+            .order-id {
+              font-size: 11px;
+              color: #999;
+              margin-top: 5px;
+              word-break: break-all;
+            }
+            .items-section {
+              margin-bottom: 15px;
+            }
+            .item {
+              display: flex;
+              justify-content: space-between;
+              padding: 8px 0;
+              border-bottom: 1px solid #eee;
+              font-size: 13px;
+            }
+            .item-name {
+              flex: 1;
+            }
+            .item-qty {
+              margin: 0 10px;
+              color: #666;
+            }
+            .item-price {
+              font-weight: bold;
+              text-align: right;
+              min-width: 60px;
+            }
+            .totals-section {
+              border-top: 2px solid #333;
+              border-bottom: 2px solid #333;
+              padding: 10px 0;
+              margin: 15px 0;
+            }
+            .total-row {
+              display: flex;
+              justify-content: space-between;
+              padding: 5px 0;
+              font-size: 13px;
+            }
+            .total-row.final {
+              font-size: 16px;
+              font-weight: bold;
+              color: #2c3e50;
+            }
+            .label {
+              color: #666;
+            }
+            .value {
+              text-align: right;
+              font-weight: bold;
+            }
+            .footer {
+              text-align: center;
+              margin-top: 15px;
+              font-size: 11px;
+              color: #999;
+            }
+            .thank-you {
+              text-align: center;
+              margin-top: 15px;
+              font-size: 14px;
+              font-weight: bold;
+              color: #27ae60;
+            }
+            @media print {
+              body {
+                background-color: white;
+              }
+              .receipt {
+                box-shadow: none;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="receipt">
+            <div class="header">
+              <div class="restaurant-name">${visibleSelected.restaurant}</div>
+              <div class="order-date">Order Date: ${visibleSelected.createdAt}</div>
+              <div class="order-id">Order ID: ${visibleSelected.id}</div>
+            </div>
+
+            <div class="items-section">
+              ${items
+                .map(
+                  (item) => `
+                <div class="item">
+                  <div class="item-name">${item.name}</div>
+                  <div class="item-qty">x${item.qty}</div>
+                  <div class="item-price">$${(item.price * item.qty).toFixed(2)}</div>
+                </div>
+              `,
+                )
+                .join("")}
+            </div>
+
+            <div class="totals-section">
+              <div class="total-row">
+                <span class="label">Subtotal</span>
+                <span class="value">$${subtotal.toFixed(2)}</span>
+              </div>
+              <div class="total-row">
+                <span class="label">Delivery Fee</span>
+                <span class="value">$${deliveryFee.toFixed(2)}</span>
+              </div>
+              ${
+                appliedCoupon
+                  ? `
+                <div class="total-row">
+                  <span class="label">Coupon Discount (${appliedCoupon.code})</span>
+                  <span class="value">-$${appliedCoupon.discount.toFixed(2)}</span>
+                </div>
+              `
+                  : ""
+              }
+              <div class="total-row final">
+                <span class="label">Total</span>
+                <span class="value">$${total.toFixed(2)}</span>
+              </div>
+            </div>
+
+            <div class="thank-you">
+              Thank you for your order! 🙏
+            </div>
+
+            <div class="footer">
+              <p>Delizioso Restaurant</p>
+              <p>Seoul, South Korea</p>
+              <p>Order Status: ${visibleSelected.status}</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    try {
+      // Create a blob and download
+      const blob = new Blob([receiptHTML], { type: "text/html;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `receipt-${visibleSelected.id}.html`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      await sweetSuccessAlert("Receipt Downloaded", "Your receipt has been downloaded successfully.");
+    } catch (err) {
+      console.error("❌ Download receipt error:", err);
+      await sweetErrorHandling({
+        response: { data: { message: "Failed to download receipt" } }
+      });
+    }
+  };
 
   return (
     <div className="orders-page">
@@ -605,15 +831,15 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                   </Stack>
                   <Stack direction="row" justifyContent="space-between">
                     <Box className="tlabel">Delivery</Box>
-                    <Box className={`tval delivery-val ${appliedCoupon ? "applied" : ""}`}>
+                    <Box className={`tval delivery-val ${deliveryFee === 0 ? "applied" : ""}`}>
                       ${deliveryFee.toFixed(2)}
                     </Box>
                   </Stack>
-                  {appliedCoupon && (
+                  {couponDiscount > 0 && (
                     <Stack direction="row" justifyContent="space-between">
                       <Box className="tlabel">Coupon Discount</Box>
                       <Box className="tval coupon-discount-val">
-                        -${appliedCoupon.discount.toFixed(2)}
+                        -${couponDiscount.toFixed(2)}
                       </Box>
                     </Stack>
                   )}
@@ -661,6 +887,9 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                                 orderId: visibleSelected.id,
                                 orderStatus: OrderStatus.PROCESS,
                                 couponCode: appliedCoupon?.code,
+                                deliveryFee: deliveryFee,
+                                couponDiscount: couponDiscount,
+                                totalAmount: total,
                               });
                               
                               // Refresh member data to get updated coupon status (isUsed: true)
@@ -864,8 +1093,12 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                       >
                         Order again
                       </Button> */}
-                      <Button className="summary-secondary" variant="outlined">
-                        Write a review
+                      <Button 
+                        className="summary-secondary" 
+                        variant="outlined"
+                        onClick={handleDownloadReceipt}
+                      >
+                        Download Receipt
                       </Button>
                     </>
                   )}

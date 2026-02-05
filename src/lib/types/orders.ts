@@ -17,6 +17,9 @@ export interface Order {
   _id: string;
   orderTotal: number;
   orderDelivery: number;
+  deliveryFee?: number;
+  couponDiscount?: number;
+  totalAmount?: number;
   orderStatus: OrderStatus;
   memberId: string;
   createdAt: Date;
@@ -43,4 +46,7 @@ export interface OrderUpdateInput {
   orderId: string;
   orderStatus: OrderStatus;
   couponCode?: string;
+  deliveryFee?: number;
+  couponDiscount?: number;
+  totalAmount?: number;
 }
