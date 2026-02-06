@@ -209,22 +209,33 @@ const Menu = () => {
         likesCount: result.productLikes,
       });
 
+      // ✅ IMPORTANT: Update the CACHE with new like count
+      const updatedCachedProducts = products.map((p) =>
+        p._id === product._id
+          ? {
+              ...p,
+              memberLiked: result.memberLiked,
+              productLikes: result.productLikes,
+            }
+          : p,
+      );
+
       // If user is in Favorite category and unlikes a product, remove it from the list
       if (selectedCategory === "Favorite" && !result.memberLiked) {
-        setProductsAction(products.filter((p) => p._id !== product._id));
+        setProductsAction(updatedCachedProducts.filter((p) => p._id !== product._id));
+        // ✅ Also update cache
+        cacheProductsAction({
+          queryKey,
+          products: updatedCachedProducts.filter((p) => p._id !== product._id),
+        });
       } else {
-        // Otherwise just update the product in store
-        setProductsAction(
-          products.map((p) =>
-            p._id === product._id
-              ? {
-                  ...p,
-                  memberLiked: result.memberLiked,
-                  productLikes: result.productLikes,
-                }
-              : p,
-          ),
-        );
+        // Otherwise just update the product in store AND cache
+        setProductsAction(updatedCachedProducts);
+        // ✅ Update the cache with new like count
+        cacheProductsAction({
+          queryKey,
+          products: updatedCachedProducts,
+        });
       }
     } catch (err: unknown) {
       console.error("Error liking product:", err);
