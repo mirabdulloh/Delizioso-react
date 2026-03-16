@@ -49,4 +49,5 @@ export interface OrderUpdateInput {
   deliveryFee?: number;
   couponDiscount?: number;
   totalAmount?: number;
+  orderItems?: OrderItemInput[];
 }

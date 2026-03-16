@@ -953,6 +953,11 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                                 deliveryFee: deliveryFee,
                                 couponDiscount: couponDiscount,
                                 totalAmount: total,
+                                orderItems: checkoutItems.map((item) => ({
+                                  productId: item.id,
+                                  itemQuantity: item.qty,
+                                  itemPrice: item.price,
+                                })),
                               });
                               
                               // Refresh member data to get updated coupon status (isUsed: true)
