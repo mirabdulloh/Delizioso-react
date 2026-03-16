@@ -4,7 +4,6 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import TelegramIcon from "@mui/icons-material/Telegram";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
-import EditIcon from "@mui/icons-material/Edit";
 import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
@@ -459,6 +458,10 @@ export default function UserPage() {
             value={currentTab} 
             onChange={handleTabChange}
             className="profile-tabs"
+            variant="scrollable"
+            scrollButtons="auto"
+            allowScrollButtonsMobile
+            aria-label="My page sections"
           >
             <Tab label="Edit Profile" />
             <Tab label="Order History" />

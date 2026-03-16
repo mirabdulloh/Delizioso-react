@@ -240,6 +240,7 @@ export default function FinishedOrders() {
                     spacing={2}
                     alignItems="center"
                     sx={{ flex: 1 }}
+                    className="order-item-main"
                   >
                     <Box
                       component="img"
@@ -252,7 +253,12 @@ export default function FinishedOrders() {
                       <Box className="item-qty">x{item.qty}</Box>
                     </Box>
                   </Stack>
-                  <Stack direction="row" spacing={1} alignItems="center">
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    alignItems="center"
+                    className="order-item-actions"
+                  >
                     <Box className="item-price">
                       ${(item.price * item.qty).toFixed(2)}
                     </Box>
@@ -263,6 +269,7 @@ export default function FinishedOrders() {
                       onClick={() => handleWriteReview(item, order.id)}
                       disabled={item.hasReview}
                       sx={{ minWidth: 100 }}
+                      className="review-item-btn"
                     >
                       {item.hasReview ? "Reviewed" : "Review"}
                     </Button>
@@ -285,7 +292,7 @@ export default function FinishedOrders() {
                   ${order.subtotal.toFixed(2)}
                 </span>
               </Box>
-              <Stack direction="row" spacing={1}>
+              <Stack direction="row" spacing={1} className="order-footer-actions">
                 <Button
                   variant="contained"
                   size="small"

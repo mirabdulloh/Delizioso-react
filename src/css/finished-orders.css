@@ -217,8 +217,18 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .finished-orders-list {
+    max-height: none;
+    padding-right: 0;
+  }
+
   .finished-order-card {
     padding: 14px;
+  }
+
+  .order-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
   }
 
   .item-img {
@@ -238,6 +248,10 @@
     flex-direction: column !important;
     gap: 12px !important;
     align-items: flex-start !important;
+  }
+
+  .order-footer-actions {
+    width: 100%;
   }
 
   .reorder-btn {
@@ -262,10 +276,25 @@
   .order-item {
     align-items: flex-start !important;
     gap: 10px !important;
+    flex-direction: column !important;
+    padding: 10px 0;
   }
 
   .item-details {
     min-width: 0;
+  }
+
+  .order-item-main {
+    width: 100%;
+  }
+
+  .order-item-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .review-item-btn {
+    min-width: 94px !important;
   }
 }
 

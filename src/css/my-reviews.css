@@ -302,7 +302,7 @@
   box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.1);
 }
 
-.save-btn {
+.dialog-save-btn {
   background: linear-gradient(135deg, var(--primary2), var(--primary)) !important;
   box-shadow: 0 4px 12px rgba(109, 40, 217, 0.3) !important;
   border-radius: 8px !important;
@@ -311,7 +311,7 @@
   transition: all 0.3s ease;
 }
 
-.save-btn:hover {
+.dialog-save-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(109, 40, 217, 0.4) !important;
 }
@@ -321,6 +321,10 @@
   .my-reviews-container,
   .my-reviews-empty {
     padding: 16px;
+  }
+
+  .my-reviews-container {
+    max-height: none;
   }
 
   .reviews-title {
@@ -339,6 +343,15 @@
   .review-header {
     flex-direction: column !important;
     gap: 12px !important;
+  }
+
+  .review-header-main {
+    width: 100%;
+  }
+
+  .review-footer {
+    justify-content: space-between !important;
+    flex-wrap: wrap;
   }
 
   .dialog-content {
@@ -374,6 +387,11 @@
     align-items: flex-start !important;
   }
 
+  .expired-chip,
+  .edit-review-btn {
+    width: 100% !important;
+  }
+
   .dialog-product-info {
     align-items: flex-start;
     text-align: left;
@@ -385,6 +403,16 @@
   }
 
   .edit-review-btn {
+    width: 100% !important;
+  }
+
+  .dialog-actions {
+    flex-direction: column-reverse !important;
+    align-items: stretch !important;
+  }
+
+  .dialog-actions .MuiButton-root,
+  .dialog-save-btn {
     width: 100% !important;
   }
 }

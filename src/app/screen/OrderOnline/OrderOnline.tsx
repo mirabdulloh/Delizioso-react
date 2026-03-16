@@ -762,7 +762,12 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                   <Box className="coupon-section">
                     {showCouponCard && (
                       <Box className="coupon-card">
-                        <Stack direction="row" justifyContent="space-between" alignItems="center">
+                        <Stack
+                          direction="row"
+                          justifyContent="space-between"
+                          alignItems="center"
+                          className="coupon-card-row"
+                        >
                           <Box>
                             <Box className="coupon-card-title">🎉 You have a coupon!</Box>
                             <Box className="coupon-card-code">{availableCoupon.code}</Box>
@@ -785,7 +790,7 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                       </Box>
                     )}
                     <Box className="coupon-apply-title">Apply Coupon</Box>
-                    <Stack direction="row" spacing={1}>
+                    <Stack direction="row" spacing={1} className="coupon-form">
                       <TextField
                         size="small"
                         placeholder="Enter coupon code"
@@ -793,6 +798,7 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                         onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                         disabled={appliedCoupon !== null}
                         className="coupon-input"
+                        fullWidth
                       />
                       {!appliedCoupon ? (
                         <Button
@@ -851,7 +857,7 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                 </Stack>
 
                 {/* ACTIONS */}
-                <Stack spacing={1.2} mt={2}>
+                <Stack spacing={1.2} mt={2} className="summary-actions">
                   {activeStatus === "PAUSED" ? (
                     <>
                       <Button

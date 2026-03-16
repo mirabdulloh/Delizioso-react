@@ -157,7 +157,13 @@ function MyReviews() {
                 justifyContent="space-between"
                 className="review-header"
               >
-                <Stack direction="row" spacing={2} alignItems="flex-start" sx={{ flex: 1 }}>
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  alignItems="flex-start"
+                  sx={{ flex: 1 }}
+                  className="review-header-main"
+                >
                   {/* Product Image */}
                   <Box
                     component="img"
@@ -322,7 +328,12 @@ function MyReviews() {
             </Box>
 
             {/* Dialog Actions */}
-            <Stack direction="row" spacing={1} justifyContent="flex-end">
+            <Stack
+              direction="row"
+              spacing={1}
+              justifyContent="flex-end"
+              className="dialog-actions"
+            >
               <Button
                 onClick={() => {
                   setEditDialogOpen(false);
@@ -336,7 +347,7 @@ function MyReviews() {
               <Button
                 onClick={handleSaveEdit}
                 variant="contained"
-                className="save-btn"
+                className="dialog-save-btn"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? "Saving..." : "Save Changes"}

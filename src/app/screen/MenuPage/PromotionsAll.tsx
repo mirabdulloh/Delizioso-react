@@ -8,11 +8,12 @@ import {
   TextField,
   InputAdornment,
   Pagination,
+  useMediaQuery,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import { useDispatch, useSelector } from "react-redux";
 
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
-import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
 
 import ProductService from "../../services/ProductService";
 import { setPromotions, setPromotionsLoading } from "./slice";
@@ -31,6 +32,8 @@ import OrderList from "./OrderList";
 const productService = new ProductService();
 
 function PromotionsAll() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = useDispatch();
   const { onAdd } = useBusket();
   const { authMember } = useGlobals();
@@ -45,7 +48,7 @@ function PromotionsAll() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 8;
+  const itemsPerPage = isMobile ? 4 : 6;
 
   useEffect(() => {
     const fetchPromotions = async () => {
@@ -67,7 +70,7 @@ function PromotionsAll() {
     };
 
     fetchPromotions();
-  }, [dispatch, currentPage]);
+  }, [dispatch, currentPage, itemsPerPage]);
 
   const handleOrder = (product: any) => {
     if (!authMember) {
@@ -192,14 +195,6 @@ function PromotionsAll() {
                     </Box>
                   </Box>
 
-                  {/* likes / views */}
-                  <Box className="promoAll-icons">
-                    <Box className="promoAll-pill">
-                      <FavoriteBorderRoundedIcon />
-                      <span>{item.productLikes}</span>
-                    </Box>
-                  </Box>
-
                   {/* image */}
                   <Box className="promoAll-imgWrap">
                     <Box
@@ -276,14 +271,18 @@ function PromotionsAll() {
             {/* Pagination */}
             {!searchTerm && totalPages > 1 && (
               <Box
+                className="promoAll-paginationWrap"
                 sx={{ display: "flex", justifyContent: "center", mt: 4, mb: 2 }}
               >
                 <Pagination
+                  className="promoAll-pagination"
                   count={totalPages}
                   page={currentPage}
                   onChange={handlePageChange}
                   color="secondary"
-                  size="large"
+                  size={isMobile ? "medium" : "large"}
+                  siblingCount={isMobile ? 0 : 1}
+                  boundaryCount={isMobile ? 1 : 2}
                 />
               </Box>
             )}
