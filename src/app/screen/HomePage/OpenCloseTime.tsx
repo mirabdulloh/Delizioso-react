@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Stack, Button, Container, Typography } from "@mui/material";
+import { Box, Stack, Button, Container } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { sweetFailureProvider } from "../../../lib/sweetAlert";
 import { useGlobals } from "../../hooks/useGlobals";
@@ -68,13 +68,32 @@ function OpenCloseTime({ onLoginClick }: OpenCloseTimeProps = {}) {
             </Stack>
 
             {/* buttons */}
-            <Stack direction="row" spacing={3} className="oct-buttons">
+            <Stack
+              direction={{ xs: "column", md: "row" }}
+              spacing={{ xs: 1.5, md: 3 }}
+              className="oct-buttons"
+              sx={{
+                width: { xs: "100%", md: "fit-content" },
+                maxWidth: "100%",
+                alignItems: "center",
+                justifyContent: "center",
+                mx: "auto",
+              }}
+            >
               {/* 🔥 theme secondary */}
               <Button
                 variant="contained"
                 color="secondary"
                 size="large"
                 className="open-btn"
+                sx={{
+                  width: { xs: "min(100%, 240px)", md: 232 },
+                  maxWidth: "100%",
+                  minHeight: { xs: 52, md: 56 },
+                  px: { xs: 3, md: 4 },
+                  fontSize: { xs: "0.95rem", md: "1rem" },
+                  whiteSpace: "nowrap",
+                }}
                 onClick={handleOrderClick}
               >
                 Order now
@@ -85,6 +104,14 @@ function OpenCloseTime({ onLoginClick }: OpenCloseTimeProps = {}) {
                 variant="contained"
                 size="large"
                 className="open-btn2"
+                sx={{
+                  width: { xs: "min(100%, 240px)", md: 232 },
+                  maxWidth: "100%",
+                  minHeight: { xs: 52, md: 56 },
+                  px: { xs: 3, md: 4 },
+                  fontSize: { xs: "0.95rem", md: "1rem" },
+                  whiteSpace: "nowrap",
+                }}
                 onClick={handleReserveClick}
               >
                 Reservation

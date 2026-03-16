@@ -10,7 +10,9 @@ import {
   Checkbox,
   FormControlLabel,
   InputAdornment,
+  useMediaQuery,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
@@ -47,6 +49,8 @@ export default function ReservationConfirmModal({
   email: emailProp,
   phone: phoneProp,
 }: Props) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const mm = String(Math.floor(holdSeconds / 60)).padStart(2, "0");
   const ss = String(holdSeconds % 60).padStart(2, "0");
 
@@ -93,10 +97,27 @@ export default function ReservationConfirmModal({
       open={open}
       onClose={onClose}
       fullWidth
+      fullScreen={isMobile}
       maxWidth="md"
-      PaperProps={{ className: "resv2-modalPaper" }}
+      PaperProps={{
+        className: "resv2-modalPaper",
+        sx: {
+          m: { xs: 0, sm: 2 },
+          width: { xs: "100%", sm: "auto" },
+          maxWidth: { xs: "100%", sm: "calc(100vw - 32px)" },
+          maxHeight: { xs: "100%", sm: "min(92vh, 900px)" },
+          borderRadius: { xs: 0, sm: 4 },
+        },
+      }}
     >
-      <DialogContent className="resv2-modal">
+      <DialogContent
+        className="resv2-modal"
+        sx={{
+          px: { xs: 2, sm: 3 },
+          py: { xs: 2, sm: 3 },
+          overflowY: "auto",
+        }}
+      >
         <IconButton className="resv2-close" onClick={onClose}>
           <CloseRoundedIcon />
         </IconButton>
@@ -161,9 +182,7 @@ export default function ReservationConfirmModal({
             placeholder="Phone number"
             className="resv2-input"
             value={phoneState}
-            onChange={(e) =>
-              setPhoneState(e.target.value.replace(/[^\d\+]/g, ""))
-            }
+            onChange={(e) => setPhoneState(e.target.value.replace(/[^\d+]/g, ""))}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">

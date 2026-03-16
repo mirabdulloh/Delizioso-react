@@ -11,11 +11,15 @@
 }
 
 .footer-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) repeat(3, minmax(0, 1fr));
   gap: 48px;
+  align-items: start;
 }
 
 /* LEFT */
 .footer-left {
+  flex: 1 1 280px;
   max-width: 360px;
 }
 
@@ -55,6 +59,8 @@
 
 /* links */
 .footer-links a {
+  display: inline-flex;
+  width: fit-content;
   text-decoration: none;
   color: rgba(255, 255, 255, 0.86);
   font-size: 16px;
@@ -68,14 +74,21 @@
 
 /* get in touch text */
 .footer-touch {
+  flex: 1 1 220px;
   max-width: 280px;
   line-height: 1.8;
   font-size: 16px;
 }
 
+.footer-col {
+  flex: 1 1 180px;
+  min-width: 0;
+}
+
 /* socials */
 .footer-socials {
   margin-top: 26px;
+  flex-wrap: wrap;
 }
 
 .footer-social-btn {
@@ -111,11 +124,84 @@
 /* responsive */
 @media (max-width: 1000px) {
   .footer-grid {
-    flex-direction: column !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px;
   }
 
   .footer-left,
-  .footer-touch {
+  .footer-touch,
+  .footer-col {
     max-width: 100%;
+  }
+
+  .footer-left {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 599px) {
+  .footer {
+    padding: 54px 0 28px;
+  }
+
+  .footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 18px;
+  }
+
+  .footer-left {
+    grid-column: 1 / -1;
+    width: 100%;
+    max-width: none;
+    text-align: left;
+  }
+
+  .footer-col,
+  .footer-touch {
+    width: 100%;
+    max-width: none;
+    text-align: left;
+  }
+
+  .footer-col-touch {
+    grid-column: 1 / -1;
+  }
+
+  .footer-left .MuiStack-root,
+  .footer-links,
+  .footer-touch {
+    align-items: flex-start;
+  }
+
+  .footer-title {
+    margin-bottom: 18px;
+    font-size: 20px;
+  }
+
+  .footer-desc,
+  .footer-links a,
+  .footer-touch {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .footer-socials {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 14px !important;
+  }
+
+  .footer-social-btn {
+    width: 48px;
+    height: 48px;
+  }
+
+  .footer-social-btn svg {
+    font-size: 22px;
+  }
+
+  .footer-bottom {
+    margin-top: 40px;
+    font-size: 14px;
   }
 }

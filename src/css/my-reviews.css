@@ -353,15 +353,35 @@
 }
 
 @media (max-width: 480px) {
+  .my-reviews-container {
+    max-height: none;
+    padding: 14px;
+  }
+
   .review-product-img {
     width: 60px;
     height: 60px;
+  }
+
+  .review-product-info {
+    width: 100%;
+    min-width: 0;
   }
 
   .review-footer {
     flex-direction: column !important;
     gap: 8px !important;
     align-items: flex-start !important;
+  }
+
+  .dialog-product-info {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .dialog-product-img {
+    width: 80px;
+    height: 80px;
   }
 
   .edit-review-btn {

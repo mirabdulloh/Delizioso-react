@@ -8,7 +8,9 @@ import {
   TextField,
   InputAdornment,
   Pagination,
+  useMediaQuery,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import FavoriteBorderRoundedIcon from "@mui/icons-material/FavoriteBorderRounded";
@@ -62,6 +64,8 @@ const menuPageRetriever = createSelector(
 );
 
 const Menu = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
   const {
     setProducts: setProductsAction,
@@ -271,7 +275,6 @@ const Menu = () => {
           direction="row"
           spacing={2}
           className="menu2-cats"
-          flexWrap="wrap"
         >
           {categories.map((c) => (
             <Button
@@ -489,13 +492,16 @@ const Menu = () => {
             )}
 
             {!loading && products.length > 0 && totalPages > 1 && (
-              <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+              <Box className="menu2-paginationWrap" sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
                 <Pagination
+                  className="menu2-pagination"
                   count={totalPages}
                   page={currentPage}
                   onChange={handlePageChange}
                   color="secondary"
-                  size="large"
+                  size={isMobile ? "medium" : "large"}
+                  siblingCount={isMobile ? 0 : 1}
+                  boundaryCount={isMobile ? 1 : 2}
                 />
               </Box>
             )}

@@ -34,6 +34,14 @@ function WelcomePage() {
               variant="contained"
               color="secondary"
               className="welcome-btn"
+              sx={{
+                width: { xs: "min(100%, 260px)", sm: "min(100%, 220px)" },
+                maxWidth: "100%",
+                minHeight: { xs: 52, sm: 50 },
+                px: { xs: 3, sm: 3.5 },
+                fontSize: { xs: "0.95rem", sm: "1rem" },
+                whiteSpace: "nowrap",
+              }}
               onClick={() => navigate("/products")}
             >
               See our menu

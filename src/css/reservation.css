@@ -363,3 +363,88 @@
   }
 }
 
+@media (max-width: 599px) {
+  .resv {
+    padding: 64px 0;
+  }
+
+  .resv__container {
+    width: min(100%, 100%);
+    gap: 22px;
+    padding-top: 28px;
+  }
+
+  .resv__left {
+    min-height: 320px;
+  }
+
+  .resv__ring.r1 {
+    width: 320px;
+    height: 320px;
+  }
+
+  .resv__ring.r2 {
+    width: 270px;
+    height: 270px;
+  }
+
+  .resv__ring.r3 {
+    width: 220px;
+    height: 220px;
+  }
+
+  .resv__imgWrap {
+    width: 220px;
+    height: 220px;
+  }
+
+  .resv__title {
+    font-size: 36px;
+    text-align: center;
+  }
+
+  .resv__right {
+    align-items: stretch;
+  }
+
+  .resv__input,
+  .resv__select,
+  .resv__btn {
+    height: 50px;
+  }
+
+  .resv2-modal {
+    padding: 20px 18px 18px !important;
+  }
+
+  .resv2-heroImg {
+    width: 96px;
+    height: 96px;
+  }
+
+  .resv2-title {
+    font-size: 16px;
+    text-align: center;
+  }
+
+  .resv2-meta {
+    gap: 10px !important;
+  }
+
+  .resv2-metaItem {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .resv2-hold {
+    padding: 14px 12px;
+    font-size: 14px;
+  }
+
+  .resv2-checks .MuiFormControlLabel-root {
+    align-items: flex-start;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}

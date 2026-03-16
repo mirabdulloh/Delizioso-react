@@ -8,7 +8,9 @@ import {
   Button,
   Box,
   IconButton,
+  useMediaQuery,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import "../../css/chat.css";
 
@@ -20,6 +22,8 @@ type Msg = {
 };
 
 function ChatModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const [text, setText] = useState("");
   const [mode, setMode] = useState<"ai" | "admin">("ai");
@@ -214,9 +218,33 @@ function ChatModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-        <Box sx={{ display: "flex", gap: 1 }}>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth
+      fullScreen={isMobile}
+      maxWidth="sm"
+      PaperProps={{
+        sx: {
+          width: { xs: "100%", sm: "min(100%, 640px)" },
+          maxWidth: { xs: "100%", sm: "calc(100vw - 32px)" },
+          maxHeight: { xs: "100%", sm: "min(82vh, 760px)" },
+          m: { xs: 0, sm: 2 },
+          borderRadius: { xs: 0, sm: 4 },
+        },
+      }}
+    >
+      <DialogTitle
+        sx={{
+          display: "flex",
+          alignItems: { xs: "flex-start", sm: "center" },
+          gap: 1.5,
+          flexWrap: "wrap",
+          px: { xs: 2, sm: 3 },
+          py: { xs: 1.5, sm: 2 },
+        }}
+      >
+        <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", pr: 1 }}>
           <Button
             variant={mode === "ai" ? "contained" : "text"}
             size="small"
@@ -236,14 +264,29 @@ function ChatModal({ open, onClose }: { open: boolean; onClose: () => void }) {
         <IconButton
           aria-label="close"
           onClick={onClose}
-          sx={{ position: "absolute", right: 8, top: 8 }}
+          sx={{ alignSelf: { xs: "flex-start", sm: "center" } }}
         >
           <CloseIcon />
         </IconButton>
       </DialogTitle>
 
-      <DialogContent dividers>
-        <Box className="chat-list" ref={listRef}>
+      <DialogContent
+        dividers
+        sx={{
+          p: { xs: 1.5, sm: 2.5 },
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <Box
+          className="chat-list"
+          ref={listRef}
+          sx={{
+            flex: 1,
+            minHeight: { xs: 240, sm: 320 },
+            height: { xs: "calc(100vh - 240px)", sm: "min(52vh, 420px)" },
+          }}
+        >
           {msgs.map((m) => (
             <Box
               key={m.id}
@@ -255,17 +298,34 @@ function ChatModal({ open, onClose }: { open: boolean; onClose: () => void }) {
         </Box>
       </DialogContent>
 
-      <DialogActions sx={{ padding: 2, gap: 1 }}>
+      <DialogActions
+        sx={{
+          p: { xs: 1.5, sm: 2 },
+          gap: 1,
+          flexDirection: { xs: "column", sm: "row" },
+          alignItems: "stretch",
+        }}
+      >
         <TextField
           fullWidth
           placeholder="Type your message..."
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter") send();
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              send();
+            }
           }}
+          multiline
+          maxRows={4}
         />
-        <Button variant="contained" onClick={send} color="secondary">
+        <Button
+          variant="contained"
+          onClick={send}
+          color="secondary"
+          sx={{ width: { xs: "100%", sm: "auto" } }}
+        >
           Send
         </Button>
       </DialogActions>

@@ -1,11 +1,24 @@
-import React from "react";
-import { Box, Button, Container, Stack, Menu, MenuItem, Avatar, Divider, ListItemIcon } from "@mui/material";
+import React, { useState } from "react";
+import {
+  Box,
+  Button,
+  Container,
+  Stack,
+  Menu,
+  MenuItem,
+  Avatar,
+  Divider,
+  ListItemIcon,
+  IconButton,
+} from "@mui/material";
 
 import { NavLink, useNavigate } from "react-router-dom";
 import { useGlobals } from "../../hooks/useGlobals";
 import { serverApi } from "../../../lib/config";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
+import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import Basket from "./Basket";
 import NotificationBell from "../NotificationBell";
 import { CartItem } from "../../../lib/types/search";
@@ -28,6 +41,21 @@ interface OtherNavbarProps {
 function OtherNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onLogoutMenuClose, onLogoutRequest, cartItems, onAdd, onRemove, onDelete, onDeleteAll }: OtherNavbarProps) {
   const { authMember } = useGlobals();
   const navigate = useNavigate();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const navigationItems = [
+    { label: "Home", to: "/" },
+    { label: "Menu", to: "/products" },
+    ...(authMember ? [{ label: "Order Online", to: "/order-online" }] : []),
+    ...(authMember ? [{ label: "Reservation", to: "/reservation" }] : []),
+    { label: "About", to: "/about" },
+    { label: "Support", to: "/support" },
+  ];
+
+  const closeMobileNav = () => {
+    setMobileOpen(false);
+  };
+
   return (
     <div>
       {" "}
@@ -43,29 +71,12 @@ function OtherNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onL
                 />
               </NavLink>
             </Box>
-            <Stack className="links">
-              <Box className={"hover-line"}>
-                <NavLink to="/">Home</NavLink>
-              </Box>
-              <Box className={"hover-line"}>
-                <NavLink to="/products">Menu</NavLink>
-              </Box>
-              {authMember && (
-                <Box className={"hover-line"}>
-                  <NavLink to="/order-online">Order Online</NavLink>
+            <Stack className="links desktop-links">
+              {navigationItems.map((item) => (
+                <Box className="hover-line" key={item.to}>
+                  <NavLink to={item.to}>{item.label}</NavLink>
                 </Box>
-              )}
-              {authMember && (
-                <Box className={"hover-line"}>
-                  <NavLink to="/reservation">Reservation</NavLink>
-                </Box>
-              )}
-              <Box className={"hover-line"}>
-                <NavLink to="/about">About</NavLink>
-              </Box>
-              <Box className={"hover-line"}>
-                <NavLink to="/support">Support</NavLink>
-              </Box>
+              ))}
               {/* Basket */}
               {authMember && (
                 <Basket
@@ -191,7 +202,87 @@ function OtherNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onL
                 </>
               )}
             </Stack>
+
+            <Box className="mobile-header-actions">
+              {authMember && (
+                <Basket
+                  cartItems={cartItems}
+                  onAdd={onAdd}
+                  onRemove={onRemove}
+                  onDelete={onDelete}
+                  onDeleteAll={onDeleteAll}
+                />
+              )}
+              {authMember && <NotificationBell />}
+              {authMember && (
+                <Avatar
+                  className="user-avatar"
+                  src={
+                    authMember?.memberImage
+                      ? `${serverApi}/${authMember.memberImage}`
+                      : "/icons/default-user.svg"
+                  }
+                  alt="User"
+                  onClick={onAvatarClick}
+                  sx={{
+                    width: 40,
+                    height: 40,
+                    cursor: "pointer",
+                    border: "2px solid #6366f1",
+                  }}
+                />
+              )}
+              <IconButton
+                className="mobile-menu-toggle"
+                aria-label={mobileOpen ? "Close navigation" : "Open navigation"}
+                onClick={() => setMobileOpen((prev) => !prev)}
+              >
+                {mobileOpen ? <CloseRoundedIcon /> : <MenuRoundedIcon />}
+              </IconButton>
+            </Box>
           </Stack>
+
+          <Box className={`mobile-nav-panel ${mobileOpen ? "open" : ""}`}>
+            <Stack className="mobile-nav-links">
+              {navigationItems.map((item) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className="mobile-nav-link"
+                  onClick={closeMobileNav}
+                >
+                  {item.label}
+                </NavLink>
+              ))}
+            </Stack>
+
+            {!authMember && (
+              <Box className="mobile-auth-buttons">
+                <Button
+                  color="primary"
+                  variant="contained"
+                  className="login-button"
+                  onClick={() => {
+                    closeMobileNav();
+                    onLoginClick?.();
+                  }}
+                >
+                  Login
+                </Button>
+                <Button
+                  color="secondary"
+                  variant="contained"
+                  className="signUp-button"
+                  onClick={() => {
+                    closeMobileNav();
+                    onSignupClick?.();
+                  }}
+                >
+                  Sign Up
+                </Button>
+              </Box>
+            )}
+          </Box>
         </Container>
       </div>
     </div>

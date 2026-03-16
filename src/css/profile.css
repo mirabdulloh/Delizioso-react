@@ -800,3 +800,91 @@
     font-size: 13px;
   }
 }
+
+@media (max-width: 599px) {
+  .user-page {
+    padding-top: 56px;
+    padding-bottom: 56px;
+  }
+
+  .profile-header-card {
+    padding-top: 56px;
+    margin-bottom: 20px;
+    border-radius: 24px;
+  }
+
+  .profile-cover {
+    padding-top: 40px;
+    height: 140px;
+  }
+
+  .profile-avatar-section {
+    margin-top: -56px;
+    gap: 16px;
+  }
+
+  .profile-header-avatar {
+    width: 140px !important;
+    height: 140px !important;
+  }
+
+  .profile-user-details {
+    padding-top: 0;
+    margin-top: 0;
+  }
+
+  .profile-name-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .contact-info-item {
+    justify-content: center;
+    flex-wrap: wrap;
+    text-align: center;
+  }
+
+  .social-media-icons {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .profile-picture-card,
+  .personal-info-card,
+  .payment-card-design,
+  .tabs-card,
+  .content-card {
+    padding: 16px !important;
+    border-radius: 18px;
+  }
+
+  .profile-picture-content,
+  .action-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .payment-card-icons {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stats-grid {
+    gap: 12px;
+  }
+
+  .profile-tabs {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .profile-tabs .MuiTabs-flexContainer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .profile-tabs .MuiTab-root {
+    width: 100%;
+    align-items: flex-start;
+    text-align: left;
+  }
+}

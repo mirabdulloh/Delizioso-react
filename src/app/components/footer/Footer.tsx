@@ -19,11 +19,7 @@ function Footer({ onLoginClick }: FooterProps = {}) {
     <Box className="footer">
       <Container maxWidth="lg">
         <Box className="footer-inner">
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            className="footer-grid"
-          >
+          <Box className="footer-grid">
             {/* LEFT */}
             <Box className="footer-left">
               <Stack direction="row" alignItems="center" spacing={1.5}>
@@ -37,17 +33,31 @@ function Footer({ onLoginClick }: FooterProps = {}) {
               </Box>
 
               <Stack direction="row" spacing={2.2} className="footer-socials">
-                <a className="footer-social-btn" href="#" aria-label="twitter">
+                <a
+                  className="footer-social-btn"
+                  href="https://twitter.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="twitter"
+                >
                   <TwitterIcon />
                 </a>
                 <a
                   className="footer-social-btn"
-                  href="#"
+                  href="https://instagram.com"
+                  target="_blank"
+                  rel="noreferrer"
                   aria-label="instagram"
                 >
                   <InstagramIcon />
                 </a>
-                <a className="footer-social-btn" href="#" aria-label="facebook">
+                <a
+                  className="footer-social-btn"
+                  href="https://facebook.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="facebook"
+                >
                   <FacebookIcon />
                 </a>
               </Stack>
@@ -96,9 +106,9 @@ function Footer({ onLoginClick }: FooterProps = {}) {
 
               <Stack spacing={2.2} className="footer-links">
                 <a href="/about">About us</a>
-                <a href="#">Testimonial</a>
-                <a href="#">Event</a>
-                <a href="/help">Contact us</a>
+                <a href="/support">Testimonial</a>
+                <a href="/support">Event</a>
+                <a href="/support">Contact us</a>
               </Stack>
             </Box>
 
@@ -112,7 +122,7 @@ function Footer({ onLoginClick }: FooterProps = {}) {
                 <Box>+123 4567 8901</Box>
               </Stack>
             </Box>
-          </Stack>
+          </Box>
 
           {/* bottom */}
           <Box className="footer-bottom">Copyright © 2022 Delizioso</Box>

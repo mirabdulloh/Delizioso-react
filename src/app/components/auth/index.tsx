@@ -27,13 +27,14 @@ import { useDispatch } from "react-redux";
 import { clearCache } from "../../screen/MenuPage/slice";
 import { clearLikesCache } from "../../screen/MenuPage/likesSlice";
 
-const GlassModal = styled(Box)({
+const GlassModal = styled(Box)(({ theme }) => ({
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: "440px",
-  maxWidth: "90%",
+  width: "min(440px, calc(100vw - 32px))",
+  maxHeight: "min(90vh, 760px)",
+  overflowY: "auto",
   background: "rgba(255, 255, 255, 0.95)",
   backdropFilter: "blur(20px)",
   borderRadius: "30px",
@@ -42,6 +43,8 @@ const GlassModal = styled(Box)({
   border: "1px solid rgba(255, 255, 255, 0.8)",
   outline: "none",
   animation: "slideIn 0.4s ease-out",
+  scrollbarWidth: "thin",
+  overscrollBehavior: "contain",
   "@keyframes slideIn": {
     from: {
       opacity: 0,
@@ -52,9 +55,19 @@ const GlassModal = styled(Box)({
       transform: "translate(-50%, -50%)",
     },
   },
-});
+  [theme.breakpoints.down("md")]: {
+    padding: "42px 32px",
+    borderRadius: "26px",
+  },
+  [theme.breakpoints.down("sm")]: {
+    width: "calc(100vw - 24px)",
+    maxHeight: "calc(100vh - 24px)",
+    padding: "36px 20px 24px",
+    borderRadius: "24px",
+  },
+}));
 
-const StyledCloseButton = styled(IconButton)({
+const StyledCloseButton = styled(IconButton)(({ theme }) => ({
   position: "absolute",
   right: "20px",
   top: "20px",
@@ -68,7 +81,13 @@ const StyledCloseButton = styled(IconButton)({
     color: "#ef4444",
     transform: "rotate(90deg)",
   },
-});
+  [theme.breakpoints.down("sm")]: {
+    top: "14px",
+    right: "14px",
+    width: "36px",
+    height: "36px",
+  },
+}));
 
 const GlassTextField = styled(TextField)({
   "& .MuiOutlinedInput-root": {
@@ -108,10 +127,11 @@ const GlassTextField = styled(TextField)({
   },
 });
 
-const GradientButton = styled(Button)({
+const GradientButton = styled(Button)(({ theme }) => ({
   background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
   borderRadius: "16px",
   padding: "16px 32px",
+  minHeight: "54px",
   fontSize: "16px",
   fontWeight: 700,
   textTransform: "none",
@@ -127,9 +147,14 @@ const GradientButton = styled(Button)({
   "&:active": {
     transform: "translateY(-1px) scale(0.98)",
   },
-});
+  [theme.breakpoints.down("sm")]: {
+    padding: "14px 24px",
+    minHeight: "50px",
+    fontSize: "15px",
+  },
+}));
 
-const IconWrapper = styled(Box)({
+const IconWrapper = styled(Box)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
@@ -143,7 +168,15 @@ const IconWrapper = styled(Box)({
     fontSize: "32px",
     color: "#fff",
   },
-});
+  [theme.breakpoints.down("sm")]: {
+    width: "52px",
+    height: "52px",
+    borderRadius: "18px",
+    "& svg": {
+      fontSize: "28px",
+    },
+  },
+}));
 
 interface AuthenticationModalProps {
   signupOpen: boolean;
@@ -256,6 +289,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
         open={signupOpen}
         onClose={handleSignupClose}
         closeAfterTransition
+        sx={{ p: { xs: 1.5, sm: 2 } }}
         BackdropProps={{
           sx: {
             backgroundColor: "rgba(0, 0, 0, 0.90)",
@@ -270,14 +304,14 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
               <CloseIcon />
             </StyledCloseButton>
 
-            <Stack spacing={3.5}>
+            <Stack spacing={{ xs: 2.5, sm: 3.5 }}>
               <Box sx={{ textAlign: "center" }}>
                 <IconWrapper>
                   <PersonIcon />
                 </IconWrapper>
                 <Typography
                   sx={{
-                    fontSize: "32px",
+                    fontSize: { xs: "26px", sm: "32px" },
                     fontWeight: 800,
                     background:
                       "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
@@ -292,7 +326,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
                 <Typography
                   sx={{
                     color: "#64748b",
-                    fontSize: "15px",
+                    fontSize: { xs: "14px", sm: "15px" },
                     fontWeight: 500,
                   }}
                 >
@@ -378,6 +412,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
         open={loginOpen}
         onClose={handleLoginClose}
         closeAfterTransition
+        sx={{ p: { xs: 1.5, sm: 2 } }}
         BackdropProps={{
           sx: {
             backgroundColor: "rgba(0, 0, 0, 0.90)",
@@ -392,14 +427,14 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
               <CloseIcon />
             </StyledCloseButton>
 
-            <Stack spacing={3.5}>
+            <Stack spacing={{ xs: 2.5, sm: 3.5 }}>
               <Box sx={{ textAlign: "center" }}>
                 <IconWrapper>
                   <LockIcon />
                 </IconWrapper>
                 <Typography
                   sx={{
-                    fontSize: "32px",
+                    fontSize: { xs: "26px", sm: "32px" },
                     fontWeight: 800,
                     background:
                       "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
@@ -414,7 +449,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
                 <Typography
                   sx={{
                     color: "#64748b",
-                    fontSize: "15px",
+                    fontSize: { xs: "14px", sm: "15px" },
                     fontWeight: 500,
                   }}
                 >

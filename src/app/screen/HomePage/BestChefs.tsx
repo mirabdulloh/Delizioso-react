@@ -11,6 +11,8 @@ function BestChefs() {
           Our greatest chef
         </Box>
 
+        <Box className="chef-mobile-hint">Swipe to explore</Box>
+
         {/* CARDS */}
         <Box className="chef-grid">
           {/* CARD 1 */}

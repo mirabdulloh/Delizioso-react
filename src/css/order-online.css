@@ -41,7 +41,7 @@
 /* layout */
 .orders-layout {
   display: grid;
-  grid-template-columns: 280px 1fr 360px;
+  grid-template-columns: minmax(0, 280px) minmax(0, 1fr) minmax(0, 360px);
   gap: 22px;
   align-items: start;
 }
@@ -103,14 +103,15 @@
 
 /* center cards */
 .orders-center {
-  width: 570px;
+  width: 100%;
+  min-width: 0;
   min-height: 650px;
   background: transparent;
 }
 
 .orders-center-scroll {
   max-height: 450px;
-  width: 570px;
+  width: 100%;
   padding: 10px;
   overflow-y: auto;
   overflow-x: hidden;
@@ -387,6 +388,7 @@
   border-radius: 22px;
   padding: 18px;
   box-shadow: 0 14px 40px rgba(0, 0, 0, 0.08);
+  min-width: 0;
 }
 
 .orders-summary-title {
@@ -611,10 +613,106 @@
     width: 100%;
     max-width: 520px;
   }
+
+  .orders-center-scroll {
+    max-height: none;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .orders-center-scroll::after {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .orders-page {
+    padding: 56px 0 72px;
+  }
+
+  .orders-title {
+    padding-top: 40px;
+    font-size: 44px;
+  }
+
+  .orders-layout {
+    gap: 16px;
+  }
+
+  .orders-panel,
+  .orders-summary,
+  .orderCard {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .summary-item {
+    align-items: flex-start;
+  }
+
+  .summary-img {
+    width: 48px;
+    height: 38px;
+  }
+
+  .orders-statusBtn {
+    justify-content: center !important;
+  }
 }
 
 @media (max-width: 700px) {
   .orders-title {
     font-size: 40px;
+  }
+
+  .orders-filterRow {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .orderCard-items {
+    overflow-x: auto;
+  }
+
+  .summary-item {
+    flex-direction: column;
+  }
+
+  .summary-qty {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 479px) {
+  .orders-page {
+    padding: 48px 0 60px;
+  }
+
+  .orders-title {
+    font-size: 34px;
+    line-height: 1.1;
+  }
+
+  .orders-search .MuiOutlinedInput-root {
+    height: 40px;
+  }
+
+  .orders-panel,
+  .orders-summary,
+  .orderCard {
+    padding: 14px;
+  }
+
+  .orders-summary-title,
+  .cart-title {
+    font-size: 16px;
+    padding: 12px;
+  }
+
+  .summary-primary,
+  .summary-secondary {
+    padding: 12px 14px !important;
   }
 }

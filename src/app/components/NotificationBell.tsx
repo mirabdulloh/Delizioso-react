@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Snackbar,
   Alert,
@@ -28,16 +28,14 @@ const NotificationBell: React.FC = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [currentNotification, setCurrentNotification] = useState<string>("");
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const [loading, setLoading] = useState(false);
 
-  const notificationService = new NotificationService();
+  const notificationService = useMemo(() => new NotificationService(), []);
   // Fetch notifications on mount
   useEffect(() => {
     if (!authMember?._id) return;
 
     const fetchNotifications = async () => {
       try {
-        setLoading(true);
         const dbNotifications =
           await notificationService.getUnreadNotifications();
         const mapped = dbNotifications.map((notif) => ({
@@ -48,13 +46,11 @@ const NotificationBell: React.FC = () => {
         setNotifications(mapped);
       } catch (err) {
         console.error("Error fetching notifications:", err);
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchNotifications();
-  }, [authMember?._id]);
+  }, [authMember?._id, notificationService]);
 
   // Listen for real-time socket notifications
   useEffect(() => {
@@ -212,6 +208,12 @@ const NotificationBell: React.FC = () => {
         open={open}
         anchorEl={anchorEl}
         onClose={handleClose}
+        PaperProps={{
+          sx: {
+            width: { xs: "min(92vw, 360px)", sm: 380 },
+            maxWidth: "calc(100vw - 24px)",
+          },
+        }}
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "right",
@@ -221,7 +223,7 @@ const NotificationBell: React.FC = () => {
           horizontal: "right",
         }}
       >
-        <Box sx={{ width: 350, maxHeight: 400, overflow: "auto" }}>
+        <Box sx={{ width: "100%", maxHeight: 400, overflow: "auto" }}>
           <Box
             sx={{
               p: 2,

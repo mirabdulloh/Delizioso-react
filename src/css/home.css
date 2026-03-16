@@ -87,9 +87,16 @@
 
 /* button */
 .welcome-btn {
-  width: 200.42px;
-  height: 50.441px;
+  width: min(100%, 220px);
+  max-width: 100%;
+  min-height: 50.441px;
+  height: auto;
+  padding: 12px 24px !important;
   border-radius: 162.942px !important;
+  line-height: 1.2 !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
 }
 
 .welcome-btn:hover {
@@ -341,9 +348,10 @@
 
 .order-btn-small {
   font-size: 13px;
-  padding: 4px 16px;
+  padding: 6px 16px !important;
   min-width: 0;
-  height: 32px;
+  min-height: 34px;
+  height: auto;
 }
 
 /* ! PAgination */
@@ -530,9 +538,16 @@
 }
 
 .reservation-btn {
-  width: 232.42px;
-  height: 74.441px;
+  width: min(100%, 232.42px);
+  max-width: 100%;
+  min-height: 58px;
+  height: auto;
+  padding: 14px 28px !important;
   border-radius: 162.942px !important;
+  line-height: 1.2 !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
 }
 
 /* =======================
@@ -573,6 +588,10 @@
   margin-bottom: 140px;
 }
 
+.chef-mobile-hint {
+  display: none;
+}
+
 /* grid */
 .chef-grid {
   display: grid;
@@ -586,6 +605,7 @@
   text-align: center;
   cursor: pointer;
   height: auto;
+  min-width: 0;
 }
 
 /* image wrapper */
@@ -968,12 +988,20 @@
 }
 .oct-buttons {
   margin-top: 60px !important;
+  width: fit-content;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
 .open-btn {
-  width: 232.42px !important;
-  height: 56.441px !important ;
+  width: min(100%, 232.42px) !important;
+  max-width: 100%;
+  min-height: 56px !important;
+  height: auto !important;
+  padding: 12px 24px !important;
   border-radius: 162.942px !important;
   background: #ff8a00 !important;
+  line-height: 1.2 !important;
 }
 .open-btn2 {
   color: #311f09 !important;
@@ -981,9 +1009,12 @@
   font-size: 20px;
   font-style: normal;
   font-weight: 600;
-  line-height: 200%; /* 40px */
-  width: 232.42px !important;
-  height: 56.441px !important ;
+  line-height: 1.2 !important;
+  width: min(100%, 232.42px) !important;
+  max-width: 100%;
+  min-height: 56px !important;
+  height: auto !important;
+  padding: 12px 24px !important;
   border-radius: 162.942px !important;
   background: #fff !important;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
@@ -1024,4 +1055,469 @@
   font-style: normal;
   font-weight: 400;
   line-height: 200%; /* 40px */
+}
+
+@media (max-width: 1200px) {
+  .welcome-grid,
+  .reservation-container {
+    gap: 40px;
+  }
+
+  .welcome-title,
+  .welcome-brand,
+  .popular-title,
+  .reservation-title,
+  .reservation-title span,
+  .chef-title,
+  .review-title,
+  .oct-title {
+    font-size: clamp(48px, 6vw, 64px);
+    line-height: 1.15;
+  }
+
+  .welcome-main-img {
+    width: min(100%, 520px);
+    height: auto;
+  }
+
+  .menu-grid-4 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .reservation-left {
+    width: min(100%, 540px);
+    height: 540px;
+  }
+
+  .reservation-outline {
+    width: 100%;
+    height: 100%;
+  }
+
+  .reservation-right {
+    margin-left: 0;
+  }
+
+  .reservation-desc {
+    margin-bottom: 64px;
+  }
+
+  .chef-img-wrap {
+    width: min(100%, 320px);
+    height: 470px;
+  }
+
+  .oct-card {
+    height: auto;
+    min-height: 520px;
+    border-radius: 56px;
+  }
+}
+
+@media (max-width: 900px) {
+  .welcome-section,
+  .popular-section,
+  .reservation-section,
+  .chef-section,
+  .review-section,
+  .oct-section {
+    padding: 72px 0;
+  }
+
+  .welcome-grid {
+    margin-top: 40px;
+    margin-bottom: 20px;
+    gap: 28px;
+  }
+
+  .welcome-images {
+    min-height: 360px;
+  }
+
+  .welcome-content {
+    margin-left: 0;
+  }
+
+  .welcome-desc,
+  .reservation-desc {
+    width: 100%;
+    max-width: 580px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 17px;
+    line-height: 1.8;
+  }
+
+  .popular-title,
+  .chef-title,
+  .review-title {
+    margin-bottom: 40px;
+  }
+
+  .menu-grid,
+  .menu-grid-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  .menu-card-small {
+    max-width: none;
+  }
+
+  .menu-img-small {
+    width: 100px;
+    height: 100px;
+  }
+
+  .menu-desc {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .pagination-wrap {
+    margin-top: 48px;
+    gap: 10px;
+  }
+
+  .reservation-container {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .reservation-left {
+    width: min(100%, 420px);
+    height: 420px;
+  }
+
+  .reservation-ring.big {
+    width: 320px;
+    height: 320px;
+  }
+
+  .reservation-ring.small {
+    width: 120px;
+    height: 120px;
+  }
+
+  .reservation-ring.top {
+    right: 0;
+  }
+
+  .reservation-ring.bottom {
+    left: 0;
+  }
+
+  .reservation-right {
+    align-items: center;
+    text-align: center;
+  }
+
+  .reservation-title,
+  .reservation-title span {
+    width: auto;
+  }
+
+  .reservation-desc {
+    margin-bottom: 40px;
+  }
+
+  .reservation-btn {
+    width: auto;
+    min-width: 220px;
+  }
+
+  .oct-buttons {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .chef-mobile-hint {
+    display: block;
+    margin: -96px 0 28px;
+    color: #a08d76;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .chef-grid {
+    display: flex;
+    grid-template-columns: none;
+    gap: 18px;
+    overflow-x: auto;
+    padding: 6px 6px 20px;
+    margin: 0 -6px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    justify-items: unset;
+  }
+
+  .chef-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .chef-card {
+    flex: 0 0 clamp(240px, 70vw, 290px);
+    scroll-snap-align: center;
+  }
+
+  .chef-img-wrap {
+    width: 100%;
+    height: 420px;
+  }
+
+  .review-food-card,
+  .review-image-box {
+    width: 220px;
+    height: 220px;
+  }
+
+  .review-quote {
+    padding: 0 24px;
+    font-size: 18px;
+  }
+
+  .review-users-row {
+    flex-wrap: wrap;
+    gap: 14px;
+    padding-bottom: 32px;
+  }
+
+  .oct-section {
+    min-height: auto;
+  }
+
+  .oct-buttons {
+    margin-top: 40px !important;
+  }
+}
+
+@media (max-width: 599px) {
+  .welcome-section,
+  .popular-section,
+  .reservation-section,
+  .chef-section,
+  .review-section,
+  .oct-section {
+    padding: 56px 0;
+  }
+
+  .welcome-images {
+    min-height: 280px;
+  }
+
+  .welcome-main-img {
+    width: min(100%, 320px);
+  }
+
+  .welcome-title,
+  .welcome-brand,
+  .popular-title,
+  .reservation-title,
+  .reservation-title span,
+  .chef-title,
+  .review-title,
+  .oct-title {
+    font-size: clamp(36px, 10vw, 44px) !important;
+  }
+
+  .welcome-desc,
+  .reservation-desc,
+  .review-quote,
+  .oct-subtitle,
+  .oct-lines {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .popular-tabs {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .tab {
+    padding: 8px 18px !important;
+  }
+
+  .menu-grid,
+  .menu-grid-4 {
+    grid-template-columns: 1fr;
+  }
+
+  .popular-mobile-track {
+    display: flex !important;
+    grid-template-columns: none !important;
+    gap: 16px;
+    overflow-x: auto;
+    padding: 4px 4px 12px;
+    margin: 0 -4px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .popular-mobile-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .popular-mobile-track .menu-card-small {
+    flex: 0 0 clamp(240px, 78vw, 300px);
+    max-width: none;
+    margin: 0;
+    scroll-snap-align: center;
+  }
+
+  .popular-mobile-dots {
+    gap: 8px !important;
+    margin-top: 12px;
+  }
+
+  .popular-mobile-dot {
+    width: 10px;
+    height: 10px;
+    border: none;
+    border-radius: 999px;
+    padding: 0;
+    background: rgba(49, 31, 9, 0.18);
+    transition: all 0.25s ease;
+  }
+
+  .popular-mobile-dot.is-active {
+    width: 28px;
+    background: #ff8a00;
+  }
+
+  .chef-mobile-hint {
+    margin: -24px 0 22px;
+    font-size: 12px;
+  }
+
+  .chef-grid {
+    display: flex !important;
+    gap: 16px;
+    padding: 4px 4px 16px;
+    margin: 0 -4px;
+  }
+
+  .chef-card {
+    flex-basis: clamp(220px, 78vw, 260px);
+  }
+
+  .menu-card,
+  .menu-card-small {
+    padding: 16px;
+  }
+
+  .menu-name {
+    font-size: 22px;
+    line-height: 1.4;
+  }
+
+  .price {
+    font-size: 20px;
+  }
+
+  .menu-footer {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .menu-footer-small {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .price-small {
+    text-align: center;
+  }
+
+  .order-btn-small {
+    width: 100%;
+  }
+
+  .pg-arrow,
+  .pg-item {
+    min-width: 38px !important;
+    height: 38px !important;
+    border-radius: 12px !important;
+  }
+
+  .pagination-wrap {
+    margin-top: 24px;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .reservation-left {
+    width: min(100%, 320px);
+    height: 320px;
+  }
+
+  .reservation-ring.big {
+    width: 250px;
+    height: 250px;
+  }
+
+  .reservation-ring.small {
+    width: 88px;
+    height: 88px;
+  }
+
+  .reservation-btn,
+  .open-btn,
+  .open-btn2 {
+    width: min(100%, 240px) !important;
+    min-width: 0;
+    height: 52px !important;
+  }
+
+  .chef-img-wrap {
+    height: 360px;
+    border-radius: 28px;
+  }
+
+  .chef-name,
+  .chef-role {
+    line-height: 1.5;
+  }
+
+  .chef-img-wrap {
+    height: 380px;
+  }
+
+  .chef-name,
+  .chef-role,
+  .review-name {
+    font-size: 20px;
+    line-height: 1.4;
+  }
+
+  .review-food-card,
+  .review-image-box {
+    width: 180px;
+    height: 180px;
+  }
+
+  .review-user {
+    width: 54px;
+    height: 54px;
+  }
+
+  .review-user.active {
+    width: 70px;
+    height: 70px;
+  }
+
+  .oct-card {
+    min-height: 400px;
+    border-radius: 28px;
+  }
+
+  .oct-buttons {
+    flex-direction: column;
+    gap: 12px !important;
+    margin-top: 28px !important;
+  }
 }

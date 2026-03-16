@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Container,
   Stack,
@@ -10,13 +10,15 @@ import {
   PaginationItem,
   Snackbar,
   Alert,
+  useMediaQuery,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import ArrowBackIosNewRoundedIcon from "@mui/icons-material/ArrowBackIosNewRounded";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useSelector } from "react-redux";
 import { retrievePopularDishes, retrievePaginationInfo } from "./selector";
-import { serverApi, Messages } from "../../../lib/config";
+import { serverApi } from "../../../lib/config";
 import { CartItem } from "../../../lib/types/search";
 import { sweetErrorHandling } from "../../../lib/sweetAlert";
 import { useGlobals } from "../../hooks/useGlobals";
@@ -30,15 +32,29 @@ interface PopularMenuProps {
 }
 
 function PopularMenu({ page, setPage, onAdd }: PopularMenuProps) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const popularDishes = useSelector(retrievePopularDishes);
   const { totalPages } = useSelector(retrievePaginationInfo);
   const { authMember } = useGlobals();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [addedItemName, setAddedItemName] = useState("");
   const [clickedButton, setClickedButton] = useState<string | null>(null);
+  const [activeSlide, setActiveSlide] = useState(0);
+  const sliderRef = useRef<HTMLDivElement | null>(null);
 
   console.log("[PopularMenu] popularDishes from selector:", popularDishes);
   console.log("[PopularMenu] Current page:", page, "Total pages:", totalPages);
+
+  // Filter products to only show those with at least 2 views
+  const filteredDishes = popularDishes.filter((dish) => dish.productViews >= 2);
+
+  useEffect(() => {
+    setActiveSlide(0);
+    if (isMobile && sliderRef.current) {
+      sliderRef.current.scrollLeft = 0;
+    }
+  }, [isMobile, page, filteredDishes.length]);
 
   const handlePreviousPage = () => {
     if (page > 1) {
@@ -86,8 +102,38 @@ function PopularMenu({ page, setPage, onAdd }: PopularMenuProps) {
     setSnackbarOpen(false);
   };
 
-  // Filter products to only show those with at least 2 views
-  const filteredDishes = popularDishes.filter((dish) => dish.productViews >= 2);
+  const updateActiveSlide = () => {
+    if (!isMobile || !sliderRef.current) return;
+
+    const container = sliderRef.current;
+    const firstCard = container.querySelector(".menu-card-small") as HTMLElement | null;
+    if (!firstCard) return;
+
+    const computedStyle = window.getComputedStyle(container);
+    const gap = parseFloat(computedStyle.columnGap || computedStyle.gap || "0");
+    const step = firstCard.offsetWidth + gap;
+    const nextIndex = Math.round(container.scrollLeft / Math.max(step, 1));
+
+    setActiveSlide(
+      Math.max(0, Math.min(filteredDishes.length - 1, nextIndex)),
+    );
+  };
+
+  const scrollToSlide = (index: number) => {
+    if (!sliderRef.current) return;
+
+    const container = sliderRef.current;
+    const firstCard = container.querySelector(".menu-card-small") as HTMLElement | null;
+    const computedStyle = window.getComputedStyle(container);
+    const gap = parseFloat(computedStyle.columnGap || computedStyle.gap || "0");
+    const step = firstCard ? firstCard.offsetWidth + gap : container.clientWidth;
+
+    container.scrollTo({
+      left: step * index,
+      behavior: "smooth",
+    });
+    setActiveSlide(index);
+  };
 
   return (
     <div className="popular-section">
@@ -96,7 +142,11 @@ function PopularMenu({ page, setPage, onAdd }: PopularMenuProps) {
         <Box className="popular-title">Our popular menu</Box>
 
         {/* GRID */}
-        <div className="menu-grid menu-grid-4">
+        <div
+          ref={sliderRef}
+          onScroll={isMobile ? updateActiveSlide : undefined}
+          className={`menu-grid menu-grid-4 ${isMobile ? "popular-mobile-track" : ""}`}
+        >
           {filteredDishes.map((dish) => (
             <div key={dish._id} className="menu-card menu-card-small">
               <Box sx={{ position: "relative" }}>
@@ -164,11 +214,22 @@ function PopularMenu({ page, setPage, onAdd }: PopularMenuProps) {
                   startIcon={<ShoppingCartIcon />}
                   onClick={() => handleAddToCart(dish)}
                   sx={{
+                    width: { xs: "100%", sm: "auto" },
+                    maxWidth: "100%",
+                    minHeight: { xs: 40, sm: 34 },
+                    px: { xs: 1.75, sm: 2 },
+                    fontSize: { xs: "0.85rem", sm: "0.8125rem" },
+                    whiteSpace: "nowrap",
+                    justifyContent: "center",
                     transition: "all 0.3s ease",
                     transform:
                       clickedButton === dish._id ? "scale(0.95)" : "scale(1)",
                     "&:active": {
                       transform: "scale(0.95)",
+                    },
+                    "& .MuiButton-startIcon": {
+                      mr: 0.75,
+                      ml: 0,
                     },
                   }}
                 >
@@ -178,6 +239,21 @@ function PopularMenu({ page, setPage, onAdd }: PopularMenuProps) {
             </div>
           ))}
         </div>
+
+        {isMobile && filteredDishes.length > 1 && (
+          <Stack direction="row" justifyContent="center" className="popular-mobile-dots">
+            {filteredDishes.map((dish, index) => (
+              <Box
+                key={`${dish._id}-dot`}
+                component="button"
+                type="button"
+                className={`popular-mobile-dot ${activeSlide === index ? "is-active" : ""}`}
+                aria-label={`Go to popular dish ${index + 1}`}
+                onClick={() => scrollToSlide(index)}
+              />
+            ))}
+          </Stack>
+        )}
 
         <Stack className="pagination-wrap" direction="row" alignItems="center">
           <IconButton
@@ -192,8 +268,8 @@ function PopularMenu({ page, setPage, onAdd }: PopularMenuProps) {
             page={page}
             count={totalPages || 1}
             onChange={handlePageChange}
-            siblingCount={1}
-            boundaryCount={1}
+            siblingCount={isMobile ? 0 : 1}
+            boundaryCount={isMobile ? 0 : 1}
             hidePrevButton
             hideNextButton
             renderItem={(item) => (

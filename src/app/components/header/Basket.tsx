@@ -96,8 +96,8 @@ export default function Basket(props: BasketProps) {
         onClose={handleClose}
         PaperProps={{
           sx: {
-            width: 420,
-            maxHeight: 600,
+            width: { xs: "min(92vw, 360px)", sm: 420 },
+            maxHeight: { xs: "min(78vh, 560px)", sm: 600 },
             borderRadius: "20px",
             boxShadow: "0 12px 40px rgba(0, 0, 0, 0.15)",
             border: "1px solid rgba(0, 0, 0, 0.05)",
@@ -234,8 +234,8 @@ export default function Basket(props: BasketProps) {
                       src={imgPath}
                       alt={item.name}
                       sx={{
-                        width: 80,
-                        height: 80,
+                        width: { xs: 68, sm: 80 },
+                        height: { xs: 68, sm: 80 },
                         borderRadius: "12px",
                         objectFit: "cover",
                       }}
@@ -249,6 +249,7 @@ export default function Basket(props: BasketProps) {
                           fontWeight: 600,
                           color: "#1a1a1a",
                           pr: 3,
+                          wordBreak: "break-word",
                         }}
                       >
                         {item.name}

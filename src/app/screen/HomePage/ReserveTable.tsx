@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Button, Container, Stack } from "@mui/material";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useGlobals } from "../../hooks/useGlobals";
 import { sweetFailureProvider } from "../../../lib/sweetAlert";
 import "../../../css/home.css";
@@ -81,6 +81,14 @@ function ReserveTable({ onLoginClick }: ReserveTableProps = {}) {
             variant="contained"
             className="reservation-btn"
             color="secondary"
+            sx={{
+              width: { xs: "min(100%, 260px)", sm: "min(100%, 232px)" },
+              maxWidth: "100%",
+              minHeight: { xs: 52, sm: 58 },
+              px: { xs: 3, sm: 4 },
+              fontSize: { xs: "0.95rem", sm: "1rem" },
+              whiteSpace: "nowrap",
+            }}
             onClick={handleReserveClick}
           >
             Reservation

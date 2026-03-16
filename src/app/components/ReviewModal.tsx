@@ -11,7 +11,9 @@ import {
   Typography,
   Stack,
   IconButton,
+  useMediaQuery,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import StarIcon from "@mui/icons-material/Star";
 import { sweetErrorHandling, sweetSuccessAlert } from "../../lib/sweetAlert";
@@ -44,6 +46,8 @@ function ReviewModal({
   productImage,
   onSuccess,
 }: ReviewModalProps) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [rating, setRating] = useState<number>(5);
   const [hover, setHover] = useState(-1);
   const [comment, setComment] = useState("");
@@ -94,8 +98,22 @@ function ReviewModal({
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-      <DialogTitle>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      maxWidth="sm"
+      fullWidth
+      fullScreen={isMobile}
+      PaperProps={{
+        sx: {
+          m: { xs: 0, sm: 2 },
+          width: { xs: "100%", sm: "min(100%, 600px)" },
+          maxWidth: { xs: "100%", sm: "calc(100vw - 32px)" },
+          borderRadius: { xs: 0, sm: 3 },
+        },
+      }}
+    >
+      <DialogTitle sx={{ px: { xs: 2, sm: 3 }, py: { xs: 1.5, sm: 2 } }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Typography variant="h6">Write a Review</Typography>
           <IconButton onClick={handleClose} disabled={submitting} size="small">
@@ -104,18 +122,22 @@ function ReviewModal({
         </Stack>
       </DialogTitle>
 
-      <DialogContent>
+      <DialogContent sx={{ px: { xs: 2, sm: 3 }, pb: { xs: 1, sm: 2 } }}>
         <Stack spacing={3} sx={{ mt: 1 }}>
           {/* Product Info */}
-          <Stack direction="row" spacing={2} alignItems="center">
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={2}
+            alignItems={{ xs: "flex-start", sm: "center" }}
+          >
             {productImage && (
               <Box
                 component="img"
                 src={productImage}
                 alt={productName}
                 sx={{
-                  width: 60,
-                  height: 60,
+                  width: { xs: 72, sm: 60 },
+                  height: { xs: 72, sm: 60 },
                   objectFit: "cover",
                   borderRadius: 1,
                   border: "1px solid #e0e0e0",
@@ -137,7 +159,11 @@ function ReviewModal({
             <Typography variant="body2" fontWeight={600} mb={1}>
               Rating
             </Typography>
-            <Stack direction="row" spacing={1} alignItems="center">
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              spacing={1}
+              alignItems={{ xs: "flex-start", sm: "center" }}
+            >
               <Rating
                 name="product-rating"
                 value={rating}
@@ -151,7 +177,11 @@ function ReviewModal({
                 emptyIcon={<StarIcon style={{ opacity: 0.3 }} fontSize="inherit" />}
               />
               {rating !== null && (
-                <Typography variant="body2" color="text.secondary" ml={2}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ ml: { xs: 0, sm: 2 } }}
+                >
                   {labels[hover !== -1 ? hover : rating]}
                 </Typography>
               )}
@@ -166,7 +196,7 @@ function ReviewModal({
             <TextField
               fullWidth
               multiline
-              rows={4}
+              rows={isMobile ? 5 : 4}
               placeholder="Share your thoughts about this product..."
               value={comment}
               onChange={(e) => setComment(e.target.value)}
@@ -178,8 +208,20 @@ function ReviewModal({
         </Stack>
       </DialogContent>
 
-      <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={handleClose} disabled={submitting} color="inherit">
+      <DialogActions
+        sx={{
+          px: { xs: 2, sm: 3 },
+          pb: { xs: 2, sm: 2.5 },
+          gap: 1,
+          flexDirection: { xs: "column-reverse", sm: "row" },
+        }}
+      >
+        <Button
+          onClick={handleClose}
+          disabled={submitting}
+          color="inherit"
+          sx={{ width: { xs: "100%", sm: "auto" } }}
+        >
           Cancel
         </Button>
         <Button
@@ -187,6 +229,7 @@ function ReviewModal({
           variant="contained"
           disabled={submitting || rating === 0}
           color="primary"
+          sx={{ width: { xs: "100%", sm: "auto" } }}
         >
           {submitting ? "Submitting..." : "Submit Review"}
         </Button>

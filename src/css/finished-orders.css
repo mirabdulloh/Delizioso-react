@@ -245,6 +245,30 @@
   }
 }
 
+@media (max-width: 480px) {
+  .finished-orders-list {
+    max-height: none;
+    padding-right: 0;
+  }
+
+  .order-header {
+    align-items: flex-start !important;
+  }
+
+  .order-status-badge {
+    align-self: flex-start;
+  }
+
+  .order-item {
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+
+  .item-details {
+    min-width: 0;
+  }
+}
+
 .reorder-btn {
   text-transform: none !important;
   border-radius: 14px !important;
