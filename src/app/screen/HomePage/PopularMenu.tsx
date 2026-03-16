@@ -45,11 +45,7 @@ function PopularMenu({ page, setPage, onAdd }: PopularMenuProps) {
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const sectionRef = useRef<HTMLDivElement | null>(null);
 
-  console.log("[PopularMenu] popularDishes from selector:", popularDishes);
-  console.log("[PopularMenu] Current page:", page, "Total pages:", totalPages);
-
-  // Filter products to only show those with at least 2 views
-  const filteredDishes = popularDishes.filter((dish) => dish.productViews >= 2);
+  const filteredDishes = popularDishes;
 
   useEffect(() => {
     setActiveSlide(0);
@@ -73,7 +69,6 @@ function PopularMenu({ page, setPage, onAdd }: PopularMenuProps) {
   };
 
   const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
-    console.log("[PopularMenu] Page changed to:", value);
     if (value <= totalPages) {
       setPage(value);
       scrollToSectionTop(sectionRef.current);

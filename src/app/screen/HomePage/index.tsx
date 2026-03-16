@@ -30,8 +30,9 @@ function HomePage({ onLoginClick, onAdd = () => {} }: HomePageProps) {
   const ITEMS_PER_PAGE = 4;
 
   useEffect(() => {
-    // Fetch popular dishes by likes
-    console.log("[HomePage] useEffect: Fetching popular dishes for page:", page);
+    // Fetch popular dishes ordered by views.
+    // The homepage only shows dishes with at least 2 views, so pagination
+    // must be calculated from that same visible list.
     const productService = new ProductService();
     productService
       .getProducts({
@@ -40,29 +41,42 @@ function HomePage({ onLoginClick, onAdd = () => {} }: HomePageProps) {
         limit: ITEMS_PER_PAGE,
       })
       .then((data) => {
-        console.log("[HomePage] Fetched data:", data);
-        setPopularDishes(data);
-        
-        // If backend returns full response object with totalCount
-        if (data && typeof data === "object" && "totalCount" in data && "data" in data) {
-          const totalCount = (data as any).totalCount;
-          const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
-          console.log("[HomePage] Calculated totalPages:", totalPages);
-          setPaginationInfo({ totalPages, totalCount });
-        } else if (Array.isArray(data)) {
-          // If data is just an array, calculate based on array length
-          const itemCount = data.length;
-          console.log("[HomePage] Got", itemCount, "items on page", page);
-          // If we got less than ITEMS_PER_PAGE items, we're on the last page
-          if (itemCount < ITEMS_PER_PAGE) {
-            setPaginationInfo({ totalPages: page, totalCount: itemCount * page });
-          } else {
-            // Assume there might be more pages
-            setPaginationInfo({ totalPages: page + 1, totalCount: itemCount * (page + 1) });
-          }
+        const visibleDishes = data.filter((dish) => dish.productViews >= 2);
+        const visibleCount = visibleDishes.length;
+
+        // If a stale page lands on an empty result, step back to the last valid page.
+        if (page > 1 && visibleCount === 0) {
+          setPaginationInfo({
+            totalPages: page - 1,
+            totalCount: (page - 1) * ITEMS_PER_PAGE,
+          });
+          setPage(page - 1);
+          return;
         }
+
+        setPopularDishes(visibleDishes);
+
+        const totalCount = (page - 1) * ITEMS_PER_PAGE + visibleCount;
+        const totalPages =
+          visibleCount < ITEMS_PER_PAGE ? page : page + 1;
+
+        setPaginationInfo({ totalPages, totalCount });
       })
-      .catch((err) => console.error("[HomePage] Error fetching popular dishes:", err));
+      .catch((err) => {
+        console.error("[HomePage] Error fetching popular dishes:", err);
+
+        if (page > 1) {
+          setPaginationInfo({
+            totalPages: page - 1,
+            totalCount: (page - 1) * ITEMS_PER_PAGE,
+          });
+          setPage(page - 1);
+          return;
+        }
+
+        setPopularDishes([]);
+        setPaginationInfo({ totalPages: 1, totalCount: 0 });
+      });
   }, [page, setPopularDishes, setPaginationInfo]);
 
   return (
