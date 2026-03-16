@@ -1,4 +1,4 @@
-import { createTheme, darken } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 import { common } from '@mui/material/colors';
 import shadow from './shadow';
 import typography from './typography';

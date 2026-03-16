@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
+import { serverApi } from "../../lib/config";
 import "../../css/chat.css";
 
 type Msg = {
@@ -163,8 +164,7 @@ function ChatModal({ open, onClose }: { open: boolean; onClose: () => void }) {
 
       (async () => {
         try {
-          // If you have React proxy to backend, you can change this to "/ai/chat"
-          const resp = await fetch("http://localhost:3009/ai/chat", {
+          const resp = await fetch(`${serverApi}/ai/chat`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ message: myMsg.text }),

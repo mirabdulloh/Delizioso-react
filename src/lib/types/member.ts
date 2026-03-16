@@ -30,6 +30,7 @@ export interface Member {
   memberDesc?: string;
   memberImage?: string;
   memberPoints: number;
+  totalOrders?: number;
   memberEmail?: string;
   memberCoupon?: MemberCoupon;
   createdAt: Date;

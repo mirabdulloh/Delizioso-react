@@ -8,8 +8,15 @@ import reduxLogger from "redux-logger";
 
 export const store = configureStore({
   // @ts-ignore
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(reduxLogger),
+  middleware: (getDefaultMiddleware) => {
+    const baseMiddleware = getDefaultMiddleware();
+
+    if (process.env.NODE_ENV === "development") {
+      return baseMiddleware.concat(reduxLogger);
+    }
+
+    return baseMiddleware;
+  },
 
   reducer: {
     homePage: HomePageReducer,

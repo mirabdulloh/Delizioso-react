@@ -5,10 +5,7 @@ const selectHomePage = (state: RootState) => state.homePage;
 
 export const retrievePopularDishes = createSelector(
   selectHomePage,
-  (homePage) => {
-    console.log("[Selector] retrievePopularDishes:", homePage.popularDishes);
-    return homePage.popularDishes || [];
-  }
+  (homePage) => homePage.popularDishes || []
 );
 
 export const retrieveReviews = createSelector(

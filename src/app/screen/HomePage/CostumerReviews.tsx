@@ -32,9 +32,6 @@ function CostumerReviews() {
   }
 
   const activeReview = reviews[activeIndex];
-  const memberImage = activeReview.memberId?.memberImage
-    ? `${serverApi}/${activeReview.memberId.memberImage}`
-    : "/imgs/default_img.jpg";
   const productImage = activeReview.productId?.productImages?.[0]
     ? `${serverApi}/${activeReview.productId.productImages[0]}`
     : "/imgs/chef1.png";

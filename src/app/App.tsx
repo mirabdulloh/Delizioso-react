@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
@@ -68,14 +68,34 @@ function App() {
   const location = useLocation();
 
   useEffect(() => {
-    if (location.hash) return;
+    if (typeof window === "undefined" || !("scrollRestoration" in window.history)) {
+      return;
+    }
 
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: "auto",
-    });
-  }, [location.pathname, location.search, location.hash]);
+    const previousValue = window.history.scrollRestoration;
+    window.history.scrollRestoration = "manual";
+
+    return () => {
+      window.history.scrollRestoration = previousValue;
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    if (location.hash || typeof window === "undefined") return;
+
+    const resetScroll = () => {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    };
+
+    resetScroll();
+    const rafId = window.requestAnimationFrame(resetScroll);
+
+    return () => {
+      window.cancelAnimationFrame(rafId);
+    };
+  }, [location.key, location.hash]);
 
   return (
     <SocketProvider>

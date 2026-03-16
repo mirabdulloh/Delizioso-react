@@ -1,6 +1,5 @@
 /** SweetAlertHandling - Enhanced Version **/
 import Swal from "sweetalert2";
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Messages } from "./config";
 
 // Common styling configuration

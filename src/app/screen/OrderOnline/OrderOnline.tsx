@@ -28,6 +28,38 @@ import { retrievePausedOrders, retrieveFinishedOrders, retrieveProcessOrders } f
 import { sweetErrorHandling, sweetSuccessAlert, sweetWarningAlert } from "../../../lib/sweetAlert";
 import { OrderOnlineProps, OrderStatusUI, OrderItem, OrderUI } from "../../../lib/types/order-online";
 
+const FINISHED_ORDERS_STORAGE_PREFIX = "delizioso_hidden_finished_orders";
+
+function getHiddenFinishedOrdersStorageKey(memberId?: string) {
+  return `${FINISHED_ORDERS_STORAGE_PREFIX}:${memberId || "guest"}`;
+}
+
+function loadHiddenFinishedOrderIds(memberId?: string): string[] {
+  if (typeof window === "undefined") return [];
+
+  try {
+    const raw = window.localStorage.getItem(getHiddenFinishedOrdersStorageKey(memberId));
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === "string") : [];
+  } catch (err) {
+    console.error("Failed to load hidden finished orders:", err);
+    return [];
+  }
+}
+
+function saveHiddenFinishedOrderIds(memberId: string | undefined, ids: string[]) {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage.setItem(
+      getHiddenFinishedOrdersStorageKey(memberId),
+      JSON.stringify(ids),
+    );
+  } catch (err) {
+    console.error("Failed to save hidden finished orders:", err);
+  }
+}
+
 function calcSubtotal(items: OrderItem[]) {
   return items.reduce((sum, it) => sum + it.price * it.qty, 0);
 }
@@ -109,11 +141,15 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
   const dispatch = useDispatch<Dispatch>();
   const { orderBuilder, authMember, setOrderBuilder, setAuthMember } = useGlobals();
   const member = (authMember as any)?.member ?? authMember;
+  const memberId = member?._id;
   const availableCoupon = member?.memberCoupon;
   const showCouponCard = Boolean(availableCoupon?.code && !availableCoupon?.isUsed);
   const [checkoutItems, setCheckoutItems] = useState<OrderItem[]>([]);
   const [couponCode, setCouponCode] = useState<string>("");
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number } | null>(null);
+  const [hiddenFinishedOrderIds, setHiddenFinishedOrderIds] = useState<string[]>(() =>
+    loadHiddenFinishedOrderIds(memberId),
+  );
 
   const handleRemoveQty = useCallback((itemId: string) => {
     setCheckoutItems((prev) =>
@@ -207,6 +243,14 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
     }
   }, [authMember, dispatch]);
 
+  useEffect(() => {
+    setHiddenFinishedOrderIds(loadHiddenFinishedOrderIds(memberId));
+  }, [memberId]);
+
+  useEffect(() => {
+    saveHiddenFinishedOrderIds(memberId, hiddenFinishedOrderIds);
+  }, [memberId, hiddenFinishedOrderIds]);
+
   // Fetch orders from API
   useEffect(() => {
     const fetchOrders = async () => {
@@ -258,18 +302,22 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
   }, [orderBuilder]); // Re-fetch when orderBuilder changes (new order created)
 
   // Transform orders to UI format
+  const visibleFinishedOrders = finishedOrders.filter((order) => {
+    // Keep only recent finished orders and respect the local clear action for this page.
+    const orderDate = new Date(order.updatedAt || order.createdAt);
+    const now = new Date();
+    const diffInSeconds = (now.getTime() - orderDate.getTime()) / 1000;
+
+    return (
+      diffInSeconds <= 86400 &&
+      !hiddenFinishedOrderIds.includes(order._id)
+    );
+  });
+
   const allOrders: OrderUI[] = [
     ...pausedOrders.map(transformOrderToUI),
     ...processOrders.map(transformOrderToUI),
-    ...finishedOrders
-      .filter((order) => {
-        // Filter finished orders - keep only those from last 1 day (auto-clear)
-        const orderDate = new Date(order.updatedAt || order.createdAt);
-        const now = new Date();
-        const diffInSeconds = (now.getTime() - orderDate.getTime()) / 1000;
-        return diffInSeconds <= 86400; // 1 day = 86400 seconds
-      })
-      .map(transformOrderToUI),
+    ...visibleFinishedOrders.map(transformOrderToUI),
   ];
 
   const filtered = allOrders.filter((o) => o.status === activeStatus);
@@ -317,8 +365,6 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
     couponDiscount = rawOrder?.couponDiscount ?? 0;
     total = rawOrder?.totalAmount ?? Math.round((subtotal + deliveryFee - couponDiscount) * 100) / 100;
   }
-
-  const delivery = deliveryFee;
 
   const handleDownloadReceipt = async () => {
     if (!visibleSelected) return;
@@ -566,7 +612,7 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                 </Button>
               </Stack>
 
-              {activeStatus === "FINISHED" && finishedOrders.length > 0 && (
+              {activeStatus === "FINISHED" && visibleFinishedOrders.length > 0 && (
                 <Button
                   variant="outlined"
                   color="error"
@@ -576,11 +622,22 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                   onClick={async () => {
                     const confirmed = await sweetWarningAlert(
                       "Clear Finished Orders",
-                      "Are you sure you want to clear all finished orders? This action cannot be undone."
+                      "Are you sure you want to clear all finished orders from this page?"
                     );
                     if (confirmed) {
-                      dispatch(setFinishedOrders([]));
-                      await sweetSuccessAlert("Cleared", "All finished orders have been removed.");
+                      setHiddenFinishedOrderIds((prev) =>
+                        Array.from(
+                          new Set([
+                            ...prev,
+                            ...visibleFinishedOrders.map((order) => order._id),
+                          ]),
+                        ),
+                      );
+                      setSelectedId("");
+                      await sweetSuccessAlert(
+                        "Cleared",
+                        "Finished orders were cleared from the recent orders page."
+                      );
                     }
                   }}
                 >
@@ -714,12 +771,12 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                 <Box className="summary-items">
                   {(activeStatus === "PAUSED" ? checkoutItems : visibleSelected?.items || []).map((it) => (
                     <Box key={it.id} className="summary-item">
-                      <Stack direction="row" spacing={1.2} alignItems="center">
+                      <Stack direction="row" spacing={1.2} alignItems="center" className="summary-main">
                         <Box component="img" src={it.img} alt={it.name} className="summary-img" />
                         <Box className="summary-name">{it.name}</Box>
                       </Stack>
 
-                      <Stack direction="row" spacing={1} alignItems="center">
+                      <Stack direction="row" spacing={1} alignItems="center" className="summary-controls">
                         {activeStatus === "PAUSED" ? (
                           <Stack direction="row" spacing={0.6} alignItems="center" className="summary-qty">
                             <IconButton 
@@ -765,10 +822,10 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                         <Stack
                           direction="row"
                           justifyContent="space-between"
-                          alignItems="center"
+                          alignItems="flex-start"
                           className="coupon-card-row"
                         >
-                          <Box>
+                          <Box className="coupon-card-content">
                             <Box className="coupon-card-title">🎉 You have a coupon!</Box>
                             <Box className="coupon-card-code">{availableCoupon.code}</Box>
                             <Box className="coupon-card-subtitle">
@@ -1016,15 +1073,30 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                             // Update order status from PROCESS to FINISH
                             if (visibleSelected) {
                               const orderService = new OrderService();
+                              const previousCouponCode = member?.memberCoupon?.code;
+                              const previousCouponWasUsed = Boolean(member?.memberCoupon?.isUsed);
                               await orderService.updateOrder({
                                 orderId: visibleSelected.id,
                                 orderStatus: OrderStatus.FINISH,
                               });
+
+                              const memberService = new MemberService();
+                              const freshMember = await memberService.getMemberDetail();
+                              setAuthMember(freshMember);
+
+                              const nextCoupon = freshMember?.memberCoupon;
+                              const earnedNewCoupon = Boolean(
+                                nextCoupon?.code &&
+                                  !nextCoupon.isUsed &&
+                                  (nextCoupon.code !== previousCouponCode || previousCouponWasUsed)
+                              );
                               
                               // Show success alert
                               await sweetSuccessAlert(
                                 "Order Completed!",
-                                "Thank you! Your order has been marked as completed."
+                                earnedNewCoupon
+                                  ? "Thank you! Your order has been marked as completed. A new reward coupon was added to your account."
+                                  : "Thank you! Your order has been marked as completed."
                               );
 
                               console.log("✅ Order marked as finished - Order status updated to FINISH");

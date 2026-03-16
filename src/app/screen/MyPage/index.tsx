@@ -437,8 +437,7 @@ export default function UserPage() {
                       <Card className="stat-card orders-card">
                         <ReceiptLongIcon className="stat-icon orders-icon" />
                         <Typography variant="h5" className="stat-value">
-                          {/* You can add order count here */}
-                          {member?.memberPoints || 0}
+                          {member?.totalOrders || 0}
                         </Typography>
                         <Typography variant="caption" className="stat-label orders-label">
                           Total Orders
