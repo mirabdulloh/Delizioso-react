@@ -22,6 +22,7 @@ import { serverApi } from "../../../lib/config";
 import { CartItem } from "../../../lib/types/search";
 import { sweetErrorHandling } from "../../../lib/sweetAlert";
 import { useGlobals } from "../../hooks/useGlobals";
+import { scrollToSectionTop } from "../../../lib/scroll";
 
 import "../../../css/home.css";
 
@@ -42,6 +43,7 @@ function PopularMenu({ page, setPage, onAdd }: PopularMenuProps) {
   const [clickedButton, setClickedButton] = useState<string | null>(null);
   const [activeSlide, setActiveSlide] = useState(0);
   const sliderRef = useRef<HTMLDivElement | null>(null);
+  const sectionRef = useRef<HTMLDivElement | null>(null);
 
   console.log("[PopularMenu] popularDishes from selector:", popularDishes);
   console.log("[PopularMenu] Current page:", page, "Total pages:", totalPages);
@@ -59,12 +61,14 @@ function PopularMenu({ page, setPage, onAdd }: PopularMenuProps) {
   const handlePreviousPage = () => {
     if (page > 1) {
       setPage(page - 1);
+      scrollToSectionTop(sectionRef.current);
     }
   };
 
   const handleNextPage = () => {
     if (page < totalPages) {
       setPage(page + 1);
+      scrollToSectionTop(sectionRef.current);
     }
   };
 
@@ -72,6 +76,7 @@ function PopularMenu({ page, setPage, onAdd }: PopularMenuProps) {
     console.log("[PopularMenu] Page changed to:", value);
     if (value <= totalPages) {
       setPage(value);
+      scrollToSectionTop(sectionRef.current);
     }
   };
 
@@ -136,7 +141,7 @@ function PopularMenu({ page, setPage, onAdd }: PopularMenuProps) {
   };
 
   return (
-    <div className="popular-section">
+    <div ref={sectionRef} className="popular-section">
       <Container>
         {/* TITLE */}
         <Box className="popular-title">Our popular menu</Box>

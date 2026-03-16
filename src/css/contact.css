@@ -1,17 +1,20 @@
 /* contact.css */
 .contact2 {
   background: #ffffff;
-  padding: 85px 0 0;
+  padding: 120px 0 0;
+  overflow-x: hidden;
 }
 
 .contact2-container {
   padding-bottom: 60px;
+  padding-left: 24px !important;
+  padding-right: 24px !important;
 }
 
 .contact2-title {
-  padding-top: 80px;
+  padding-top: 0;
   text-align: center;
-  font-size: 56px;
+  font-size: clamp(38px, 6vw, 56px);
   font-weight: 900;
   color: #2c2c2c;
   font-family: "Playfair Display", serif;
@@ -28,7 +31,7 @@
 
 /* form card */
 .contact2-formWrap {
-  margin-top: 55px;
+  margin-top: 42px;
   display: flex;
   justify-content: center;
 }
@@ -54,7 +57,7 @@
 .contact2-input .MuiOutlinedInput-root {
   border-radius: 16px;
   background: #f7f7f7;
-  height: 56px;
+  min-height: 56px;
 }
 
 .contact2-input .MuiOutlinedInput-notchedOutline {
@@ -80,8 +83,8 @@
 
 /* orange submit */
 .contact2-submit {
-  width: 320px;
-  height: 54px;
+  width: min(320px, 100%);
+  min-height: 54px;
   border-radius: 16px !important;
   background: #ff8a00 !important;
   color: #fff !important;
@@ -134,6 +137,7 @@
   padding: 12px 14px;
   box-shadow: 0 18px 44px rgba(0, 0, 0, 0.12);
   backdrop-filter: blur(8px);
+  min-width: 0;
 }
 
 .contact2-mapThumb {
@@ -144,10 +148,15 @@
   background: #ddd;
 }
 
+.contact2-mapInfo {
+  min-width: 0;
+}
+
 .contact2-mapName {
   font-weight: 900;
   color: #2c2c2c;
   font-size: 14px;
+  overflow-wrap: anywhere;
 }
 
 .contact2-mapMeta {
@@ -155,6 +164,7 @@
   color: #6a6a6a;
   font-weight: 700;
   font-size: 12px;
+  overflow-wrap: anywhere;
 }
 
 .contact2-mapBtns {
@@ -183,12 +193,23 @@
 
 /* responsive */
 @media (max-width: 900px) {
+  .contact2 {
+    padding-top: 104px;
+  }
+
+  .contact2-container {
+    padding-bottom: 48px;
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+  }
+
   .contact2-title {
     font-size: 42px;
   }
 
   .contact2-formGrid {
     grid-template-columns: 1fr;
+    gap: 18px;
   }
 
   .contact2-submit {
@@ -196,13 +217,120 @@
     max-width: 360px;
   }
 
+  .contact2-mapWrap {
+    height: 420px;
+  }
+
   .contact2-mapOverlay {
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
+    bottom: 16px;
+  }
+
+  .contact2-mapMini {
+    width: 100%;
   }
 
   .contact2-mapBtns {
     justify-content: flex-end;
+  }
+}
+
+@media (max-width: 599px) {
+  .contact2 {
+    padding-top: 92px;
+  }
+
+  .contact2-container {
+    padding-bottom: 40px;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+
+  .contact2-title {
+    line-height: 1.05;
+  }
+
+  .contact2-subtitle {
+    max-width: none;
+    margin-top: 10px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  .contact2-formWrap {
+    margin-top: 28px;
+  }
+
+  .contact2-formCard {
+    padding: 0;
+  }
+
+  .contact2-formGrid {
+    gap: 14px;
+  }
+
+  .contact2-input .MuiOutlinedInput-root {
+    min-height: 52px;
+    border-radius: 14px;
+  }
+
+  .contact2-input input {
+    padding: 16px 16px;
+    font-size: 14px;
+  }
+
+  .contact2-message textarea {
+    font-size: 14px;
+  }
+
+  .contact2-submitRow {
+    width: 100%;
+    margin-top: 18px !important;
+  }
+
+  .contact2-submit {
+    width: 100%;
+    max-width: none;
+    min-height: 50px;
+    border-radius: 14px !important;
+  }
+
+  .contact2-mapWrap {
+    height: 360px;
+  }
+
+  .contact2-mapOverlay {
+    width: calc(100% - 24px);
+    bottom: 12px;
+  }
+
+  .contact2-mapMini {
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .contact2-mapThumb {
+    width: 52px;
+    height: 52px;
+  }
+
+  .contact2-mapBtns {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .contact2-mapBtn {
+    min-width: 48px !important;
+    width: 48px;
+    height: 48px;
+  }
+}
+
+@media (max-width: 420px) {
+  .contact2-mapMini {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

@@ -19,7 +19,7 @@ import { plans } from "../../../lib/data/plans";
 import ChatModal from "../../components/ChatModal";
 
 function CS() {
-  const [q, setQ] = useState("");
+  const [q] = useState("");
   const [openChat, setOpenChat] = useState(false);
 
   const filteredFaq = faq.filter(
@@ -30,7 +30,7 @@ function CS() {
 
   return (
     <div className="cs2">
-      <Container >
+      <Container className="cs2-container">
         {/* ===== HEADER ===== */}
         <Stack
           direction={{ xs: "column", md: "row" }}
@@ -53,6 +53,7 @@ function CS() {
             alignItems={{ xs: "center", md: "center" }}
             justifyContent="space-between"
             sx={{ width: "100%" }}
+            className="cs2-quickRow"
           >
             <Stack direction="row" spacing={2} className="cs2-quickLeft">
               <Box className="cs2-chip">

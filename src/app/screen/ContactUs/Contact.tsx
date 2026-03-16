@@ -49,7 +49,12 @@ function Contact() {
            
             </Box>
 
-            <Stack direction="row" justifyContent="center" mt={3}>
+            <Stack
+              direction="row"
+              justifyContent="center"
+              mt={3}
+              className="contact2-submitRow"
+            >
               <Button className="contact2-submit" variant="contained">
                 Submit
               </Button>

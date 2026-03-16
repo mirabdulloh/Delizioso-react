@@ -12,7 +12,7 @@ import {
   IconButton,
 } from "@mui/material";
 
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useGlobals } from "../../hooks/useGlobals";
 import { serverApi } from "../../../lib/config";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -22,6 +22,7 @@ import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import Basket from "./Basket";
 import NotificationBell from "../NotificationBell";
 import { CartItem } from "../../../lib/types/search";
+import { scrollWindowTop } from "../../../lib/scroll";
 import "../../../css/navbar.css";
 
 interface OtherNavbarProps {
@@ -41,6 +42,7 @@ interface OtherNavbarProps {
 function OtherNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onLogoutMenuClose, onLogoutRequest, cartItems, onAdd, onRemove, onDelete, onDeleteAll }: OtherNavbarProps) {
   const { authMember } = useGlobals();
   const navigate = useNavigate();
+  const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navigationItems = [
@@ -56,6 +58,14 @@ function OtherNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onL
     setMobileOpen(false);
   };
 
+  const handleNavLinkClick = (to: string) => {
+    closeMobileNav();
+
+    if (location.pathname === to) {
+      scrollWindowTop();
+    }
+  };
+
   return (
     <div>
       {" "}
@@ -63,7 +73,7 @@ function OtherNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onL
         <Container className="navbar-container">
           <Stack className="menu">
             <Box>
-              <NavLink to="/">
+              <NavLink to="/" onClick={() => handleNavLinkClick("/")}>
                 <img
                   src="/icons/Logo_Delizioso.svg"
                   alt="#"
@@ -74,7 +84,9 @@ function OtherNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onL
             <Stack className="links desktop-links">
               {navigationItems.map((item) => (
                 <Box className="hover-line" key={item.to}>
-                  <NavLink to={item.to}>{item.label}</NavLink>
+                  <NavLink to={item.to} onClick={() => handleNavLinkClick(item.to)}>
+                    {item.label}
+                  </NavLink>
                 </Box>
               ))}
               {/* Basket */}
@@ -249,7 +261,7 @@ function OtherNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onL
                   key={item.to}
                   to={item.to}
                   className="mobile-nav-link"
-                  onClick={closeMobileNav}
+                  onClick={() => handleNavLinkClick(item.to)}
                 >
                   {item.label}
                 </NavLink>

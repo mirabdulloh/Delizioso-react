@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Box,
   Stack,
@@ -25,6 +25,7 @@ import {
   sweetTopSmallSuccessAlert,
 } from "../../../lib/sweetAlert";
 import { useGlobals } from "../../hooks/useGlobals";
+import { scrollToSectionTop } from "../../../lib/scroll";
 
 import "../../../css/menu.css";
 import OrderList from "./OrderList";
@@ -48,6 +49,7 @@ function PromotionsAll() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const sectionRef = useRef<HTMLDivElement | null>(null);
   const itemsPerPage = isMobile ? 4 : 6;
 
   useEffect(() => {
@@ -93,11 +95,11 @@ function PromotionsAll() {
   };
 
   const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
+    _: React.ChangeEvent<unknown>,
     value: number,
   ) => {
     setCurrentPage(value);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    scrollToSectionTop(sectionRef.current);
   };
 
   const filteredPromotions = promotions.filter((item) =>
@@ -109,7 +111,7 @@ function PromotionsAll() {
 
   if (loading) {
     return (
-      <div className="promoAll-section">
+      <div ref={sectionRef} className="promoAll-section">
         <Container>
           <Box sx={{ textAlign: "center", py: 8 }}>
             <Box sx={{ fontSize: "1.2rem", color: "#666" }}>
@@ -123,7 +125,7 @@ function PromotionsAll() {
 
   if (promotions.length === 0) {
     return (
-      <div className="promoAll-section">
+      <div ref={sectionRef} className="promoAll-section">
         <Container>
           <Box className="promoAll-title">Hot Promotions</Box>
           <Box className="promoAll-subtitle">
@@ -153,7 +155,7 @@ function PromotionsAll() {
   }
 
   return (
-    <div className="promoAll-section">
+    <div ref={sectionRef} className="promoAll-section">
       <Container>
         {/* title */}
         <Box className="promoAll-title">Hot Promotions</Box>

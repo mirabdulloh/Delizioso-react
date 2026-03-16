@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Box,
   Stack,
@@ -39,6 +39,7 @@ import {
   sweetTopSmallSuccessAlert,
 } from "../../../lib/sweetAlert";
 import { useGlobals } from "../../hooks/useGlobals";
+import { scrollToSectionTop } from "../../../lib/scroll";
 
 import "../../../css/menu.css";
 
@@ -83,6 +84,7 @@ const Menu = () => {
   const [clickedButton, setClickedButton] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const sectionRef = useRef<HTMLDivElement | null>(null);
   const itemsPerPage = 8;
 
   const categories = [
@@ -196,7 +198,7 @@ const Menu = () => {
 
   const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
     setCurrentPage(value);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    scrollToSectionTop(sectionRef.current);
   };
 
   const handleLikeProduct = async (product: Product) => {
@@ -248,7 +250,7 @@ const Menu = () => {
   };
 
   return (
-    <div className="menu2-section">
+    <div ref={sectionRef} className="menu2-section">
       <Container>
         <Box className="menu2-title">Menu</Box>
 

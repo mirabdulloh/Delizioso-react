@@ -1,20 +1,21 @@
 /* cs.css - modernized and cleaned */
 .cs2 {
-  padding: 80px 0 90px;
+  padding: 120px 0 88px;
   background: #fbfbfc;
   color: #222;
+  overflow-x: hidden;
 }
 
 .cs2-container {
   width: 100%;
   max-width: 1150px;
   margin: 0 auto;
-  padding: 0 18px;
+  padding: 0 24px;
 }
 
 .cs2-head {
-  padding-top: 80px;
-  margin-bottom: 18px;
+  padding-top: 0;
+  margin-bottom: 22px;
 }
 
 .cs2-title {
@@ -34,8 +35,8 @@
 /* quick support strip */
 .cs2-quick {
   margin-top: 18px;
-  padding: 12px 16px;
-  border-radius: 12px;
+  padding: 14px 18px;
+  border-radius: 18px;
   background: linear-gradient(180deg, #ffffff, #fbfbff);
   box-shadow: 0 8px 20px rgba(17, 17, 22, 0.06);
   display: flex;
@@ -62,6 +63,11 @@
   box-shadow: 0 6px 18px rgba(17, 17, 22, 0.04);
   font-weight: 700;
   color: #222;
+  max-width: 100%;
+}
+
+.cs2-chip span {
+  overflow-wrap: anywhere;
 }
 
 .cs2-chip svg {
@@ -175,6 +181,10 @@
   border: 1px solid rgba(17, 17, 22, 0.04);
 }
 
+.cs2-planBody {
+  min-width: 0;
+}
+
 .cs2-planImg {
   width: 84px;
   height: 84px;
@@ -209,10 +219,113 @@
 
 /* responsive */
 @media (max-width: 980px) {
+  .cs2 {
+    padding-top: 104px;
+    padding-bottom: 76px;
+  }
+
+  .cs2-container {
+    padding: 0 18px;
+  }
+
   .cs2-title {
     font-size: 36px;
   }
+
   .cs2-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 599px) {
+  .cs2 {
+    padding-top: 92px;
+    padding-bottom: 64px;
+  }
+
+  .cs2-container {
+    padding: 0 14px;
+  }
+
+  .cs2-head {
+    margin-bottom: 18px;
+  }
+
+  .cs2-title {
+    font-size: 32px;
+    line-height: 1.05;
+  }
+
+  .cs2-subtitle {
+    margin-top: 6px;
+    font-size: 13px;
+  }
+
+  .cs2-quick {
+    margin-top: 14px;
+    padding: 14px;
+    gap: 14px;
+    border-radius: 18px;
+  }
+
+  .cs2-quickRow {
+    align-items: stretch !important;
+  }
+
+  .cs2-quickLeft {
+    width: 100%;
+    gap: 10px;
+  }
+
+  .cs2-chip {
+    width: 100%;
+    justify-content: flex-start;
+    border-radius: 14px;
+    padding: 10px 12px;
+  }
+
+  .cs2-cta {
+    width: 100%;
+    min-height: 46px;
+    margin-left: 0 !important;
+  }
+
+  .cs2-grid {
+    margin-top: 18px;
+    gap: 14px;
+  }
+
+  .cs2-card {
+    padding: 14px;
+    border-radius: 18px;
+  }
+
+  .cs2-cardTitle {
+    font-size: 16px;
+  }
+
+  .cs2-accSum,
+  .cs2-accDet {
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  .cs2-plan {
+    grid-template-columns: 72px 1fr;
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .cs2-planImg {
+    width: 72px;
+    height: 72px;
+  }
+
+  .cs2-planDesc {
+    font-size: 13px;
+  }
+
+  .cs2-planMeta {
+    gap: 6px !important;
   }
 }
