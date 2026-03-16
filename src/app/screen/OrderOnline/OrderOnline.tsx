@@ -119,6 +119,7 @@ function transformOrderToUI(order: Order): OrderUI {
     
     return {
       id: orderItem._id,
+      productId: String(orderItem.productId),
       name: product?.productName || 'Unknown Product',
       img: product?.productImages?.[0] ? `${serverApi}/${product.productImages[0]}` : '/imgs/pastas.jpg',
       price: orderItem.itemPrice,
@@ -954,7 +955,7 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                                 couponDiscount: couponDiscount,
                                 totalAmount: total,
                                 orderItems: checkoutItems.map((item) => ({
-                                  productId: item.id,
+                                  productId: item.productId,
                                   itemQuantity: item.qty,
                                   itemPrice: item.price,
                                 })),
@@ -1144,7 +1145,7 @@ function OrderOnline({ cartItems, onAdd, onRemove, onDelete }: OrderOnlineProps)
                             
                             // Transform order items to CartItem format for createOrder
                             const cartItems = visibleSelected.items.map((item) => ({
-                              _id: item.id,
+                              _id: item.productId,
                               quantity: item.qty,
                               name: item.name,
                               price: item.price,

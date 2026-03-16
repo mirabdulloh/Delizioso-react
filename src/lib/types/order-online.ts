@@ -4,6 +4,7 @@ export type OrderStatusUI = "PAUSED" | "ONGOING" | "FINISHED";
 
 export type OrderItem = {
   id: string;
+  productId: string;
   name: string;
   img: string;
   price: number;

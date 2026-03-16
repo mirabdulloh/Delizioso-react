@@ -1,4 +1,3 @@
-// Footer.jsx
 import React from "react";
 import { Box, Container, Stack } from "@mui/material";
 import TwitterIcon from "@mui/icons-material/Twitter";
@@ -15,12 +14,12 @@ interface FooterProps {
 
 function Footer({ onLoginClick }: FooterProps = {}) {
   const { authMember } = useGlobals();
+
   return (
     <Box className="footer">
       <Container maxWidth="lg">
         <Box className="footer-inner">
           <Box className="footer-grid">
-            {/* LEFT */}
             <Box className="footer-left">
               <Stack direction="row" alignItems="center" spacing={1.5}>
                 <Box className="footer-logo-circle">D</Box>
@@ -63,7 +62,6 @@ function Footer({ onLoginClick }: FooterProps = {}) {
               </Stack>
             </Box>
 
-            {/* PAGE */}
             <Box className="footer-col footer-col-page">
               <Box className="footer-title">Page</Box>
 
@@ -77,7 +75,10 @@ function Footer({ onLoginClick }: FooterProps = {}) {
                   onClick={(e: any) => {
                     if (!authMember) {
                       e.preventDefault();
-                      sweetFailureProvider('Please login first to order.', true);
+                      sweetFailureProvider(
+                        "Please login first to order.",
+                        true,
+                      );
                       onLoginClick?.();
                     }
                   }}
@@ -89,7 +90,10 @@ function Footer({ onLoginClick }: FooterProps = {}) {
                   onClick={(e: any) => {
                     if (!authMember) {
                       e.preventDefault();
-                      sweetFailureProvider('Please login first to make a reservation.', true);
+                      sweetFailureProvider(
+                        "Please login first to make a reservation.",
+                        true,
+                      );
                       onLoginClick?.();
                     }
                   }}
@@ -100,7 +104,6 @@ function Footer({ onLoginClick }: FooterProps = {}) {
               </Stack>
             </Box>
 
-            {/* INFO */}
             <Box className="footer-col footer-col-info">
               <Box className="footer-title">Information</Box>
 
@@ -112,7 +115,6 @@ function Footer({ onLoginClick }: FooterProps = {}) {
               </Stack>
             </Box>
 
-            {/* TOUCH */}
             <Box className="footer-col footer-col-touch">
               <Box className="footer-title">Get in touch</Box>
 
@@ -124,7 +126,6 @@ function Footer({ onLoginClick }: FooterProps = {}) {
             </Box>
           </Box>
 
-          {/* bottom */}
           <Box className="footer-bottom">Copyright © 2022 Delizioso</Box>
         </Box>
       </Container>
