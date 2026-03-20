@@ -1,25 +1,27 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Delizioso",
+  "name": "Delizioso Restaurant",
+  "description": "Explore the menu, order online, and reserve a table at Delizioso Restaurant.",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "icons/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
     },
     {
-      "src": "logo192.png",
-      "type": "image/png",
-      "sizes": "192x192"
+      "src": "icons/Logo_Delizioso.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
     },
     {
-      "src": "logo512.png",
+      "src": "imgs/WelcomePage.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "816x816",
+      "purpose": "any"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
   "display": "standalone",
-  "theme_color": "#000000",
+  "theme_color": "#311F09",
   "background_color": "#ffffff"
 }
