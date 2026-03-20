@@ -1,4 +1,12 @@
-export const serverApi:string = `${process.env.REACT_APP_API_URL}`;
+const normalizeUrl = (value?: string): string =>
+  value ? value.trim().replace(/\/+$/, "") : "";
+
+export const serverApi: string = normalizeUrl(process.env.REACT_APP_API_URL);
+export const siteUrl: string = normalizeUrl(process.env.REACT_APP_SITE_URL);
+
+if (process.env.NODE_ENV === "production" && !serverApi) {
+  console.error("Missing REACT_APP_API_URL in the production build environment.");
+}
 
 export const Messages ={
     error1:"Something went wrong, please try again later.",
