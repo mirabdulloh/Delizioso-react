@@ -109,22 +109,22 @@ const Menu = () => {
   };
 
   const queryKey = `${selectedCategory}-${deferredSearchQuery}-${currentPage}`;
+  const cachedProducts = productsCache[queryKey];
+  const visibleProducts = cachedProducts ?? products;
 
   // Check if we have cached products
   const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
   const isCached =
     lastFetch[queryKey] &&
     Date.now() - lastFetch[queryKey] < CACHE_DURATION &&
-    productsCache[queryKey];
+    cachedProducts;
 
   useEffect(() => {
     // If we have valid cached products, use them
     if (isCached) {
       console.log("Using cached products for:", queryKey);
-      const cached = productsCache[queryKey];
-      setProductsAction(cached);
       setTotalPages(
-        cached.length < itemsPerPage ? currentPage : currentPage + 1,
+        cachedProducts.length < itemsPerPage ? currentPage : currentPage + 1,
       );
     } else {
       console.log("Loading products from API for:", queryKey);
@@ -213,7 +213,7 @@ const Menu = () => {
       });
 
       // ✅ IMPORTANT: Update the CACHE with new like count
-      const updatedCachedProducts = products.map((p) =>
+      const updatedCachedProducts = visibleProducts.map((p) =>
         p._id === product._id
           ? {
               ...p,
@@ -246,8 +246,8 @@ const Menu = () => {
     }
   };
 
-  const showInitialLoading = loading && products.length === 0;
-  const showRefreshing = loading && products.length > 0;
+  const showInitialLoading = loading && visibleProducts.length === 0;
+  const showRefreshing = loading && visibleProducts.length > 0;
 
   return (
     <div ref={sectionRef} className="menu2-section">
@@ -312,11 +312,11 @@ const Menu = () => {
           <Box className="menu2-left">
             {showInitialLoading ? (
               <Box sx={{ textAlign: "center", py: 4 }}>Loading products...</Box>
-            ) : products.length === 0 ? (
+            ) : visibleProducts.length === 0 ? (
               <Box sx={{ textAlign: "center", py: 4 }}>There is no product for that category for now</Box>
             ) : (
               <Box className="menu2-grid cols-4">
-                {products.map((product) => (
+                {visibleProducts.map((product) => (
                   <Box
                     key={product._id}
                     className="menu2-card"
@@ -513,7 +513,7 @@ const Menu = () => {
               </Box>
             )}
 
-            {!loading && products.length > 0 && totalPages > 1 && (
+            {!loading && visibleProducts.length > 0 && totalPages > 1 && (
               <Box className="menu2-paginationWrap" sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
                 <Pagination
                   className="menu2-pagination"
