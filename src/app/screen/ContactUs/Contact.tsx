@@ -78,7 +78,7 @@ function Contact() {
           <Box className="contact2-mapMini">
             <Box
               component="img"
-              src="/imgs/deafult_img.jpg"
+              src="/imgs/default_img.jpg"
               alt="Restaurant"
               className="contact2-mapThumb"
             />

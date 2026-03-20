@@ -12,7 +12,7 @@ function WelcomePage() {
           {/* LEFT IMAGES */}
           <div className="welcome-images">
             <img
-              src="/imgs/welcomePage.png"
+              src="/imgs/WelcomePage.png"
               alt="food"
               className="welcome-main-img"
             />
