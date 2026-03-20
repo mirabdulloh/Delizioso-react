@@ -34,7 +34,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       return;
     }
 
-    const socketInstance = io(serverApi, {
+    const socketInstance = io(serverApi || undefined, {
       withCredentials: true,
       transports: ["websocket", "polling"],
     });
