@@ -203,6 +203,9 @@ function PromotionsAll() {
                       component="img"
                       src={`${serverApi}/${item.productImages[0]}`}
                       alt={item.productName}
+                      loading="lazy"
+                      decoding="async"
+                      fetchPriority="low"
                     />
                   </Box>
 

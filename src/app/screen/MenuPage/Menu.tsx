@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useDeferredValue, useEffect, useRef, useState } from "react";
 import {
   Box,
   Stack,
@@ -86,6 +86,7 @@ const Menu = () => {
   const [totalPages, setTotalPages] = useState(1);
   const sectionRef = useRef<HTMLDivElement | null>(null);
   const itemsPerPage = 8;
+  const deferredSearchQuery = useDeferredValue(searchQuery.trim());
 
   const categories = [
     "All Category",
@@ -107,7 +108,7 @@ const Menu = () => {
     return mapping[category];
   };
 
-  const queryKey = `${selectedCategory}-${searchQuery}-${currentPage}`;
+  const queryKey = `${selectedCategory}-${deferredSearchQuery}-${currentPage}`;
 
   // Check if we have cached products
   const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
@@ -115,10 +116,6 @@ const Menu = () => {
     lastFetch[queryKey] &&
     Date.now() - lastFetch[queryKey] < CACHE_DURATION &&
     productsCache[queryKey];
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [selectedCategory, searchQuery]);
 
   useEffect(() => {
     // If we have valid cached products, use them
@@ -171,7 +168,7 @@ const Menu = () => {
         page: currentPage,
         limit: itemsPerPage,
         order: "createdAt",
-        search: searchQuery || undefined,
+        search: deferredSearchQuery || undefined,
         productCollection:
           selectedCategory !== "All Category"
             ? categoryToEnum(selectedCategory)
@@ -249,6 +246,9 @@ const Menu = () => {
     }
   };
 
+  const showInitialLoading = loading && products.length === 0;
+  const showRefreshing = loading && products.length > 0;
+
   return (
     <div ref={sectionRef} className="menu2-section">
       <Container>
@@ -261,7 +261,12 @@ const Menu = () => {
             placeholder="Search your favorite food..."
             variant="outlined"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              if (currentPage !== 1) {
+                setCurrentPage(1);
+              }
+            }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -271,6 +276,12 @@ const Menu = () => {
             }}
           />
         </Box>
+
+        {showRefreshing && (
+          <Box sx={{ textAlign: "center", color: "#888", fontSize: "0.95rem", mb: 2 }}>
+            Updating products...
+          </Box>
+        )}
 
         {/* categories (full-width under search) */}
         <Stack
@@ -282,7 +293,13 @@ const Menu = () => {
             <Button
               key={c}
               className={`menu2-cat ${c === selectedCategory ? "active" : ""}`}
-              onClick={() => setSelectedCategory(c)}
+              onClick={() => {
+                if (c === selectedCategory) return;
+                setSelectedCategory(c);
+                if (currentPage !== 1) {
+                  setCurrentPage(1);
+                }
+              }}
             >
               {c}
             </Button>
@@ -293,7 +310,7 @@ const Menu = () => {
         <Box className="menu2-layout no-cart">
           {/* LEFT */}
           <Box className="menu2-left">
-            {loading ? (
+            {showInitialLoading ? (
               <Box sx={{ textAlign: "center", py: 4 }}>Loading products...</Box>
             ) : products.length === 0 ? (
               <Box sx={{ textAlign: "center", py: 4 }}>There is no product for that category for now</Box>
@@ -399,6 +416,9 @@ const Menu = () => {
                         component="img"
                         src={`${serverApi}/${product.productImages[0]}`}
                         alt={product.productName}
+                        loading="lazy"
+                        decoding="async"
+                        fetchPriority="low"
                         onError={(
                           e: React.SyntheticEvent<HTMLImageElement>,
                         ) => {

@@ -139,7 +139,7 @@ function ChoosenProduct() {
     fetchReviews();
   }, [productId, reviewsLimit]);
 
-  if (loading) {
+  if (loading && !chosenProduct) {
     return (
       <div className="cp-section">
         <Container className="cp-container">
@@ -229,6 +229,8 @@ function ChoosenProduct() {
                   src={activeImg}
                   alt="product"
                   className="cp-mainImg"
+                  decoding="async"
+                  fetchPriority="high"
                 />
                 {/* FLOAT ICONS */}
                 <Stack direction="row" spacing={1} className="cp-floatIcons">
@@ -252,7 +254,13 @@ function ChoosenProduct() {
                     role="button"
                     onClick={() => setActiveImg(img)}
                   >
-                    <Box component="img" src={img} alt="thumb" />
+                    <Box
+                      component="img"
+                      src={img}
+                      alt="thumb"
+                      loading="lazy"
+                      decoding="async"
+                    />
                   </Box>
                 ))}
               </Stack>
@@ -340,6 +348,8 @@ function ChoosenProduct() {
                             component="img"
                             src={avatar}
                             alt={review.memberId?.memberNick || "User"}
+                            loading="lazy"
+                            decoding="async"
                             sx={{
                               width: 44,
                               height: 44,

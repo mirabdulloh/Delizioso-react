@@ -191,6 +191,7 @@ function Promotions() {
                   src={`${serverApi}/${promo45.productImages[0]}`}
                   alt={promo45.productName}
                   className="promo2-hero-img"
+                  decoding="async"
                 />
               </Box>
             ) : (
@@ -238,6 +239,9 @@ function Promotions() {
                     src={`${serverApi}/${promo.productImages[0]}`}
                     alt={promo.productName}
                     className="promo2-mini-img"
+                    loading="lazy"
+                    decoding="async"
+                    fetchPriority="low"
                   />
                 </Box>
               ))}

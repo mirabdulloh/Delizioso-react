@@ -154,6 +154,9 @@ function PopularMenu({ page, setPage, onAdd }: PopularMenuProps) {
                   component="img"
                   src={`${serverApi}/${dish.productImages[0]}`}
                   className="menu-img menu-img-small"
+                  loading="lazy"
+                  decoding="async"
+                  fetchPriority="low"
                 />
                 <Box className="menu-views-topright">
                   <svg
