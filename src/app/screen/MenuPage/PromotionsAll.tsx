@@ -19,7 +19,7 @@ import ProductService from "../../services/ProductService";
 import { setPromotions, setPromotionsLoading } from "./slice";
 import { RootState } from "../../store";
 import useBusket from "../../hooks/useBusket";
-import { serverApi } from "../../../lib/config";
+import { resolveMediaUrl } from "../../../lib/config";
 import {
   sweetErrorHandling,
   sweetTopSmallSuccessAlert,
@@ -201,7 +201,7 @@ function PromotionsAll() {
                   <Box className="promoAll-imgWrap">
                     <Box
                       component="img"
-                      src={`${serverApi}/${item.productImages[0]}`}
+                      src={resolveMediaUrl(item.productImages[0])}
                       alt={item.productName}
                       loading="lazy"
                       decoding="async"

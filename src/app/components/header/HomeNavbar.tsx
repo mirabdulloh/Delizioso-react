@@ -15,7 +15,7 @@ import {
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useGlobals } from "../../hooks/useGlobals";
 import { sweetFailureProvider } from "../../../lib/sweetAlert";
-import { serverApi } from "../../../lib/config";
+import { resolveMediaUrl } from "../../../lib/config";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
@@ -132,7 +132,7 @@ function HomeNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onLo
                     className="user-avatar"
                     src={
                       authMember?.memberImage
-                        ? `${serverApi}/${authMember.memberImage}`
+                        ? resolveMediaUrl(authMember.memberImage)
                         : "/icons/default-user.svg"
                     }
                     alt="User"
@@ -232,7 +232,7 @@ function HomeNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onLo
                   className="user-avatar"
                   src={
                     authMember?.memberImage
-                      ? `${serverApi}/${authMember.memberImage}`
+                      ? resolveMediaUrl(authMember.memberImage)
                       : "/icons/default-user.svg"
                   }
                   alt="User"

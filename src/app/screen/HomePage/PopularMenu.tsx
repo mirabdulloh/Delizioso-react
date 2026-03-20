@@ -18,7 +18,7 @@ import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRound
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useSelector } from "react-redux";
 import { retrievePopularDishes, retrievePaginationInfo } from "./selector";
-import { serverApi } from "../../../lib/config";
+import { resolveMediaUrl } from "../../../lib/config";
 import { CartItem } from "../../../lib/types/search";
 import { sweetErrorHandling } from "../../../lib/sweetAlert";
 import { useGlobals } from "../../hooks/useGlobals";
@@ -152,7 +152,7 @@ function PopularMenu({ page, setPage, onAdd }: PopularMenuProps) {
               <Box sx={{ position: "relative" }}>
                 <Box
                   component="img"
-                  src={`${serverApi}/${dish.productImages[0]}`}
+                  src={resolveMediaUrl(dish.productImages[0])}
                   className="menu-img menu-img-small"
                   loading="lazy"
                   decoding="async"

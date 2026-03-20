@@ -14,7 +14,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import InboxRoundedIcon from "@mui/icons-material/InboxRounded";
 import ReviewService from "../../services/ReviewService";
-import { serverApi } from "../../../lib/config";
+import { resolveMediaUrl } from "../../../lib/config";
 import { EditingReview } from "../../../lib/types/mypage";
 import {
   sweetErrorHandling,
@@ -169,7 +169,7 @@ function MyReviews() {
                     component="img"
                     src={
                       review.productId?.productImages?.[0]
-                        ? `${serverApi}/${review.productId.productImages[0]}`
+                        ? resolveMediaUrl(review.productId.productImages[0])
                         : "/imgs/pastas.jpg"
                     }
                     alt={review.productId?.productName}
@@ -275,10 +275,10 @@ function MyReviews() {
                 src={
                   reviews.find((r) => r._id === editingId)?.productId
                     ?.productImages?.[0]
-                    ? `${serverApi}/${
+                    ? resolveMediaUrl(
                         reviews.find((r) => r._id === editingId)?.productId
-                          ?.productImages?.[0]
-                      }`
+                          ?.productImages?.[0],
+                      )
                     : "/imgs/pastas.jpg"
                 }
                 alt="Product"

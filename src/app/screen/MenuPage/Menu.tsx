@@ -31,7 +31,7 @@ import {
   retrieveLastFetch,
 } from "./selector";
 import { updateProductLike } from "./likesSlice";
-import { serverApi } from "../../../lib/config";
+import { resolveMediaUrl } from "../../../lib/config";
 import { addToCart } from "../OrderOnline/slice";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import {
@@ -414,7 +414,7 @@ const Menu = () => {
                     <Box className="menu2-imgWrap">
                       <Box
                         component="img"
-                        src={`${serverApi}/${product.productImages[0]}`}
+                        src={resolveMediaUrl(product.productImages[0])}
                         alt={product.productName}
                         loading="lazy"
                         decoding="async"

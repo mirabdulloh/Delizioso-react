@@ -8,7 +8,7 @@ import {
   sweetErrorHandling,
   sweetTopSmallSuccessAlert,
 } from "../../../lib/sweetAlert";
-import { Messages, serverApi } from "../../../lib/config";
+import { Messages, resolveMediaUrl } from "../../../lib/config";
 import MemberService from "../../services/MemberService";
 
 export function Settings() {
@@ -16,7 +16,7 @@ export function Settings() {
   const member = authMember;
   const [memberImage, setMemberImage] = useState<string>(
     member?.memberImage
-      ? `${serverApi}/${member.memberImage}`
+      ? resolveMediaUrl(member.memberImage)
       : "/icons/default-user.svg",
   );
 

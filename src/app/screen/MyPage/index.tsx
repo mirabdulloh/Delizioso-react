@@ -15,7 +15,7 @@ import "../../../css/userPage.css";
 import "../../../css/profile.css";
 import { useNavigate } from "react-router-dom";
 import { useGlobals } from "../../hooks/useGlobals";
-import { serverApi, Messages } from "../../../lib/config";
+import { resolveMediaUrl, serverApi, Messages } from "../../../lib/config";
 import { MemberUpdateInput } from "../../../lib/types/member";
 import { useState, useEffect } from "react";
 import {
@@ -32,14 +32,14 @@ function Settings() {
 
   const [memberImage, setMemberImage] = useState<string>(
     member?.memberImage
-      ? `${serverApi}/${member.memberImage}`
+      ? resolveMediaUrl(member.memberImage)
       : "/icons/default-user.svg",
   );
 
   // Sync memberImage with authMember changes
   useEffect(() => {
     if (member?.memberImage) {
-      setMemberImage(`${serverApi}/${member.memberImage}`);
+      setMemberImage(resolveMediaUrl(member.memberImage));
     }
   }, [member?.memberImage]);
 
@@ -354,7 +354,7 @@ export default function UserPage() {
                     key={authMember?.memberImage || 'default'}
                     src={
                       authMember?.memberImage
-                        ? `${serverApi}/${authMember.memberImage}?t=${Date.now()}`
+                        ? `${resolveMediaUrl(authMember.memberImage)}?t=${Date.now()}`
                         : "/icons/default-user.svg"
                     }
                     className="profile-header-avatar"

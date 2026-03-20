@@ -14,7 +14,7 @@ import {
 
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useGlobals } from "../../hooks/useGlobals";
-import { serverApi } from "../../../lib/config";
+import { resolveMediaUrl } from "../../../lib/config";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
@@ -131,7 +131,7 @@ function OtherNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onL
                     className="user-avatar"
                     src={
                       authMember?.memberImage
-                        ? `${serverApi}/${authMember.memberImage}`
+                        ? resolveMediaUrl(authMember.memberImage)
                         : "/icons/default-user.svg"
                     }
                     alt="User"
@@ -231,7 +231,7 @@ function OtherNavbar({ onLoginClick, onSignupClick, anchorEl, onAvatarClick, onL
                   className="user-avatar"
                   src={
                     authMember?.memberImage
-                      ? `${serverApi}/${authMember.memberImage}`
+                      ? resolveMediaUrl(authMember.memberImage)
                       : "/icons/default-user.svg"
                   }
                   alt="User"

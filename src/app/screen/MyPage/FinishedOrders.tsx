@@ -8,7 +8,7 @@ import { Order } from "../../../lib/types/orders";
 import { CartItem } from "../../../lib/types/search";
 import { OrderItem, OrderUI } from "../../../lib/types/mypage";
 import ReviewModal from "../../components/ReviewModal";
-import { serverApi } from "../../../lib/config";
+import { resolveMediaUrl } from "../../../lib/config";
 import {
   sweetErrorHandling,
   sweetSuccessAlert,
@@ -67,7 +67,7 @@ function transformOrderToUI(order: Order, reviews: any[]): OrderUI {
       productId: product?._id || orderItem.productId,
       name: product?.productName || "Unknown Product",
       img: product?.productImages?.[0]
-        ? `${serverApi}/${product.productImages[0]}`
+        ? resolveMediaUrl(product.productImages[0])
         : "/imgs/pastas.jpg",
       price: orderItem.itemPrice,
       qty: orderItem.itemQuantity,
@@ -121,22 +121,12 @@ export default function FinishedOrders() {
       order.items.forEach((item) => {
         console.log("REORDER IMG:", item.img);
 
-        const normalizeImage = (img: string) => {
-          if (!img) return "/imgs/pastas.jpg";
-          // If already has full URL (http or https), return as-is
-          if (img.startsWith("http://") || img.startsWith("https://")) return img;
-          // If starts with /, it's already a path, don't add serverApi
-          if (img.startsWith("/")) return img;
-          // Otherwise, add serverApi prefix
-          return `${serverApi}/${img.replace(/^\/+/, "")}`;
-        };
-
         const cartItem: CartItem = {
           _id: item.productId,
           quantity: item.qty,
           name: item.name,
           price: item.price,
-          image: normalizeImage(item.img),
+          image: resolveMediaUrl(item.img) || "/imgs/pastas.jpg",
         };
 
         // Dispatch to Redux for each item

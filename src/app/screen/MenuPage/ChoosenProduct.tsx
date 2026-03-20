@@ -25,7 +25,7 @@ import {
   retrieveProductsCache,
 } from "./selector";
 import ProductService from "../../services/ProductService";
-import { serverApi } from "../../../lib/config";
+import { resolveMediaUrl } from "../../../lib/config";
 import { setProducts, setChosenProduct, cacheProducts } from "./slice";
 import "../../../css/menu.css";
 import { useGlobals } from "../../hooks/useGlobals";
@@ -60,7 +60,7 @@ function ChoosenProduct() {
     if (cached) {
       dispatch(setChosenProduct(cached));
       const cachedImages = cached.productImages?.length
-        ? cached.productImages.map((img) => `${serverApi}/${img}`)
+        ? cached.productImages.map((img) => resolveMediaUrl(img))
         : ["/imgs/default_img.jpg"];
       setActiveImg(cachedImages[0]);
     }
@@ -89,7 +89,7 @@ function ChoosenProduct() {
         dispatch(setChosenProduct(data));
         updateProductInStore(data);
         const fetchedImages = data.productImages?.length
-          ? data.productImages.map((img) => `${serverApi}/${img}`)
+          ? data.productImages.map((img) => resolveMediaUrl(img))
           : ["/imgs/default_img.jpg"];
         setActiveImg(fetchedImages[0]);
       } catch (err) {
@@ -106,7 +106,7 @@ function ChoosenProduct() {
   useEffect(() => {
     if (!chosenProduct) return;
     if (chosenProduct.productImages?.length) {
-      setActiveImg(`${serverApi}/${chosenProduct.productImages[0]}`);
+      setActiveImg(resolveMediaUrl(chosenProduct.productImages[0]));
     }
   }, [chosenProduct]);
 
@@ -167,7 +167,7 @@ function ChoosenProduct() {
   }
 
   const images = chosenProduct.productImages?.length
-    ? chosenProduct.productImages.map((img) => `${serverApi}/${img}`)
+    ? chosenProduct.productImages.map((img) => resolveMediaUrl(img))
     : ["/imgs/default_img.jpg"];
 
   const handleAddToCart = () => {
@@ -333,7 +333,7 @@ function ChoosenProduct() {
                   <Stack spacing={2}>
                     {reviews.map((review) => {
                       const avatar = review.memberId?.memberImage
-                        ? `${serverApi}/${review.memberId.memberImage}`
+                        ? resolveMediaUrl(review.memberId.memberImage)
                         : "/imgs/default_img.jpg";
                       return (
                         <Box

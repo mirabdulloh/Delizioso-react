@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Container, Rating } from "@mui/material";
 import ReviewService, { Review } from "../../services/ReviewService";
-import { serverApi } from "../../../lib/config";
+import { resolveMediaUrl } from "../../../lib/config";
 import "../../../css/home.css";
 
 function CostumerReviews() {
@@ -33,7 +33,7 @@ function CostumerReviews() {
 
   const activeReview = reviews[activeIndex];
   const productImage = activeReview.productId?.productImages?.[0]
-    ? `${serverApi}/${activeReview.productId.productImages[0]}`
+    ? resolveMediaUrl(activeReview.productId.productImages[0])
     : "/imgs/chef1.png";
 
   return (
@@ -72,7 +72,7 @@ function CostumerReviews() {
         <Box className="review-users-row">
           {reviews.map((review, index) => {
             const userImg = review.memberId?.memberImage
-              ? `${serverApi}/${review.memberId.memberImage}`
+              ? resolveMediaUrl(review.memberId.memberImage)
               : "/imgs/default_img.jpg";
 
             return (

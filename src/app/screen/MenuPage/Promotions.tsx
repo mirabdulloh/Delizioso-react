@@ -8,7 +8,7 @@ import ProductService from "../../services/ProductService";
 import { setPromotions, setPromotionsLoading } from "./slice";
 import { RootState } from "../../store";
 import useBusket from "../../hooks/useBusket";
-import { serverApi } from "../../../lib/config";
+import { resolveMediaUrl } from "../../../lib/config";
 import { sweetErrorHandling, sweetTopSmallSuccessAlert } from "../../../lib/sweetAlert";
 import { useGlobals } from "../../hooks/useGlobals";
 
@@ -188,7 +188,7 @@ function Promotions() {
                 {/* hero image */}
                 <Box
                   component="img"
-                  src={`${serverApi}/${promo45.productImages[0]}`}
+                  src={resolveMediaUrl(promo45.productImages[0])}
                   alt={promo45.productName}
                   className="promo2-hero-img"
                   decoding="async"
@@ -236,7 +236,7 @@ function Promotions() {
 
                   <Box
                     component="img"
-                    src={`${serverApi}/${promo.productImages[0]}`}
+                    src={resolveMediaUrl(promo.productImages[0])}
                     alt={promo.productName}
                     className="promo2-mini-img"
                     loading="lazy"
@@ -287,7 +287,7 @@ function Promotions() {
 
                     <Box
                       component="img"
-                      src={`${serverApi}/${promo.productImages[0]}`}
+                      src={resolveMediaUrl(promo.productImages[0])}
                       alt={promo.productName}
                       className="promo2-dealImg"
                     />

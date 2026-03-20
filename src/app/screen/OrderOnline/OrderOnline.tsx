@@ -21,7 +21,7 @@ import { OrderStatus } from "../../../lib/enums/order.enum";
 import { CouponValidationResult } from "../../../lib/types/member";
 import OrderService from "../../services/OrderService";
 import MemberService from "../../services/MemberService";
-import { serverApi } from "../../../lib/config";
+import { resolveMediaUrl } from "../../../lib/config";
 import { useGlobals } from "../../hooks/useGlobals";
 import { setPausedOrders, setFinishedOrders, setProcessOrders } from "./slice";
 import { retrievePausedOrders, retrieveFinishedOrders, retrieveProcessOrders } from "./selector";
@@ -121,7 +121,7 @@ function transformOrderToUI(order: Order): OrderUI {
       id: orderItem._id,
       productId: String(orderItem.productId),
       name: product?.productName || 'Unknown Product',
-      img: product?.productImages?.[0] ? `${serverApi}/${product.productImages[0]}` : '/imgs/pastas.jpg',
+      img: product?.productImages?.[0] ? resolveMediaUrl(product.productImages[0]) : '/imgs/pastas.jpg',
       price: orderItem.itemPrice,
       qty: orderItem.itemQuantity,
     };
