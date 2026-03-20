@@ -4,19 +4,24 @@ const normalizeUrl = (value?: string): string =>
 const normalizeMediaPath = (value?: string): string => {
   if (!value) return "";
 
-  let normalized = value.trim();
+  let normalized = value.trim().replace(/\\/g, "/");
 
-  if (/^https?:\/\//i.test(normalized)) {
+  const uploadsMatch = normalized.match(/(?:^|\/)(uploads\/.*)$/i);
+  if (uploadsMatch) {
+    normalized = `/${uploadsMatch[1]}`;
+  } else if (/^https?:\/\//i.test(normalized)) {
     return normalized;
   }
 
-  normalized = normalized.replace(/^\/+app\/+uploads\//i, "/uploads/");
+  normalized = normalized
+    .replace(/^\/+app\/+uploads\//i, "/uploads/")
+    .replace(/^\/?uploads\//i, "/uploads/");
 
   if (!normalized.startsWith("/")) {
     normalized = `/${normalized}`;
   }
 
-  return normalized;
+  return normalized.replace(/\/{2,}/g, "/");
 };
 
 export const serverApi: string = normalizeUrl(process.env.REACT_APP_API_URL);
